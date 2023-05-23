@@ -1,4 +1,4 @@
-![logo-full.svg](/home/wayne/code/LimSim%20Public/assets/logo-full.svg)
+![logo-full.svg](assets/logo-full.svg)
 
 # LimSim
 
