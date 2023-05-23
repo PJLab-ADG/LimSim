@@ -19,26 +19,37 @@ LimSim is a Long-term Interactive Multi-scenario traffic Simulator, which aims t
 ## 🖥️ GUI
 
 LimSim has a cross-platform user-friendly GUI, which includes not only a beautiful simulation interface, but also information on road network and ego-vehicle status.
+<p align="center">
+  <img src="assets/limsim_gui.png" title="" alt="limsim_gui.png">
+</p>
 
-<img src="assets/limsim_gui.png" title="" alt="limsim_gui.png" data-align="center">
 
 ## 🛣️ Multi-scenarios support
 
 LimSim supports road scenarios not limited to freeways, signalized intersections, roundabouts and overpasses.
 
-<img src="assets/scenarios.gif" title="" alt="scenarios.gif" data-align="center">
+<p align="center">
+ <img src="assets/scenarios.gif" title="" alt="scenarios.gif" data-align="center" width="700">
+</p>
+
 
 ## 📊 Scenario Evaluation
 
 After running a long-term simulation with all kinds of scenarios contained in it, LimSim generates a log report and extract the key scenarios via the evaluation results.
 
-<img src="assets/evaluation.gif" title="" alt="evaluation.gif" data-align="center">
+<p align="center">
+ <img src="assets/evaluation.gif" title="" alt="evaluation.gif" data-align="center" width="700">
+</p>
+
 
 ## 💡Co-sim with SUMO & CARLA
 
 LimSim supports co-simulation with CARLA and SUMO, guaranteeing that all three softwares show identical vehicle status. 
 
-<img src="assets/cosim.gif" title="" alt="cosim.gif" data-align="center">
+<p align="center">
+ <img src="assets/cosim.gif" title="" alt="cosim.gif" data-align="center" width="700">
+</p>
+
 
 ## License
 
