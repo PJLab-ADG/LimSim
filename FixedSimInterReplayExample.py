@@ -1,5 +1,5 @@
-import time
-from rich import print
+from simModel.fixedScene import interReplay
+from trafficManager.traffic_manager import TrafficManager
 
 import logger
 # config a logger, set use_stdout=True to output log to terminal
@@ -7,8 +7,6 @@ log = logger.setup_app_level_logger(file_name="app_debug.log",
                                     level="DEBUG",
                                     use_stdout=False)
 
-from trafficManager.traffic_manager import TrafficManager
-from simModel.fixedScene import interReplay
 
 firmodel = interReplay.InterReplayModel(
     dataBase='fixedSceneTest.db'

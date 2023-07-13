@@ -1,0 +1,9 @@
+dearpygui==1.8.0
+matplotlib==3.7.1
+numpy==1.24.2
+pandas==2.0.0
+pynput==1.7.6
+PyYAML==6.0
+rich==13.4.2
+sumolib==1.16.0
+traci==1.16.0

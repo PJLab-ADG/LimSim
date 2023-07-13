@@ -1,7 +1,5 @@
 from simModel.fixedScene.model import Model
 from trafficManager.traffic_manager import TrafficManager
-import time
-from rich import print
 
 import logger
 # config a logger, set use_stdout=True to output log to terminal
