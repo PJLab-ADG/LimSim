@@ -1,5 +1,7 @@
 ![logo-full.svg](assets/logo-full.svg)
 
+[https://img.shields.io/badge/video-bilibili-74b9ff](https://www.bilibili.com/video/BV1rT411x7VF)
+
 # LimSim
 
 LimSim is a Long-term Interactive Multi-scenario traffic Simulator, which aims to provide a continuous simulation capability under the complex urban road network.
