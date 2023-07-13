@@ -1,0 +1,4 @@
+<obstacles>
+    <circle id="oc1" on="E1" center="48,-10" radius="3"/>
+    <rectangle id="op1" on="E2" center="150,-8" length="10" width="4" yaw="10"/>
+</obstacles>

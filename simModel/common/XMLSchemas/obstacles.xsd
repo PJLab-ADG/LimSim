@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://www.w3schools.com"
+xmlns="http://www.w3schools.com"
+elementFormDefault="qualified">
+
+    <xs:element name="circle">
+        <xs:complexType>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="on" type="xs:string" use="required"/>
+            <xs:attribute name="center" type="nodeType" use="required"/>
+            <xs:attribute name="radius" type="xs:long" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="rectangle">
+        <xs:complexType>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute name="on" type="xs:string" use="required"/>
+            <xs:attribute name="center" type="nodeType" use="required"/>
+            <xs:attribute name="length" type="xs:long" use="required"/>
+            <xs:attribute name="width" type="xs:long" use="required"/>
+            <xs:attribute name="yaw" type="xs:long" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="obstacles">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="circle"/>
+                <xs:element ref="rectangle"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

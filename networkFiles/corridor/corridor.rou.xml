@@ -1,0 +1,18 @@
+<routes>
+    <vType id="type1" accel="3" decel="4.5" sigma="1.0" length="5" minGap="0.5" maxSpeed="20" speedFactor="normc(1, 0.2, 0.2, 1.2)" lcStrategic="1" lcKeepRight="1"/>
+    <vehicle id="t_0" type="type1" depart="0.0" departLane="2" arrivalLane="2">
+        <route edges="E0"/>
+    </vehicle>
+    <vehicle id="t_1" type="type1" depart="0.5" departLane="2" arrivalLane="2">
+        <route edges="E0 E1 E2 E3 E12"/>
+    </vehicle>
+    <vehicle id="t_2" type="type1" depart="1.0" departLane="2" arrivalLane="2">
+        <route edges="E0 E1 E2 E3 E12"/>
+    </vehicle>
+    <vehicle id="t_3" type="type1" depart="1.5" departLane="2" arrivalLane="2">
+        <route edges="E0 E1 E2 E3 E12"/>
+    </vehicle>
+    <vehicle id="t_4" type="type1" depart="2.0" departLane="2" arrivalLane="0">
+        <route edges="E0 E1 E2"/>
+    </vehicle>
+</routes>

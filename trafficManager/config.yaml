@@ -1,0 +1,61 @@
+ANIMATION: False
+VERBOSE: False # print detailed debug message
+CSV: False # write trajectories in trajectories.csv
+EGO_PLANNER: False # whether exist an ego planner
+USE_DECISION_MAKER: False # whether use decision maker results in planning module
+
+MAX_ROAD_WIDTH: 3.5 # [DEPRECATED]: maximum road width [m]
+D_ROAD_W: 0.75 # road width sampling length [m]
+MAX_T: 8.0 # max prediction time [m]mcts
+MIN_T: 5.0 # min prediction time [m]
+DT: 0.1 # time tick [s]
+D_T_S: 2.5 # target longtitude vel sampling length [km/h]
+N_D_S_SAMPLE: 2 # sampling number of target longtitude vel
+S_SAMPLE: 0.5 #lane change longtitude sample length [m]
+N_S_SAMPLE: 8 #sampling number for longtitude sample length
+MAX_CURVATURE: 1.0 # maximum curvature [1/m]
+
+############
+# DECISION MAKER module
+###########
+DECISION_INTERVAL: 3.0 #[s]
+DECISION_RESOLUTION: 1.5 #[s]
+MAX_DECISION_TIME: 7.0 #[s]
+LATERAL_SPEED: 1.17 # lateral speed for lane change [m/s], default: 3.5 / 3.0
+DEFAULT_ACC: 0.7 # default longitude acceleration [m/s^2]
+
+
+############
+# PLANNING module
+###########
+# planning weights
+weights:
+  W_YAW: 1.0 # smoothness cost yaw difference
+  W_CUR: 1.0 # curvature cost
+  W_VEL_DIFF: 5.0e-1 # velocity diff cost
+  W_T: 1.0 # time cost
+  W_OBS: 1.0 # obstacle cost
+  W_GUIDE: 5.0 # guidance cost
+  W_ACC: 1.0 # acceleration cost
+  W_JERK: 1.0 # jerk cost
+  W_COLLISION: 4.0 # collision cost
+  W_STOP: 100 # punishment for stop
+  W_CHANGELANE: 50 # punishment for lane change
+
+# 目前没有使用，直接从外界传入
+vehicle:
+  car:
+    length: 5 # 车长
+    width: 2 #车宽
+    max_accel: 2.6 # 最大加速度
+    max_decel: -4.5 #最大减速度，注意一定负号
+    max_speed: 55 # 最大速度 m/s
+    L: 2.9 # wheel base 轴距, 暂未使用
+    R: 1.5 # minimum turning radius 最小转弯半径， 暂未使用
+    ds: 0.1 # course distanse， 暂未使用
+  truck:
+    length: 7.2 # 车长
+    width: 2.3
+    max_accel: 2.0
+    max_decel: -4.0
+    max_speed: 40
