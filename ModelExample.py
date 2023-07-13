@@ -27,6 +27,8 @@ file_paths = {
         "networkFiles/bilbao/osm.net.xml",
         "networkFiles/bilbao/osm.rou.xml",
     ),
+    #######
+    # Please make sure you have request the access from https://github.com/ozheng1993/UCF-SST-CitySim-Dataset and put the road network files (.net.xml) in the relevent networkFiles/CitySim folder
     "freewayB": (
         "networkFiles/CitySim/freewayB/freewayB.net.xml",
         "networkFiles/CitySim/freewayB/freewayB.rou.xml",
@@ -35,6 +37,7 @@ file_paths = {
         "networkFiles/CitySim/Expressway_A/Expressway_A.net.xml",
         "networkFiles/CitySim/Expressway_A/Expressway_A.rou.xml",
     ),
+    ########
 }
 
 
