@@ -1,8 +1,8 @@
 ![logo-full.svg](assets/logo-full.svg)
 
-<!-- [![Custom badge](https://img.shields.io/badge/paper-Arxiv-red?style=for-the-badge&logo=arxiv&logoColor=white)](https://www.bilibili.com/video/BV1rT411x7VF) -->
+[![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2307.06648)
 [![Custom badge](https://img.shields.io/badge/video-Bilibili-74b9ff?style=for-the-badge&logo=bilibili&logoColor=white)](https://www.bilibili.com/video/BV1rT411x7VF)
-[![Custom badge](https://img.shields.io/badge/video-YouTube-red?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/YR2A25v0hj4)
+[![Custom badge](https://img.shields.io/badge/video-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/YR2A25v0hj4)
 
 ## News: 🚀The code is now released!
 # LimSim
@@ -67,9 +67,6 @@ To run these two maps, you need to:
    networkFiles/CitySim/Expressway_A/Expressway_A.net.xml
    ```
 
-<!-- ## Cite -->
-
-
 ## Acknowledgments
 
 We would like to thank the authors and developers of the following projects, this project is built upon these great projects.
@@ -80,6 +77,20 @@ We would like to thank the authors and developers of the following projects, thi
 ## Contact
 
 If you have any suggestions or collaboration about this repo, feel free to create a issue/PR or send email to us (<a href="mailto:wenlicheng@pjlab.org.cn">wenlicheng@pjlab.org.cn</a>).
+
+
+## Citation
+If you use LimSim in your research , please use the following BibTeX entry.
+```
+@misc{wen2023limsim,
+      title={LimSim: A Long-term Interactive Multi-scenario Traffic Simulator}, 
+      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou and Yikang Li},
+      year={2023},
+      eprint={2307.06648},
+      archivePrefix={arXiv},
+      primaryClass={eess.SY}
+}
+```
 
 ## License
 
