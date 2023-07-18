@@ -1,8 +1,9 @@
 ![logo-full.svg](assets/logo-full.svg)
 
-[![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2307.06648)
-[![Custom badge](https://img.shields.io/badge/video-Bilibili-74b9ff?style=for-the-badge&logo=bilibili&logoColor=white)](https://www.bilibili.com/video/BV1rT411x7VF)
-[![Custom badge](https://img.shields.io/badge/video-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/YR2A25v0hj4)
+[![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2307.06648)
+[![Custom badge](https://img.shields.io/badge/Docs-page-green?logo=document)](https://pjlab-adg.github.io/LimSim)
+[![Custom badge](https://img.shields.io/badge/video-Bilibili-74b9ff?logo=bilibili&logoColor=white)](https://www.bilibili.com/video/BV1rT411x7VF)
+[![Custom badge](https://img.shields.io/badge/video-YouTube-FF0000?logo=youtube&logoColor=white)](https://youtu.be/YR2A25v0hj4)
 
 ## News: 🚀The code is now released!
 # LimSim
