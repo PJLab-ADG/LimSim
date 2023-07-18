@@ -176,7 +176,7 @@
 }
 
 .mdx-hero h1 {
-    color: #0e4130;
+    color: #ffffff;
     font-weight: 700;
     margin-bottom: 1rem;
     font-size: 1.6rem;
@@ -231,7 +231,7 @@
 }
 
 .mdx-hero .md-button--primary {
-    background-color: #338033;
+    background-color: #4a69bd;
     border-color: transparent;
     color: #ffffff;
 }

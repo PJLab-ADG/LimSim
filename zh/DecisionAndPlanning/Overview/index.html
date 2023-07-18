@@ -62,7 +62,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange">
   
     
     
@@ -111,7 +111,7 @@
       <form class="md-header__option" data-md-component="palette">
         
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
           
         
       </form>
@@ -127,14 +127,14 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="../../../DecisionAndPlanning/Overview/" hreflang="zh" class="md-select__link">
-                    简体中文
+                  <a href="../../../DecisionAndPlanning/Overview/" hreflang="en" class="md-select__link">
+                    English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="../../../en/DecisionAndPlanning/Overview/" hreflang="en" class="md-select__link">
-                    English
+                  <a href="./" hreflang="zh" class="md-select__link">
+                    简体中文
                   </a>
                 </li>
               
@@ -617,56 +617,63 @@
 
   <h1>Overview</h1>
 
-<p>LimSim中使用<code>TrafficManager</code>类来统一管理，这个类主要负责对于AOI范围内的车辆进行“预测-决策-规划”（PDP）流程，最终为每辆车生成一条合理、安全、符合运动学约束的轨迹。</p>
-<p>在使用时，我们需要首先初始化<code>TrafficManager</code>类，初始化需要的参数如下：</p>
+<!--
+ * @Author: Licheng Wen
+ * @Date: 2023-04-25 16:19:40
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by PJLab, All Rights Reserved. 
+-->
+<p>In LimSim, the <code>TrafficManager</code> class is used for unified management, mainly responsible for the "prediction-decision-planning" (PDP) process of vehicles within the AOI range, and ultimately generates a reasonable, safe, and kinematic-constraint-compliant trajectory for each vehicle.</p>
+<p>When using it, we need to first initialize the <code>TrafficManager</code> class, and the required parameters for initialization are as follows:</p>
 <table>
 <thead>
 <tr>
-<th align="center">参数名</th>
-<th align="center">必须/可选</th>
-<th align="center">描述</th>
+<th>Parameter Name</th>
+<th>Required/Optional</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="center"><code>model</code></td>
-<td align="center">必须</td>
-<td align="center">传入的包含Sumo仿真的仿真模型，应当为<code>Model</code>类或者<code>ReplayModel</code>类</td>
+<td><code>model</code></td>
+<td>Required</td>
+<td>The simulation model containing Sumo, which should be either <code>Model</code> or <code>ReplayModel</code> class.</td>
 </tr>
 <tr>
-<td align="center"><code>predictor</code></td>
-<td align="center">可选</td>
-<td align="center">车辆的预测器，应当是一个<code>AbstractPredictor</code> 的子类。</td>
+<td><code>predictor</code></td>
+<td>Optional</td>
+<td>The predictor of the vehicle, which should be a subclass of <code>AbstractPredictor</code>.</td>
 </tr>
 <tr>
-<td align="center"><code>ego_decision</code></td>
-<td align="center">可选</td>
-<td align="center">自车的决策器，应当是一个<code>AbstractEgoDecisionMaker</code> 的子类。</td>
+<td><code>ego_decision</code></td>
+<td>Optional</td>
+<td>The decision maker of the ego vehicle, which should be a subclass of <code>AbstractEgoDecisionMaker</code>.</td>
 </tr>
 <tr>
-<td align="center"><code>ego_planner</code></td>
-<td align="center">可选</td>
-<td align="center">自车的规划器，应当是一个<code>AbstractEgoPlanner</code> 的子类。</td>
+<td><code>ego_planner</code></td>
+<td>Optional</td>
+<td>The planner of the ego vehicle, which should be a subclass of <code>AbstractEgoPlanner</code>.</td>
 </tr>
 <tr>
-<td align="center"><code>multi_decision</code></td>
-<td align="center">可选</td>
-<td align="center">适用于多车的联合决策器，应当是一个<code>AbstractMultiDecisionMaker</code> 的子类。</td>
+<td><code>multi_decision</code></td>
+<td>Optional</td>
+<td>The joint decision maker for multiple vehicles, which should be a subclass of <code>AbstractMultiDecisionMaker</code>.</td>
 </tr>
 <tr>
-<td align="center"><code>multi_veh_planner</code></td>
-<td align="center">可选</td>
-<td align="center">适用于多车的联合规划器，应当是一个<code>AbstractMultiPlanner</code> 的子类。</td>
+<td><code>multi_veh_planner</code></td>
+<td>Optional</td>
+<td>The joint planner for multiple vehicles, which should be a subclass of <code>AbstractMultiPlanner</code>.</td>
 </tr>
 <tr>
-<td align="center"><code>config_file_path</code></td>
-<td align="center">可选</td>
-<td align="center">配置文件路径。其负责存储PDP流程中的一些重要可修改参数。</td>
+<td><code>config_file_path</code></td>
+<td>Optional</td>
+<td>The configuration file path, which is responsible for storing some important configurable parameters in the PDP process.</td>
 </tr>
 </tbody>
 </table>
-<p>LimSim已事先实现了PDP全流程的方法，这意味着用户不需要填充任何算法即可正常运行LimSim。</p>
-<p>同时，LimSim也支持用户替换PDP流程中的部分或全部算法，只需继承给定基类并填充接口，即可使Limsim拥有全新表现。</p>
+<p>LimSim has already implemented the method for the entire PDP process in advance, which means that users do not need to fill in any algorithms to run LimSim normally.</p>
+<p>At the same time, LimSim also supports users to replace parts or all of the algorithms in the PDP process, only need to inherit the given base class and fill in the interface, so that LimSim can have a brand new performance.</p>
 
 
 
