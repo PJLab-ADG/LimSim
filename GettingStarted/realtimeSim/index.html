@@ -1,0 +1,855 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../installDeploy/">
+      
+      
+        <link rel="next" href="../replayAndIreplay/">
+      
+      <link rel="icon" href="../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Real-time Simulation - LimSim</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+<link rel="stylesheet" href="../../assets/stylesheets/custom.2fa34c39.min.css">
+<!-- <link rel="stylesheet" href="../../assets/stylesheets/my.css"> -->
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="LimSim" class="md-header__button md-logo" aria-label="LimSim" data-md-component="logo">
+      
+  <img src="../../assets/images/car.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LimSim
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Real-time Simulation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="选择当前语言">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="./" hreflang="zh" class="md-select__link">
+                    简体中文
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="../../en/GettingStarted/realtimeSim/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/PJLab-ADG/LimSim.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PJLab-ADG/LimSim
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../installDeploy/" class="md-tabs__link md-tabs__link--active">
+        Getting Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../DecisionAndPlanning/Overview/" class="md-tabs__link">
+        Decision & Planing
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../AnalysisAndEvaluation/Database/" class="md-tabs__link">
+        Analysis & Evaluation
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="LimSim" class="md-nav__button md-logo" aria-label="LimSim" data-md-component="logo">
+      
+  <img src="../../assets/images/car.svg" alt="logo">
+
+    </a>
+    LimSim
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/PJLab-ADG/LimSim.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PJLab-ADG/LimSim
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installDeploy/" class="md-nav__link">
+        Installation & Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Real-time Simulation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Real-time Simulation
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    界面布局
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    示例分析
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../replayAndIreplay/" class="md-nav__link">
+        Replay & Interactive Replay
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../otherFunction/" class="md-nav__link">
+        Other Functions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Decision & Planing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Decision & Planing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Decision/" class="md-nav__link">
+        Decision
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Planning/" class="md-nav__link">
+        Planning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Customization/" class="md-nav__link">
+        Customization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Analysis & Evaluation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Analysis & Evaluation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AnalysisAndEvaluation/Database/" class="md-nav__link">
+        Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AnalysisAndEvaluation/Evaluation/" class="md-nav__link">
+        Evaluation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    界面布局
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    示例分析
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Real-time Simulation</h1>
+
+<p>跟随 Ego 的实时仿真是 LimSim 的基础功能，运行下面的指令，体验一下：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd </span><span class="n">LimSim</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">python</span> <span class="n">ModelExample</span><span class="p">.</span><span class="n">py</span>
+</code></pre></div>
+<h2 id="_1">界面布局<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>若上述指令运行正常，会显示如下画面：</p>
+<p><img alt="img" src="../../assets/images/GuiIllustration.png" /></p>
+<p>整个图形界面分为五个区域。A 区显示路网的全局视角，黄色圆圈是跟随 Ego 移动的感兴趣区域 (Area of Interest, AoI)，即显示 Ego 在整个路网中的实时位置；B 区显示 Ego 的跟随视角，黄色半透明圆圈同样是 AoI，与 A 区中的圆圈是一致的，车辆前方紫色曲线为轨迹规划算法提供的轨迹；C 区为 Ego 的状态显示区，会显示 Ego 的实时速度和加速度。<mark>注意 X 轴的坐标，0 点在 x 轴的正中间，表示当前时刻，0 点左半边表示历史的速度和加速度，0 点的右半边表示未来的速度和加速度（即规划算法提供的速度和加速度）</mark>，此外速度轴的取值范围取决于道路的限速；D 区为仿真信息展示区域，显示仿真的模式，仿真时刻，Ego 所在车道，以及 Ego 在车道上的位置；E 区为场景评价区域，实时显示对场景的评价，每个指标的具体含义请参考 <a href="../../AnalysisAndEvaluation/Evaluation/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />场景评价</a>。</p>
+<div class="admonition info">
+<p class="admonition-title">AoI (Area of Interest)</p>
+<p>AoI 可以视为 Ego 的感知区域，是 LimSim 为了进行长时仿真做出的折中方案。长时仿真意味着大范围路网和大量交通流，无法对所有车辆进行轨迹规划。因此，AoI 内部的车辆，其行为由决策-规划模型控制，在 Ego 的周围营造多样且真实的驾驶环境；AoI 外部的车辆，由 SUMO 控制，符合基本的交通规律。</p>
+</div>
+<h2 id="_2">示例分析<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>该仿真示例具有如下的结构：</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span>
+<span class="normal"><a href="#__codelineno-1-17">17</a></span>
+<span class="normal"><a href="#__codelineno-1-18">18</a></span>
+<span class="normal"><a href="#__codelineno-1-19">19</a></span>
+<span class="normal"><a href="#__codelineno-1-20">20</a></span>
+<span class="normal"><a href="#__codelineno-1-21">21</a></span>
+<span class="normal"><a href="#__codelineno-1-22">22</a></span>
+<span class="normal"><a href="#__codelineno-1-23">23</a></span>
+<span class="normal"><a href="#__codelineno-1-24">24</a></span>
+<span class="normal"><a href="#__codelineno-1-25">25</a></span>
+<span class="normal"><a href="#__codelineno-1-26">26</a></span>
+<span class="normal"><a href="#__codelineno-1-27">27</a></span>
+<span class="normal"><a href="#__codelineno-1-28">28</a></span>
+<span class="normal"><a href="#__codelineno-1-29">29</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">simModel.egoTracking.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">trafficManager.traffic_manager</span> <span class="kn">import</span> <span class="n">TrafficManager</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="n">netFile</span> <span class="o">=</span> <span class="s1">&#39;data/networkFiles/CarlaTown05/Town05.net.xml&#39;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="n">rouFile</span> <span class="o">=</span> <span class="s1">&#39;data/networkFiles/CarlaTown05/carlavtypes.rou.xml,data/networkFiles/CarlaTown05/Town05.rou.xml&#39;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span> <span class="c1"># (1)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a>        <span class="n">egoID</span> <span class="o">=</span> <span class="s1">&#39;61&#39;</span><span class="p">,</span> 
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a>        <span class="n">netFile</span> <span class="o">=</span> <span class="n">netFile</span><span class="p">,</span> 
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a>        <span class="n">rouFile</span> <span class="o">=</span> <span class="n">rouFile</span><span class="p">,</span> 
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a>        <span class="n">dataBase</span> <span class="o">=</span> <span class="s1">&#39;egoTrackingTest.db&#39;</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a>        <span class="p">)</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a>    <span class="n">model</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a>    <span class="n">planner</span> <span class="o">=</span> <span class="n">TrafficManager</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a>
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a>    <span class="k">while</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">tpEnd</span><span class="p">:</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a>        <span class="n">model</span><span class="o">.</span><span class="n">moveStep</span><span class="p">()</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a>        <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">timeStep</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20"></a>            <span class="n">roadgraph</span><span class="p">,</span> <span class="n">vehicles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">exportSce</span><span class="p">()</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21"></a>            <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">tpStart</span> <span class="ow">and</span> <span class="n">roadgraph</span><span class="p">:</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22"></a>                <span class="n">trajectories</span> <span class="o">=</span> <span class="n">planner</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23"></a>                    <span class="n">model</span><span class="o">.</span><span class="n">timeStep</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">roadgraph</span><span class="p">,</span> <span class="n">vehicles</span><span class="p">)</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24"></a>                <span class="n">model</span><span class="o">.</span><span class="n">setTrajectories</span><span class="p">(</span><span class="n">trajectories</span><span class="p">)</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26"></a>                <span class="n">model</span><span class="o">.</span><span class="n">ego</span><span class="o">.</span><span class="n">exitControlMode</span><span class="p">()</span> <span class="c1"># (2)</span>
+<a id="__codelineno-1-27" name="__codelineno-1-27"></a>        <span class="n">model</span><span class="o">.</span><span class="n">updateVeh</span><span class="p">()</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28"></a>
+<a id="__codelineno-1-29" name="__codelineno-1-29"></a>    <span class="n">model</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+<ol>
+<li><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" />  在 Windows 系统下，请务必保证 model 的相关代码都在 <code>if __name__ == '__main__':</code> 范围内，否则程序会崩溃。主要原因在于 SUMO 使用了 Python 的 multiprocessing 模块，而该模块产生进程的方法，在 Windows 下 和 Linux 下存在不同，详情请参考：<a href="https://docs.python.org/3.10/library/multiprocessing.html#contexts-and-start-methods">contexts-and-start-methods</a></li>
+<li>如果不再控制 Ego，记得将控制权交还给 SUMO。</li>
+</ol>
+<p>程序的第 8 行是模型的初始化，主要的参数有 <code>egoID</code> ，用来指定的 Ego car 的 ID。这里我们使用 SUMO 进行环境交通流的管理，路网中所有车辆的路径信息实际上是被定义在 <code>Town05.rou.xml</code> 中的。因此你可以查看这个文件，选择喜欢的一辆车作为 Ego car，或者你可以参考 <a href="https://sumo.dlr.de/docs/Definition_of_Vehicles%2C_Vehicle_Types%2C_and_Routes.html#vehicles_and_routes"><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" />自定义车辆和路径</a>来生成特定路径的车辆来进行模型的仿真和算法的测试。然后是仿真使用的路网路网文件 <code>netFile</code> 和路径文件 <code>rouFile</code> ，这些文件的生成和定义请参考 <a href="https://sumo.dlr.de/docs/index.html"><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" />SUMO 的文档</a>。<code>dataBase</code> 为记录仿真数据的数据库，字符串类型。</p>
+<p>第 15 行是轨迹规划算法的初始化，包括轨迹预测、决策、规划等多个模块。这里使用了 LimSim 实现的基础版本（默认参数），用以控制 AoI 中的车辆，你也可以替换其中任何一个环节为你自己的算法，具体的自定义方法请参考 <a href="../../DecisionAndPlanning/Customization/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />自定义算法</a>。</p>
+<p>17 行开始是程序运行的主要环节，<code>model.tpEnd</code> 是布尔变量，用来表征 Ego 是否到达终点，即程序是否结束。<code>model.moveStep()</code> 和 <code>model.updateVeh()</code> 是仿真更新的流程，前者用于获取所有交通参与者的信息，后者用于更新（控制）所有交通参与者的信息。因此在两者之间，可以用轨迹规划算法控制 AoI 中的车辆。</p>
+<p>由于轨迹规划算法通常比较耗时，而且一次规划可以给出未来多帧的轨迹，所以我们可以每 5 帧进行一次轨迹规划，即 <code>if model.timeStep % 5 == 0:</code>。然后，由 <code>roadgraph, vehicles = model.exportSce()</code> 获得当前时刻 Ego 附近的场景。其中，<code>roadgraph</code> 为 Ego 周围的路网信息，<code>vehicles</code> 为 Ego 周围车辆的信息，这些信息的使用方法可以参考 XXXXX。轨迹规划算法返回的轨迹则通过 <code>model.setTrajectories()</code> 传回仿真中。</p>
+<p>上述仿真运行完成后，会将仿真过程中所有的数据存放在 <code>egoTrackingTest.db</code> 中，供回放和分析所用，关于数据库的介绍，可以参考<a href="../../AnalysisAndEvaluation/Database/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />数据库</a>。</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../installDeploy/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Installation &amp; Deployment" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  上一页
+                </span>
+                Installation & Deployment
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../replayAndIreplay/" class="md-footer__link md-footer__link--next" aria-label="下一页: Replay &amp; Interactive Replay" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  下一页
+                </span>
+                Replay & Interactive Replay
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.path", "header.autohide", "announce.dismiss", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+
+      <script src="../../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+<script src="../../assets/javascripts/custom.a7283b5f.min.js"></script>
+
+  </body>
+</html>

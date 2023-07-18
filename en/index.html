@@ -1,0 +1,866 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="GettingStarted/installDeploy/">
+      
+      <link rel="icon" href="../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Long-term Macro-micro Interactive Simulation - LimSim</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+<link rel="stylesheet" href="../assets/stylesheets/custom.2fa34c39.min.css">
+<!-- <link rel="stylesheet" href="../assets/stylesheets/my.css"> -->
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="./" title="LimSim" class="md-header__button md-logo" aria-label="LimSim" data-md-component="logo">
+      
+  <img src="../assets/images/car.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LimSim
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Long-term Macro-micro Interactive Simulation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="Select language">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="../" hreflang="zh" class="md-select__link">
+                    简体中文
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="./" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/PJLab-ADG/LimSim.git" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PJLab-ADG/LimSim
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="./" class="md-tabs__link md-tabs__link--active">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="GettingStarted/installDeploy/" class="md-tabs__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="DecisionAndPlanning/Overview/" class="md-tabs__link">
+        Decision & Planing
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="AnalysisAndEvaluation/Database/" class="md-tabs__link">
+        Analysis & Evaluation
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+<style>
+  .md-header {
+    position: initial
+  }
+
+  .md-main__inner {
+    margin: 0
+  }
+
+  .md-content {
+    display: none
+  }
+
+  @media screen and (min-width:60em) {
+    .md-sidebar--secondary {
+      display: none
+    }
+  }
+
+  @media screen and (min-width:76.25em) {
+    .md-sidebar--primary {
+      display: none
+    }
+  }
+</style>
+<section class="mdx-container">
+  <div class="md-grid md-typeset">
+    <div class="mdx-hero" style="margin-bottom: 0; padding-top: .5rem; margin-top: .5rem;">
+      <div class="mdx-hero__image" style="padding-bottom: 1rem; padding-top: 1rem;">
+        <img src="assets\images\illustration.png" alt="illustration" width="77%" height="77%" draggable="false"
+          style="box-shadow: 0 .2rem 2.5rem rgba(0,0,0,.3) !important; margin-top: 60px;">
+      </div>
+      <div class="mdx-hero__content" style="padding-bottom: 1rem; padding-top: 1rem;">
+        <h1>Long-term Interactive Multi-scenario Simulation</h1>
+        <p style="text-align: justify;">
+          <font color="black">Welcome! LimSim is an easy-to-use,
+            decision- & planning-oriented simulation software.</font>
+        </p>
+        <a href="GettingStarted/installDeploy/" title="Installation &amp; Deployment"
+          class="md-button md-button--primary">
+          Quick start
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="md-grid md-typeset">
+    <div class="mdx-hero" style="margin-top: 1rem; margin-bottom: 0rem; height: 30rem;">
+      <iframe width=95% src="https://www.youtube.com/embed/YR2A25v0hj4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="md-grid md-typeset">
+    <div class="mdx-hero" style="margin-top: 1rem; margin-bottom: 0rem;">
+      <h1>Our Features</h1>
+    </div>
+    <div class="mdx-hero" style="margin-bottom: 0rem;">
+      <div class="mdx-hero__content" style="margin-top: 0rem; padding-bottom: 1rem;">
+        <div style="padding-right: 1rem">
+          <div
+            style="fill: currentColor; background-color: #7ac98d; border-radius: 20%; flex-shrink: 0; height: 2.2rem; padding: .4rem; width: 2.2rem;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 4H41" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path d="M7 44H41" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path d="M11 44C13.6667 30.6611 18 23.9944 24 24C30 24.0056 34.3333 30.6722 37 44H11Z" fill="#7ac98d"
+                stroke="#ffffff" stroke-width="3" stroke-linejoin="bevel" />
+              <path d="M37 4C34.3333 17.3389 30 24.0056 24 24C18 23.9944 13.6667 17.3278 11 4H37Z" fill="#7ac98d"
+                stroke="#ffffff" stroke-width="3" stroke-linejoin="bevel" />
+              <path d="M21 15H27" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path d="M19 38H29" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+            </svg>
+          </div>
+          <h3 style="margin-top: .3rem;">
+            <font color='black'>Long-term simulation</font>
+          </h3>
+          <p style="text-align: justify;">
+            <font color='#718093'>Generate background traffic flows using a prediction-decision-planning framework to
+              support long-term, continuous microscopic traffic simulations.
+            </font>
+          </p>
+
+        </div>
+      </div>
+      <div class="mdx-hero__content" style="margin-top: 0rem; padding-bottom: 1rem;">
+        <div style="padding-left: 0.5rem; padding-right: 0.5rem;">
+          <div
+            style="fill: currentColor; background-color: #7ac98d; border-radius: 20%; flex-shrink: 0; height: 2.2rem; padding: .4rem; width: 2.2rem;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 24V18L26 21L31 24L26 27L21 30V24Z" fill="#7ac98d" stroke="#ffffff" stroke-width="3"
+                stroke-linejoin="bevel" />
+              <path
+                d="M11.2721 36.7279C14.5294 39.9853 19.0294 42 24 42C33.9411 42 42 33.9411 42 24C42 14.0589 33.9411 6 24 6C19.0294 6 14.5294 8.01472 11.2721 11.2721C9.6141 12.9301 6 17 6 17"
+                stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path d="M6 9V17H14" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+            </svg>
+          </div>
+          <h3 style="margin-top: .3rem;">
+            <font color='black'>Close-loop replay</font>
+          </h3>
+          <p style="text-align: justify;">
+            <font color='#718093'>When debugging the corner case, it supports the ego car to make decisions and re-plan
+              the path, while the other car reacts to the new trajectory of the self car, enabling closed-loop
+              debugging.
+            </font>
+          </p>
+
+        </div>
+      </div>
+      <div class="mdx-hero__content" style="margin-top: 0rem; padding-bottom: 1rem;">
+        <div style="padding-left: 1rem;">
+          <div
+            style="fill: currentColor; background-color: #7ac98d; border-radius: 20%; flex-shrink: 0; height: 2.2rem; padding: .4rem; width: 2.2rem;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6H6V20H20V6Z" fill="#7ac98d" stroke="#ffffff" stroke-width="4" stroke-linecap="square"
+                stroke-linejoin="bevel" />
+              <path d="M20 28H6V42H20V28Z" fill="#7ac98d" stroke="#ffffff" stroke-width="4" stroke-linecap="square"
+                stroke-linejoin="bevel" />
+              <path d="M42 6H28V20H42V6Z" fill="#7ac98d" stroke="#ffffff" stroke-width="4" stroke-linecap="square"
+                stroke-linejoin="bevel" />
+              <path d="M28 28L42 42M28 28H42H28ZM28 28V42V28Z" stroke="#ffffff" stroke-width="4" stroke-linecap="square"
+                stroke-linejoin="bevel" />
+            </svg>
+          </div>
+          <h3 style="margin-top: .3rem;">
+            <font color='black'>Decision & planning algorithm API</font>
+          </h3>
+          <p style="text-align: justify;">
+            <font color='#718093'>LimSim provides a complete interface for the prediction-decision-planning process,
+              allowing the user to take over any part of the process and test ego's decision-planning algorithms.
+            </font>
+          </p>
+
+        </div>
+      </div>
+    </div>
+    <div class="mdx-hero" style="margin-top: 1rem;">
+      <div class="mdx-hero__content" style="margin-top: 0rem; padding-bottom: 1rem;">
+        <div style="padding-right: 1rem">
+          <div
+            style="fill: currentColor; background-color: #7ac98d; border-radius: 20%; flex-shrink: 0; height: 2.2rem; padding: .4rem; width: 2.2rem;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M13.5 32C14.8807 32 16 30.8807 16 29.5C16 28.1193 14.8807 27 13.5 27C12.1193 27 11 28.1193 11 29.5C11 30.8807 12.1193 32 13.5 32Z"
+                fill="#ffffff" />
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M34.5 32C35.8807 32 37 30.8807 37 29.5C37 28.1193 35.8807 27 34.5 27C33.1193 27 32 28.1193 32 29.5C32 30.8807 33.1193 32 34.5 32Z"
+                fill="#ffffff" />
+              <path
+                d="M7 37C5.34315 37 4 35.6569 4 34L4 24.7097C4 22.4363 5.28486 20.3581 7.3186 19.3422L8.00053 19.0015L10.3105 9.09194C10.7326 7.28117 12.3467 6 14.206 6L33.8943 6C35.7675 6 37.3899 7.29998 37.7981 9.12816L40.0031 19.0015L40.6834 19.3416C42.716 20.358 44 22.4355 44 24.7081V34C44 35.6569 42.6569 37 41 37H39.0031V38C39.0031 40.2091 37.2107 42 35.0016 42C32.7924 42 31 40.2091 31 38V37H17V38.0003C17 40.2093 15.2093 42 13.0003 42C10.7913 42 9.00053 40.2093 9.00053 38.0003V37H7Z"
+                fill="#7ac98d" stroke="#ffffff" stroke-width="3" stroke-linejoin="bevel" />
+              <path
+                d="M14 22H34L32.348 14.5661C32.1447 13.6511 31.3331 13 30.3957 13L17.6043 13C16.6669 13 15.8553 13.6511 15.652 14.5661L14 22Z"
+                fill="#7ac98d" stroke="#ffffff" stroke-width="3" stroke-linejoin="bevel" />
+            </svg>
+          </div>
+          <h3 style="margin-top: .3rem;">
+            <font color='black'>Compliance with vehicle kinematic</font>
+          </h3>
+          <p style="text-align: justify;">
+            <font color='#718093'>Sampling-based vehicle path planning with strict vehicle kinematic constraints. Also
+              takes into account the variety of driving behaviours to create a realistic background traffic flow.
+            </font>
+          </p>
+        </div>
+      </div>
+      <div class="mdx-hero__content" style="margin-top: 0rem; padding-bottom: 1rem;">
+        <div style="padding-left: 0.5rem; padding-right: 0.5rem;">
+          <div
+            style="fill: currentColor; background-color: #7ac98d; border-radius: 20%; flex-shrink: 0; height: 2.2rem; padding: .4rem; width: 2.2rem;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M9.85786 32.7574C6.23858 33.8432 4 35.3432 4 37C4 40.3137 12.9543 43 24 43C35.0457 43 44 40.3137 44 37C44 35.3432 41.7614 33.8432 38.1421 32.7574"
+                stroke="#ffffff" stroke-width="4" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path
+                d="M24 35C24 35 37 26.504 37 16.6818C37 9.67784 31.1797 4 24 4C16.8203 4 11 9.67784 11 16.6818C11 26.504 24 35 24 35Z"
+                fill="#7ac98d" stroke="#ffffff" stroke-width="4" stroke-linejoin="bevel" />
+              <path
+                d="M24 22C26.7614 22 29 19.7614 29 17C29 14.2386 26.7614 12 24 12C21.2386 12 19 14.2386 19 17C19 19.7614 21.2386 22 24 22Z"
+                fill="#7ac98d" stroke="#ffffff" stroke-width="4" stroke-linejoin="bevel" />
+            </svg>
+          </div>
+          <h3 style="margin-top: .3rem;">
+            <font color='black'>City level map support</font>
+          </h3>
+          <p style="text-align: justify;">
+            <font color='#718093'>Supports city-level road network simulation with multiple road types including
+              highway, ramps, junctions, roundabouts, etc.
+            </font>
+          </p>
+
+        </div>
+      </div>
+      <div class="mdx-hero__content" style="margin-top: 0rem; padding-bottom: 1rem;">
+        <div style="padding-left: 1rem;">
+          <div
+            style="fill: currentColor; background-color: #7ac98d; border-radius: 20%; flex-shrink: 0; height: 2.2rem; padding: .4rem; width: 2.2rem;">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M44 31C44 36.5228 39.5228 41 34 41C32.2091 41 30.5281 40.5292 29.0741 39.7046C26.5143 38.2529 24.6579 35.7046 24.1436 32.6983C24.0492 32.1463 24 31.5789 24 31C24 28.4323 24.9678 26.0906 26.5585 24.3198C28.3892 22.2818 31.0449 21 34 21C39.5228 21 44 25.4772 44 31Z"
+                fill="#7ac98d" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path
+                d="M34 12V20V21C31.0449 21 28.3892 22.2818 26.5585 24.3198C24.9678 26.0906 24 28.4323 24 31C24 31.5789 24.0492 32.1463 24.1436 32.6983C24.6579 35.7046 26.5143 38.2529 29.0741 39.7046C26.4116 40.5096 22.8776 41 19 41C10.7157 41 4 38.7614 4 36V28V20V12"
+                stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path
+                d="M34 12C34 14.7614 27.2843 17 19 17C10.7157 17 4 14.7614 4 12C4 9.23858 10.7157 7 19 7C27.2843 7 34 9.23858 34 12Z"
+                fill="#7ac98d" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path d="M4 28C4 30.7614 10.7157 33 19 33C20.807 33 22.5393 32.8935 24.1436 32.6983" stroke="#ffffff"
+                stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path d="M4 20C4 22.7614 10.7157 25 19 25C21.7563 25 24.339 24.7522 26.5585 24.3198" stroke="#ffffff"
+                stroke-width="3" stroke-linecap="square" stroke-linejoin="bevel" />
+              <path d="M38.5 29L33 34.5L30 31.5" stroke="#ffffff" stroke-width="3" stroke-linecap="square"
+                stroke-linejoin="bevel" />
+            </svg>
+          </div>
+          <h3 style="margin-top: .3rem;">
+            <font color='black'>Data log and analysis</font>
+          </h3>
+          <p style="text-align: justify;">
+            <font color='#718093'>All status information during the simulation is recorded in real time in the database
+              for easy evaluation and analysis of scenarios and algorithms.
+            </font>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="./" title="LimSim" class="md-nav__button md-logo" aria-label="LimSim" data-md-component="logo">
+      
+  <img src="../assets/images/car.svg" alt="logo">
+
+    </a>
+    LimSim
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/PJLab-ADG/LimSim.git" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PJLab-ADG/LimSim
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Home
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="GettingStarted/installDeploy/" class="md-nav__link">
+        Installation & Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="GettingStarted/realtimeSim/" class="md-nav__link">
+        Real-time Simulation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="GettingStarted/replayAndIreplay/" class="md-nav__link">
+        Replay & Interactive Replay
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="GettingStarted/otherFunction/" class="md-nav__link">
+        Other Functions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Decision & Planing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Decision & Planing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DecisionAndPlanning/Overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DecisionAndPlanning/Decision/" class="md-nav__link">
+        Decision
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DecisionAndPlanning/Planning/" class="md-nav__link">
+        Planning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DecisionAndPlanning/Customization/" class="md-nav__link">
+        Customization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Analysis & Evaluation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Analysis & Evaluation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="AnalysisAndEvaluation/Database/" class="md-nav__link">
+        Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="AnalysisAndEvaluation/Evaluation/" class="md-nav__link">
+        Evaluation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.path", "header.autohide", "announce.dismiss", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+
+      <script src="../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+<script src="../assets/javascripts/custom.a7283b5f.min.js"></script>
+
+  </body>
+</html>

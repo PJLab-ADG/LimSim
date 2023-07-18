@@ -1,0 +1,1450 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../DecisionAndPlanning/Customization/">
+      
+      
+        <link rel="next" href="../Evaluation/">
+      
+      <link rel="icon" href="../../../assets/images/logo.svg">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+    
+    
+      
+        <title>Database - LimSim</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.c4a75a56.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+<link rel="stylesheet" href="../../../assets/stylesheets/custom.2fa34c39.min.css">
+<!-- <link rel="stylesheet" href="../../../assets/stylesheets/my.css"> -->
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../" title="LimSim" class="md-header__button md-logo" aria-label="LimSim" data-md-component="logo">
+      
+  <img src="../../../assets/images/car.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            LimSim
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Database
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="green" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="选择当前语言">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="../../../AnalysisAndEvaluation/Database/" hreflang="zh" class="md-select__link">
+                    简体中文
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="../../../en/AnalysisAndEvaluation/Database/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/PJLab-ADG/LimSim.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PJLab-ADG/LimSim
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../" class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../GettingStarted/installDeploy/" class="md-tabs__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../DecisionAndPlanning/Overview/" class="md-tabs__link">
+        Decision & Planing
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="./" class="md-tabs__link md-tabs__link--active">
+        Analysis & Evaluation
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="LimSim" class="md-nav__button md-logo" aria-label="LimSim" data-md-component="logo">
+      
+  <img src="../../../assets/images/car.svg" alt="logo">
+
+    </a>
+    LimSim
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/PJLab-ADG/LimSim.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PJLab-ADG/LimSim
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GettingStarted/installDeploy/" class="md-nav__link">
+        Installation & Deployment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GettingStarted/realtimeSim/" class="md-nav__link">
+        Real-time Simulation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GettingStarted/replayAndIreplay/" class="md-nav__link">
+        Replay & Interactive Replay
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GettingStarted/otherFunction/" class="md-nav__link">
+        Other Functions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Decision & Planing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Decision & Planing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Decision/" class="md-nav__link">
+        Decision
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Planning/" class="md-nav__link">
+        Planning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DecisionAndPlanning/Customization/" class="md-nav__link">
+        Customization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Analysis & Evaluation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Analysis & Evaluation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Database
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Database
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    路网数据
+  </a>
+  
+    <nav class="md-nav" aria-label="路网数据">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edgeinfo" class="md-nav__link">
+    edgeINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laneinfo" class="md-nav__link">
+    laneINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#junctionlaneinfo" class="md-nav__link">
+    junctionLaneINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connectioninfo" class="md-nav__link">
+    connectionINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#junctioninfo" class="md-nav__link">
+    junctionINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tllogicinfo" class="md-nav__link">
+    tlLogicINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trafficlightstates" class="md-nav__link">
+    trafficLightStates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    车辆信息
+  </a>
+  
+    <nav class="md-nav" aria-label="车辆信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vehicleinfo" class="md-nav__link">
+    vehicleINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frameinfo" class="md-nav__link">
+    frameINFO
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    仿真信息
+  </a>
+  
+    <nav class="md-nav" aria-label="仿真信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siminfo" class="md-nav__link">
+    simINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluationinfo" class="md-nav__link">
+    evaluationINFO
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Evaluation/" class="md-nav__link">
+        Evaluation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    路网数据
+  </a>
+  
+    <nav class="md-nav" aria-label="路网数据">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edgeinfo" class="md-nav__link">
+    edgeINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laneinfo" class="md-nav__link">
+    laneINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#junctionlaneinfo" class="md-nav__link">
+    junctionLaneINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connectioninfo" class="md-nav__link">
+    connectionINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#junctioninfo" class="md-nav__link">
+    junctionINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tllogicinfo" class="md-nav__link">
+    tlLogicINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trafficlightstates" class="md-nav__link">
+    trafficLightStates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    车辆信息
+  </a>
+  
+    <nav class="md-nav" aria-label="车辆信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vehicleinfo" class="md-nav__link">
+    vehicleINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frameinfo" class="md-nav__link">
+    frameINFO
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    仿真信息
+  </a>
+  
+    <nav class="md-nav" aria-label="仿真信息">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siminfo" class="md-nav__link">
+    simINFO
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluationinfo" class="md-nav__link">
+    evaluationINFO
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Database</h1>
+
+<p>LimSim 会在仿真时将所有数据存储在数据库中，方便对仿真进行分析与评价。LimSim 使用轻量级开源数据库 <a href="https://www.sqlite.org/index.html"><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" />SQLite</a> 进行数据存储，方便数据的查看与迁移。LimSim 对仿真数据的存储主要分三个部分：路网数据、车辆数据和仿真数据，下面分别对这三个部分进行介绍。</p>
+<h2 id="_1">路网数据<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>LimSim 以 SUMO 的路网为基础，对多类型的路网结构进行建模。通过以下几个表格记录路网的数据，在数据回放时，以下面的数据为依据进行路网的重建。</p>
+<h3 id="edgeinfo">edgeINFO<a class="headerlink" href="#edgeinfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left">TEXT PRIMARY KEY</td>
+<td align="left">edge 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>laneNumber</code></td>
+<td align="left">INT</td>
+<td align="left">edge 的车道数</td>
+</tr>
+<tr>
+<td align="left"><code>from_junction</code></td>
+<td align="left">TEXT</td>
+<td align="left">edge 的起点所在的 junction</td>
+</tr>
+<tr>
+<td align="left"><code>to_junction</code></td>
+<td align="left">TEXT</td>
+<td align="left">edge 的终点所在的 junction</td>
+</tr>
+</tbody>
+</table>
+<h3 id="laneinfo">laneINFO<a class="headerlink" href="#laneinfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left">TEXT PRIMARY KEY</td>
+<td align="left">lane 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>rawShape</code></td>
+<td align="left">TEXT</td>
+<td align="left">lane 的中心线几何结构</td>
+</tr>
+<tr>
+<td align="left"><code>width</code></td>
+<td align="left">REAL</td>
+<td align="left">lane 的宽度</td>
+</tr>
+<tr>
+<td align="left"><code>maxSpeed</code></td>
+<td align="left">REAL</td>
+<td align="left">lane 的最大限速</td>
+</tr>
+<tr>
+<td align="left"><code>edgeID</code></td>
+<td align="left">TEXT</td>
+<td align="left">lane 所属的 edge 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>length</code></td>
+<td align="left">REAL</td>
+<td align="left">lane 的长度</td>
+</tr>
+</tbody>
+</table>
+<p>lane 的 <code>rawShape</code> 是以字符串的形式存放在数据库中的，以 <code></code> 和 <code>,</code>  作为分隔符。比如，下面的 <code>rawShape</code> 就记录了三个点，分别是 <code>(10.2,100.3)</code>，<code>(14.3,15.4)</code> 和 <code>(13.4,12.6)</code>。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>10.2,100.3 14.3,15.4 13.4,12.6
+</code></pre></div>
+<h3 id="junctionlaneinfo">junctionLaneINFO<a class="headerlink" href="#junctionlaneinfo" title="Permanent link">&para;</a></h3>
+<p>在 SUMO 的路网中，有两种类型的 lane，一种是由用户自主生成的，具有特定名称的 lane。另一种则是为了连接第一种 lane，而由 SUMO 自动生成的 lane，这类 lane 的特点是名称的第一个字符都是 <code>:</code>，且都具有 <code>internal</code> 的属性。这里为了方便区分，我们将第二种 lane 定义为 junctionLane。junctionLane 总是连接两条 lane，部分 junctionLane 还具有信号灯的属性。</p>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left">TEXT PRIMARY KEY</td>
+<td align="left">junctionLane 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>width</code></td>
+<td align="left">REAL</td>
+<td align="left">junctionLane 的宽度</td>
+</tr>
+<tr>
+<td align="left"><code>maxSpeed</code></td>
+<td align="left">REAL</td>
+<td align="left">junctionLane 的最大限速</td>
+</tr>
+<tr>
+<td align="left"><code>length</code></td>
+<td align="left">REAL</td>
+<td align="left">junctionLane 的长度</td>
+</tr>
+<tr>
+<td align="left"><code>tlLogicID</code></td>
+<td align="left">TEXT</td>
+<td align="left">junctionLane 所属的信号控制逻辑 ID</td>
+</tr>
+<tr>
+<td align="left"><code>tlIndex</code></td>
+<td align="left">INT</td>
+<td align="left">junctionLane 在所属信号控制逻辑中的序号</td>
+</tr>
+</tbody>
+</table>
+<h3 id="connectioninfo">connectionINFO<a class="headerlink" href="#connectioninfo" title="Permanent link">&para;</a></h3>
+<p>前文提到，两条 lane 是由一条 junctionLane 连接的，connection 则是记录这种连接关系的。</p>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>fromLane</code></td>
+<td align="left">TEXT</td>
+<td align="left">起点 lane 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>toLane</code></td>
+<td align="left">TEXT</td>
+<td align="left">终点 lane 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>direction</code></td>
+<td align="left">TEXT</td>
+<td align="left">方向，具体参考 XXXX</td>
+</tr>
+<tr>
+<td align="left"><code>via</code></td>
+<td align="left">TEXT</td>
+<td align="left">连接两条 lane 的 junctionLane 的 id</td>
+</tr>
+</tbody>
+</table>
+<h3 id="junctioninfo">junctionINFO<a class="headerlink" href="#junctioninfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left">TEXT PRIMARY KEY</td>
+<td align="left">junction 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>rawShape</code></td>
+<td align="left">TEXT</td>
+<td align="left">junction 的几何结构</td>
+</tr>
+</tbody>
+</table>
+<p>与 lane 的 <code>rawShape</code> 一样，junction 的 <code>rawShape</code> 也是以字符串的形式记录的，同样以 <code></code> 和 <code>,</code> 作为分隔符。但是 junction 的 <code>rawShape</code> 记录的是 junction 的外部轮廓。</p>
+<h3 id="tllogicinfo">tlLogicINFO<a class="headerlink" href="#tllogicinfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left">TEXT PRIMARY KEY</td>
+<td align="left">信号控制逻辑的 id，也是对应 junction 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>tlType</code></td>
+<td align="left">TEXT</td>
+<td align="left">信号控制逻辑的类型，分为 <code>static</code>, <code>actuated</code>和<code>delay_based</code></td>
+</tr>
+<tr>
+<td align="left"><code>preDefPhases</code></td>
+<td align="left">TEXT</td>
+<td align="left">信号控制逻辑的相位和相序，具体参考 XXX</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trafficlightstates">trafficLightStates<a class="headerlink" href="#trafficlightstates" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>frame</code></td>
+<td align="left">INT</td>
+<td align="left">当前的仿真时刻</td>
+</tr>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left">TEXT</td>
+<td align="left">信号控制逻辑的 id</td>
+</tr>
+<tr>
+<td align="left"><code>currPhase</code></td>
+<td align="left">TEXT</td>
+<td align="left">当前的相位</td>
+</tr>
+<tr>
+<td align="left"><code>nextPhase</code></td>
+<td align="left">TEXT</td>
+<td align="left">下一个相位</td>
+</tr>
+<tr>
+<td align="left"><code>switchTime</code></td>
+<td align="left">REAL</td>
+<td align="left">当前相位剩余的持续时间</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">车辆信息<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>车辆的信息分为两种，一种是车辆的固有属性，另一种是仿真过程中的实时状态。</p>
+<h3 id="vehicleinfo">vehicleINFO<a class="headerlink" href="#vehicleinfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>vid</code></td>
+<td align="left">INT</td>
+<td align="left">车辆的 id</td>
+</tr>
+<tr>
+<td align="left"><code>length</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆的长度</td>
+</tr>
+<tr>
+<td align="left"><code>width</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆的宽度</td>
+</tr>
+<tr>
+<td align="left"><code>maxAccel</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆的最大加速度</td>
+</tr>
+<tr>
+<td align="left"><code>maxDecel</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆的最大减速度</td>
+</tr>
+<tr>
+<td align="left"><code>maxSpeed</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆的最大速度</td>
+</tr>
+<tr>
+<td align="left"><code>vTypeID</code></td>
+<td align="left">TEXT</td>
+<td align="left">车型的 id</td>
+</tr>
+<tr>
+<td align="left"><code>routes</code></td>
+<td align="left">TEXT</td>
+<td align="left">车辆的 route 信息</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frameinfo">frameINFO<a class="headerlink" href="#frameinfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>frame</code></td>
+<td align="left">INT</td>
+<td align="left">当前的仿真时刻</td>
+</tr>
+<tr>
+<td align="left"><code>vid</code></td>
+<td align="left">INT</td>
+<td align="left">车辆的 id</td>
+</tr>
+<tr>
+<td align="left"><code>vtag</code></td>
+<td align="left">TEXT</td>
+<td align="left">车辆的角色，可以取 <code>ego</code>, <code>AoI</code> 和 <code>outOfAoI</code></td>
+</tr>
+<tr>
+<td align="left"><code>x</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆此刻的 x 位置</td>
+</tr>
+<tr>
+<td align="left"><code>y</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆此刻的 y 位置</td>
+</tr>
+<tr>
+<td align="left"><code>yaw</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆此刻的 yaw 角，以 x 轴正方向为起点，逆时针为正方向</td>
+</tr>
+<tr>
+<td align="left"><code>speed</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆此刻的速度</td>
+</tr>
+<tr>
+<td align="left"><code>accel</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆此刻的加速度</td>
+</tr>
+<tr>
+<td align="left"><code>laneID</code></td>
+<td align="left">TEXT</td>
+<td align="left">车辆此刻所在 lane 的 ID</td>
+</tr>
+<tr>
+<td align="left"><code>lanePos</code></td>
+<td align="left">REAL</td>
+<td align="left">车辆此刻在 lane 上的距离 lane 起点的距离</td>
+</tr>
+<tr>
+<td align="left"><code>routeIdx</code></td>
+<td align="left">INT</td>
+<td align="left">车辆当前处于 route 的第几段上</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">仿真信息<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>仿真信息主要包括仿真的基本信息和评价的信息</p>
+<h3 id="siminfo">simINFO<a class="headerlink" href="#siminfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>startTime</code></td>
+<td align="left">TIMESTAMP</td>
+<td align="left">仿真启动时的时间戳</td>
+</tr>
+<tr>
+<td align="left"><code>localPosx</code></td>
+<td align="left">REAL</td>
+<td align="left"><code>local area</code> 模式下，固定视角的 x 位置</td>
+</tr>
+<tr>
+<td align="left"><code>localPosy</code></td>
+<td align="left">REAL</td>
+<td align="left"><code>local area</code> 模式下，固定视角的 y 位置</td>
+</tr>
+<tr>
+<td align="left"><code>radius</code></td>
+<td align="left">REAL</td>
+<td align="left"><code>local area</code> 模式下，区域的半径</td>
+</tr>
+<tr>
+<td align="left"><code>egoID</code></td>
+<td align="left">TEXT</td>
+<td align="left"><code>ego track</code> 模式下，ego 的 id</td>
+</tr>
+<tr>
+<td align="left"><code>netBoundary</code></td>
+<td align="left">TEXT</td>
+<td align="left">仿真路网的范围，即左下角和右上角的坐标</td>
+</tr>
+<tr>
+<td align="left"><code>description</code></td>
+<td align="left">TEXT</td>
+<td align="left">仿真的模式，有 <code>ego track</code> 和 <code>local area</code> 两种</td>
+</tr>
+<tr>
+<td align="left"><code>note</code></td>
+<td align="left">TEXT</td>
+<td align="left">备注信息，可以是算法的版本号和参数等</td>
+</tr>
+</tbody>
+</table>
+<h3 id="evaluationinfo">evaluationINFO<a class="headerlink" href="#evaluationinfo" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">字段</th>
+<th align="left">数据结构</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>frame</code></td>
+<td align="left">INT</td>
+<td align="left">当前的仿真时刻</td>
+</tr>
+<tr>
+<td align="left"><code>offset</code></td>
+<td align="left">REAL</td>
+<td align="left">Ego 偏离车道中心的距离</td>
+</tr>
+<tr>
+<td align="left"><code>discomfort</code></td>
+<td align="left">REAL</td>
+<td align="left">Ego 的加加速度信息</td>
+</tr>
+<tr>
+<td align="left"><code>collision</code></td>
+<td align="left">REAL</td>
+<td align="left">Ego 的 TTC<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> 的倒数</td>
+</tr>
+<tr>
+<td align="left"><code>orientation</code></td>
+<td align="left">REAL</td>
+<td align="left">Ego 偏离车道中心的角度</td>
+</tr>
+<tr>
+<td align="left"><code>consumption</code></td>
+<td align="left">REAL</td>
+<td align="left">Ego 的油耗信息</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">数值经过处理</p>
+<p>上述指标均经过归一化处理，并不是真实数值，详情请参考 <a href="../Evaluation/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />场景评价</a></p>
+</div>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>TTC(Time To Collision)：指两车保持当前的速度行驶，多久后会发生碰撞。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../../DecisionAndPlanning/Customization/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Customization" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  上一页
+                </span>
+                Customization
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../Evaluation/" class="md-footer__link md-footer__link--next" aria-label="下一页: Evaluation" rel="next">
+            <div class="md-footer__title">
+              <div class="md-ellipsis">
+                <span class="md-footer__direction">
+                  下一页
+                </span>
+                Evaluation
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.path", "header.autohide", "announce.dismiss", "navigation.footer", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+
+      <script src="../../../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+<script src="../../../assets/javascripts/custom.a7283b5f.min.js"></script>
+
+  </body>
+</html>
