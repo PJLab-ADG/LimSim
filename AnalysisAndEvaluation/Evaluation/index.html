@@ -71,6 +71,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#evaluation-module" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -562,9 +567,95 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Evaluation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Evaluation
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evaluation-module" class="md-nav__link">
+    Evaluation Module
+  </a>
+  
+    <nav class="md-nav" aria-label="Evaluation Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumption" class="md-nav__link">
+    Consumption
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collision" class="md-nav__link">
+    Collision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orientation" class="md-nav__link">
+    Orientation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discomfort" class="md-nav__link">
+    Discomfort
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#offset" class="md-nav__link">
+    Offset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualization" class="md-nav__link">
+    Visualization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-retrieval" class="md-nav__link">
+    Data Retrieval
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -597,6 +688,76 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evaluation-module" class="md-nav__link">
+    Evaluation Module
+  </a>
+  
+    <nav class="md-nav" aria-label="Evaluation Module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#consumption" class="md-nav__link">
+    Consumption
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#collision" class="md-nav__link">
+    Collision
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orientation" class="md-nav__link">
+    Orientation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discomfort" class="md-nav__link">
+    Discomfort
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#offset" class="md-nav__link">
+    Offset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualization" class="md-nav__link">
+    Visualization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-retrieval" class="md-nav__link">
+    Data Retrieval
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -615,7 +776,45 @@
 
   <h1>Evaluation</h1>
 
-
+<h2 id="evaluation-module">Evaluation Module<a class="headerlink" href="#evaluation-module" title="Permanent link">&para;</a></h2>
+<p>The Evaluation module is used for real-time evaluation of the scenarios in which vehicles are located. It includes five evaluation dimensions, and the evaluation results can be used for decision-making or scenario extraction, providing data for subsequent testing.</p>
+<p>Now let's introduce these five dimensions one by one.</p>
+<h3 id="consumption">Consumption<a class="headerlink" href="#consumption" title="Permanent link">&para;</a></h3>
+<p>We apply the following formula to calculate the energy consumption of a vehicle:</p>
+<div class="arithmatex">\[ P = (v * a)^2 + v^3 \]</div>
+<p>Here, <span class="arithmatex">\(v\)</span> and <span class="arithmatex">\(a\)</span> represent the vehicle's speed and acceleration, respectively.</p>
+<p>Under free driving (cruising) conditions, the vehicle's speed is relatively high, and the acceleration is relatively small, resulting in higher overall energy consumption, with speed being the dominant factor.
+In cases where the vehicle needs to brake urgently, the speed decreases sharply, and the acceleration is relatively high, resulting in lower overall energy consumption but with discontinuous changes.</p>
+<h3 id="collision">Collision<a class="headerlink" href="#collision" title="Permanent link">&para;</a></h3>
+<p>We use the two-dimensional Time-to-Collision (TTC) to calculate possible collisions. The two-dimensional TTC is defined as the time it takes for two vehicles to collide if they continue to travel in their current speed and direction.
+TTC indicates potential collision risks and can be used to evaluate the safety of trajectory planning algorithms.</p>
+<p>Here, we have referred to the implementation of <a href="https://www.nuscenes.org/nuplan">nuplan</a> and simplified it according to our data format.</p>
+<h3 id="orientation">Orientation<a class="headerlink" href="#orientation" title="Permanent link">&para;</a></h3>
+<p>We use the deviation of the vehicle from the centerline of the lane (the angle between the velocity direction and the lane centerline) as the orientation.</p>
+<div class="arithmatex">\[ (\sin(\theta_{ego}) - \sin(\theta_{ref}))^2 \]</div>
+<p>Here, <span class="arithmatex">\(\theta_{ego}\)</span> and <span class="arithmatex">\(\theta_{ref}\)</span> represent the angles of the ego vehicle and the projection point of the ego vehicle on the reference line (in the world coordinate system). There are three points to note here:
+1. For the sake of presentation, we use <span class="arithmatex">\(\sin\)</span> for normalization.
+2. The meaning of the deviation angle is not significant within the junction, so <span class="arithmatex">\(\theta_{ref}\)</span> here actually refers to the "nearest point on the <code>NormalLane</code> in the historical trajectory".
+3. Also for the sake of presentation, we have added a <code>delay</code> term to make the turning display smoother.</p>
+<p>Orientation can reflect the turning behavior of the vehicle, especially in scenarios that require unprotected left turns, which can be used to filter out some scenarios for testing based on the Orientation results.</p>
+<h3 id="discomfort">Discomfort<a class="headerlink" href="#discomfort" title="Permanent link">&para;</a></h3>
+<p>We use the square of jerk to represent discomfort.</p>
+<div class="arithmatex">\[ \left(\frac{da}{dt}\right)^2 \]</div>
+<p>Here, <span class="arithmatex">\(a\)</span> represents the acceleration.
+Jerk can show the impact of sudden braking and sudden acceleration on passengers during vehicle motion.</p>
+<h3 id="offset">Offset<a class="headerlink" href="#offset" title="Permanent link">&para;</a></h3>
+<p>We use the square of the lateral coordinate <span class="arithmatex">\(d\)</span> of the vehicle from the centerline of the lane (within the junction, this dimension is not calculated) as the offset.</p>
+<div class="arithmatex">\[ d^2 \]</div>
+<p>Here, <span class="arithmatex">\(d\)</span> represents the lateral coordinate of the vehicle in the Frenet coordinate system.</p>
+<p>Offset can be used to detect lane-changing behavior of vehicles. Since LimSim's default planner is based on the Frenet coordinate system, this dimension can be conveniently calculated.</p>
+<h3 id="visualization">Visualization<a class="headerlink" href="#visualization" title="Permanent link">&para;</a></h3>
+<p>We use radar charts (also known as star charts) to visualize the results of the five evaluation dimensions. To ensure consistency in the visualization, we apply appropriate transformations to the results.</p>
+<h3 id="data-retrieval">Data Retrieval<a class="headerlink" href="#data-retrieval" title="Permanent link">&para;</a></h3>
+<p>We store the real-time evaluation results in the database for scenario extraction and analysis. We can use the following code to convert the evaluation results into a <code>DataFrame</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">utils.load_data</span> <span class="kn">import</span> <span class="n">load_data_from_database</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">evaluation_df</span> <span class="o">=</span> <span class="n">load_data_from_data_base</span><span class="p">(</span><span class="n">path_to_data_base</span><span class="p">,</span> <span class="s1">&#39;evaluation&#39;</span><span class="p">)</span>
+</code></pre></div>
 
 
 

@@ -71,6 +71,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#consumption" class="md-skip">
+          跳转至
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -562,9 +567,82 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Evaluation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Evaluation
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#consumption" class="md-nav__link">
+    Consumption
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collision" class="md-nav__link">
+    Collision
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orientation" class="md-nav__link">
+    Orientation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discomfort" class="md-nav__link">
+    Discomfort
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offset" class="md-nav__link">
+    Offset
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualization" class="md-nav__link">
+    Visualization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-retrieval" class="md-nav__link">
+    Data Retrieval
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -597,6 +675,63 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#consumption" class="md-nav__link">
+    Consumption
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collision" class="md-nav__link">
+    Collision
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#orientation" class="md-nav__link">
+    Orientation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discomfort" class="md-nav__link">
+    Discomfort
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#offset" class="md-nav__link">
+    Offset
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualization" class="md-nav__link">
+    Visualization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-retrieval" class="md-nav__link">
+    Data Retrieval
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -615,7 +750,44 @@
 
   <h1>Evaluation</h1>
 
-
+<p>Evaluation模块用于实时评估车辆所处的场景。其包含了五个维度的评价指标，评价结果可以用于决策，也可以用于场景提取，为后续的测试提供数据。</p>
+<p>下面我们分别介绍这五个维度</p>
+<h2 id="consumption">Consumption<a class="headerlink" href="#consumption" title="Permanent link">&para;</a></h2>
+<p>我们应用如下公式来计算车辆的能量消耗情况：</p>
+<div class="arithmatex">\[ P = (v*a)^2 + v^3 \]</div>
+<p>这里 <span class="arithmatex">\(v\)</span> 和 <span class="arithmatex">\(a\)</span> 分别是车辆的速度和加速度。</p>
+<p>自由驾驶（巡航）情况下，车辆速度较大，加速度较小，整体能耗较高，速度占主导项；
+当前方有紧急情况需要刹车时，速度急剧变小，加速度比较大，整体能耗消耗较低但是出现不连续变化。</p>
+<h2 id="collision">Collision<a class="headerlink" href="#collision" title="Permanent link">&para;</a></h2>
+<p>我们使用二维TTC(Time-to-Collision)来计算可能的碰撞， 二维TTC定义为：假设两车以当前的速度的和方向继续行驶，两车碰撞所需要的时间。
+TTC显示了潜在的碰撞危险，其可以用来评估轨迹规划算法的安全性。</p>
+<p>这里我们参考了<a href="https://www.nuscenes.org/nuplan">nuplan</a>的实现并根据数据格式进行了简化。</p>
+<h2 id="orientation">Orientation<a class="headerlink" href="#orientation" title="Permanent link">&para;</a></h2>
+<p>我们用车辆偏离车道中心线的方向（速度方向与车道中心线的夹角）作为orientation。</p>
+<div class="arithmatex">\[ (\sin(\theta_{ego}) - \sin(\theta_{ref}))^2 \]</div>
+<p>其中，<span class="arithmatex">\(\theta_{ego}\)</span> 和 <span class="arithmatex">\(\theta_{ref}\)</span> 分别是自车和自车在参考线上投影点的角度（世界坐标系），这里有三点需要注意：
+1. 为了展示方便，我们使用 <span class="arithmatex">\(\sin\)</span> 进行归一化
+2. 在路口内考虑偏向角意义不大，因此这里的 <span class="arithmatex">\(\theta_{ref}\)</span> 实际上指的是“历史轨迹中，最近的，在<code>NormalLane</code>上对应的点”
+3. 同样是为了展示方便，我们增加了<code>delay</code>项，使得转弯显示地更加顺滑。</p>
+<p>orientation可以体现出车辆的转弯行为，特别是需要无保护左转场景时，可以利用Orientation的结果筛选出一些场景来进行测试。</p>
+<h2 id="discomfort">Discomfort<a class="headerlink" href="#discomfort" title="Permanent link">&para;</a></h2>
+<p>我们用jerk 的平方来表示discomfort， </p>
+<div class="arithmatex">\[ \left(\frac{da}{dt}\right)^2 \]</div>
+<p>这里 <span class="arithmatex">\(a\)</span> 是加速度。
+jerk可以表现出车辆在运动时出现的急刹以及突然启动对乘客的影响。</p>
+<h2 id="offset">Offset<a class="headerlink" href="#offset" title="Permanent link">&para;</a></h2>
+<p>我们以车辆偏离车道中心线（在junction里面，我们不会计算此项）距离的平方作为offset。</p>
+<div class="arithmatex">\[ d^2 \]</div>
+<p>这里 <span class="arithmatex">\(d\)</span> 是车辆在Frenet坐标系下的横坐标(lateral coordinate).</p>
+<p>offset可以用以检测车辆变道的行为。由于LimSim 提供的默认规划器是建立在frenet坐标系下的，因此这一项可以很方便地计算出来。</p>
+<h2 id="visualization">Visualization<a class="headerlink" href="#visualization" title="Permanent link">&para;</a></h2>
+<p>我们使用五星图来可视化上面五个维度的结果，为了使结果表现出一致性，我们对结果进行了适当的变换。</p>
+<h2 id="data-retrieval">Data Retrieval<a class="headerlink" href="#data-retrieval" title="Permanent link">&para;</a></h2>
+<p>我们将实时评估的结果存储在数据库中，用以进行场景提取和分析。我们可以使用如下代码将评估结果转化为<code>DataFrame</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">utils.load_data</span> <span class="kn">import</span> <span class="n">load_data_from_database</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">evaluation_df</span> <span class="o">=</span> <span class="n">load_data_from_data_base</span><span class="p">(</span><span class="n">path_to_data_base</span><span class="p">,</span> <span class="s1">&#39;evaluation&#39;</span><span class="p">)</span>
+</code></pre></div></p>
 
 
 

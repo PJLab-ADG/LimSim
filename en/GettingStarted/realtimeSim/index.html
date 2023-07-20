@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#interface-layout" class="md-skip">
           Skip to content
         </a>
       
@@ -412,15 +412,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    界面布局
+  <a href="#interface-layout" class="md-nav__link">
+    Interface Layout
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    示例分析
+  <a href="#example-analysis" class="md-nav__link">
+    Example Analysis
   </a>
   
 </li>
@@ -649,15 +649,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    界面布局
+  <a href="#interface-layout" class="md-nav__link">
+    Interface Layout
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    示例分析
+  <a href="#example-analysis" class="md-nav__link">
+    Example Analysis
   </a>
   
 </li>
@@ -682,20 +682,20 @@
 
   <h1>Real-time Simulation</h1>
 
-<p>跟随 Ego 的实时仿真是 LimSim 的基础功能，运行下面的指令，体验一下：</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd </span><span class="n">LimSim</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">python</span> <span class="n">ModelExample</span><span class="p">.</span><span class="n">py</span>
+<p>Real-time simulation following the Ego vehicle is the fundamental feature of LimSim. To experience it, run the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd</span><span class="w"> </span>LimSim
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python<span class="w"> </span>ModelExample.py
 </code></pre></div>
-<h2 id="_1">界面布局<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>若上述指令运行正常，会显示如下画面：</p>
-<p><img alt="img" src="../../assets/images/GuiIllustration.png" /></p>
-<p>整个图形界面分为五个区域。A 区显示路网的全局视角，黄色圆圈是跟随 Ego 移动的感兴趣区域 (Area of Interest, AoI)，即显示 Ego 在整个路网中的实时位置；B 区显示 Ego 的跟随视角，黄色半透明圆圈同样是 AoI，与 A 区中的圆圈是一致的，车辆前方紫色曲线为轨迹规划算法提供的轨迹；C 区为 Ego 的状态显示区，会显示 Ego 的实时速度和加速度。<mark>注意 X 轴的坐标，0 点在 x 轴的正中间，表示当前时刻，0 点左半边表示历史的速度和加速度，0 点的右半边表示未来的速度和加速度（即规划算法提供的速度和加速度）</mark>，此外速度轴的取值范围取决于道路的限速；D 区为仿真信息展示区域，显示仿真的模式，仿真时刻，Ego 所在车道，以及 Ego 在车道上的位置；E 区为场景评价区域，实时显示对场景的评价，每个指标的具体含义请参考 <a href="../../AnalysisAndEvaluation/Evaluation/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />场景评价</a>。</p>
+<h2 id="interface-layout">Interface Layout<a class="headerlink" href="#interface-layout" title="Permanent link">&para;</a></h2>
+<p>If the above command runs successfully, the following interface will be displayed:</p>
+<p><img alt="img" src="../../assets/images/GuiIllustration_en.png" /></p>
+<p>The entire graphical interface is divided into five areas. Area A shows the global view of the road network, with a blue circle representing the Area of Interest (AoI) that follows the movement of the Ego vehicle. It displays the real-time position of the Ego vehicle within the entire road network. Area B shows the follow view of the Ego vehicle, with a blue translucent circle representing the AoI, consistent with the circle in Area A. The purple curve in front of the vehicle represents the trajectory provided by the trajectory planning algorithm. Area C is the status display area of the Ego vehicle, showing its real-time speed and acceleration. <mark>Note the X-axis coordinates; the zero point is in the middle of the X-axis, representing the current moment. The left half of the zero point shows historical speed and acceleration, while the right half shows future speed and acceleration (i.e., the speed and acceleration provided by the planning algorithm).</mark> Additionally, the speed axis's range depends on the road's speed limit. Area D is the simulation information display area, showing the simulation mode, simulation time, the lane where the Ego vehicle is located, and its position on the lane. Area E is the scene evaluation area, which displays real-time evaluations of the scene. For the specific meanings of each indicator, please refer to  <a href="../../AnalysisAndEvaluation/Evaluation/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />场景评价</a>。</p>
 <div class="admonition info">
 <p class="admonition-title">AoI (Area of Interest)</p>
-<p>AoI 可以视为 Ego 的感知区域，是 LimSim 为了进行长时仿真做出的折中方案。长时仿真意味着大范围路网和大量交通流，无法对所有车辆进行轨迹规划。因此，AoI 内部的车辆，其行为由决策-规划模型控制，在 Ego 的周围营造多样且真实的驾驶环境；AoI 外部的车辆，由 SUMO 控制，符合基本的交通规律。</p>
+<p>The AoI can be considered as the perception area of the Ego vehicle. It is a compromise solution made by LimSim to conduct long-duration simulations. Long-duration simulation involves a large road network and a large number of traffic flows, making it impossible to perform trajectory planning for all vehicles. Therefore, the behavior of vehicles inside the AoI is controlled by the decision-planning model, creating diverse and realistic driving environments around the Ego vehicle. Vehicles outside the AoI are controlled by SUMO, following basic traffic rules.</p>
 </div>
-<h2 id="_2">示例分析<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>该仿真示例具有如下的结构：</p>
+<h2 id="example-analysis">Example Analysis<a class="headerlink" href="#example-analysis" title="Permanent link">&para;</a></h2>
+<p>This simulation example has the following structure:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
@@ -755,14 +755,18 @@
 <a id="__codelineno-1-29" name="__codelineno-1-29"></a>    <span class="n">model</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
 <ol>
-<li><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" />  在 Windows 系统下，请务必保证 model 的相关代码都在 <code>if __name__ == '__main__':</code> 范围内，否则程序会崩溃。主要原因在于 SUMO 使用了 Python 的 multiprocessing 模块，而该模块产生进程的方法，在 Windows 下 和 Linux 下存在不同，详情请参考：<a href="https://docs.python.org/3.10/library/multiprocessing.html#contexts-and-start-methods">contexts-and-start-methods</a></li>
-<li>如果不再控制 Ego，记得将控制权交还给 SUMO。</li>
+<li>
+<p><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" />  On Windows systems, make sure that all model-related code is within the <code>if __name__ == '__main__':</code> scope; otherwise, the program may crash. The main reason for this is that SUMO uses Python's multiprocessing module, and the methods for creating processes differ between Windows and Linux. For more details, please refer to the <a href="https://docs.python.org/3.10/library/multiprocessing.html#contexts-and-start-methods">contexts-and-start-methods</a> in the Python documentation.</p>
+</li>
+<li>
+<p>If you are no longer controlling the Ego, remember to hand control back to SUMO.</p>
+</li>
 </ol>
-<p>程序的第 8 行是模型的初始化，主要的参数有 <code>egoID</code> ，用来指定的 Ego car 的 ID。这里我们使用 SUMO 进行环境交通流的管理，路网中所有车辆的路径信息实际上是被定义在 <code>Town05.rou.xml</code> 中的。因此你可以查看这个文件，选择喜欢的一辆车作为 Ego car，或者你可以参考 <a href="https://sumo.dlr.de/docs/Definition_of_Vehicles%2C_Vehicle_Types%2C_and_Routes.html#vehicles_and_routes"><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" />自定义车辆和路径</a>来生成特定路径的车辆来进行模型的仿真和算法的测试。然后是仿真使用的路网路网文件 <code>netFile</code> 和路径文件 <code>rouFile</code> ，这些文件的生成和定义请参考 <a href="https://sumo.dlr.de/docs/index.html"><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" />SUMO 的文档</a>。<code>dataBase</code> 为记录仿真数据的数据库，字符串类型。</p>
-<p>第 15 行是轨迹规划算法的初始化，包括轨迹预测、决策、规划等多个模块。这里使用了 LimSim 实现的基础版本（默认参数），用以控制 AoI 中的车辆，你也可以替换其中任何一个环节为你自己的算法，具体的自定义方法请参考 <a href="../../DecisionAndPlanning/Customization/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />自定义算法</a>。</p>
-<p>17 行开始是程序运行的主要环节，<code>model.tpEnd</code> 是布尔变量，用来表征 Ego 是否到达终点，即程序是否结束。<code>model.moveStep()</code> 和 <code>model.updateVeh()</code> 是仿真更新的流程，前者用于获取所有交通参与者的信息，后者用于更新（控制）所有交通参与者的信息。因此在两者之间，可以用轨迹规划算法控制 AoI 中的车辆。</p>
-<p>由于轨迹规划算法通常比较耗时，而且一次规划可以给出未来多帧的轨迹，所以我们可以每 5 帧进行一次轨迹规划，即 <code>if model.timeStep % 5 == 0:</code>。然后，由 <code>roadgraph, vehicles = model.exportSce()</code> 获得当前时刻 Ego 附近的场景。其中，<code>roadgraph</code> 为 Ego 周围的路网信息，<code>vehicles</code> 为 Ego 周围车辆的信息，这些信息的使用方法可以参考 XXXXX。轨迹规划算法返回的轨迹则通过 <code>model.setTrajectories()</code> 传回仿真中。</p>
-<p>上述仿真运行完成后，会将仿真过程中所有的数据存放在 <code>egoTrackingTest.db</code> 中，供回放和分析所用，关于数据库的介绍，可以参考<a href="../../AnalysisAndEvaluation/Database/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />数据库</a>。</p>
+<p>The program's 8th line initializes the model with several main parameters, including <code>egoID</code>, which specifies the ID of the Ego car. In this case, we use SUMO for traffic flow management, and the path information for all vehicles in the network is defined in <code>Town05.rou.xml</code>. Therefore, you can check this file to select a specific car as the Ego car, or you can follow <a href="https://sumo.dlr.de/docs/Definition_of_Vehicles%2C_Vehicle_Types%2C_and_Routes.html#vehicles_and_routes"><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" />Customizing Vehicles and Routes</a> to generate vehicles with specific paths for simulation and algorithm testing. The <code>netFile</code> and <code>rouFile</code> represent the network and route files used for simulation, and their generation and definition can be found in the <a href="https://sumo.dlr.de/docs/index.html"><img alt="🔗" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f517.svg" title=":link:" />SUMO documentation</a>. <code>dataBase</code> is a string specifying the database for recording simulation data.</p>
+<p>The 15th line initializes the trajectory planning algorithm, which includes trajectory prediction, decision-making, planning, and other modules. Here, the basic version of LimSim (default parameters) is used to control the vehicles in the AoI. You can replace any part of it with your own algorithm. For details on customizing algorithms, please refer to <a href="../../DecisionAndPlanning/Customization/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />Customizing Algorithms</a>.</p>
+<p>The main part of the program runs starting from line 17. <code>model.tpEnd</code> is a boolean variable that indicates whether the Ego has reached the destination, i.e., whether the program has ended. <code>model.moveStep()</code> and <code>model.updateVeh()</code> are used for the simulation update process. The former is used to get information about all traffic participants, and the latter is used to update (control) information about all traffic participants. Thus, between the two functions, the trajectory planning algorithm can control the vehicles in the AoI.</p>
+<p>Since trajectory planning algorithms are typically time-consuming and can provide trajectories for multiple frames in a single planning step, we perform trajectory planning every 5 frames, i.e., <code>if model.timeStep % 5 == 0:</code>. Then, <code>roadgraph, vehicles = model.exportSce()</code> provides information about the current scene around the Ego. <code>roadgraph</code> contains the road network information around the Ego, and <code>vehicles</code> contains information about the surrounding vehicles. The usage of this information can be found in XXXXX. The trajectories returned by the trajectory planning algorithm are then passed back to the simulation through <code>model.setTrajectories()</code>.</p>
+<p>After running the simulation above, all the data during the simulation will be stored in <code>egoTrackingTest.db</code>, which can be used for replay and analysis. For more information about the database, please refer to <a href="../../AnalysisAndEvaluation/Database/"><img alt="📖" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4d6.svg" title=":book:" />Database</a>.</p>
 
 
 

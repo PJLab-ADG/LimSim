@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#simulation-replay" class="md-skip">
           Skip to content
         </a>
       
@@ -426,23 +426,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    仿真回放
+  <a href="#simulation-replay" class="md-nav__link">
+    Simulation Replay
   </a>
   
-    <nav class="md-nav" aria-label="仿真回放">
+    <nav class="md-nav" aria-label="Simulation Replay">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    界面布局
+  <a href="#interface-layout" class="md-nav__link">
+    Interface Layout
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    示例分析
+  <a href="#example-analysis" class="md-nav__link">
+    Example Analysis
   </a>
   
 </li>
@@ -453,22 +453,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    交互式回放
-  </a>
-  
-    <nav class="md-nav" aria-label="交互式回放">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    仿真示例
+  <a href="#interactive-replay" class="md-nav__link">
+    Interactive replay
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#simulation-example" class="md-nav__link">
+    Simulation example
+  </a>
   
 </li>
       
@@ -682,23 +676,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    仿真回放
+  <a href="#simulation-replay" class="md-nav__link">
+    Simulation Replay
   </a>
   
-    <nav class="md-nav" aria-label="仿真回放">
+    <nav class="md-nav" aria-label="Simulation Replay">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    界面布局
+  <a href="#interface-layout" class="md-nav__link">
+    Interface Layout
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    示例分析
+  <a href="#example-analysis" class="md-nav__link">
+    Example Analysis
   </a>
   
 </li>
@@ -709,22 +703,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    交互式回放
-  </a>
-  
-    <nav class="md-nav" aria-label="交互式回放">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    仿真示例
+  <a href="#interactive-replay" class="md-nav__link">
+    Interactive replay
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#simulation-example" class="md-nav__link">
+    Simulation example
+  </a>
   
 </li>
       
@@ -748,23 +736,23 @@
 
   <h1>Replay & Interactive Replay</h1>
 
-<p>回放是仿真程序的重要功能，可以帮助我们深入分析危险场景和失败场景产生的原因，从而优化相关算法。LimSim 同样提供了回放功能，可以对实时仿真生成的数据进行回放。在此基础上，我们提供了交互式回放功能，帮助算法在关键场景上进行更新迭代。</p>
-<h2 id="_1">仿真回放<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>在根目录下，运行下列指令可以调用 LimSim 的回放功能：</p>
+<p>Replay is an important feature of simulation programs that can help us deeply analyze hazardous and failure scenarios, enabling us to optimize relevant algorithms. LimSim also provides a replay feature, allowing us to replay data generated from real-time simulations. Building upon this, we offer interactive replay functionality to aid algorithm updates and iterations in critical scenarios.</p>
+<h2 id="simulation-replay">Simulation Replay<a class="headerlink" href="#simulation-replay" title="Permanent link">&para;</a></h2>
+<p>In the root directory, running the following command will invoke LimSim's replay feature:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">python</span> <span class="n">ReplayExample</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
-<h3 id="_2">界面布局<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p>上述指令会调出回放功能的界面，如下图所示:</p>
-<p><img alt="img" src="../../assets/images/replayIllustration.png" /></p>
-<p>可以看到，相较于实时仿真，回放的界面多了一个控制面板，该区域可以控制回放的开始与暂停，回放的速度等，方便查看仿真的关键细节。此外在 B 区，我们可以看到车辆前方有粉红色的曲线，该曲线是数据库记录的车辆的未来轨迹，车辆会完全按照粉红色曲线的轨迹行驶，我们将其称为 <code>dbTrajectory</code>；与之对应的，轨迹规划算法提供的紫色曲线被定义为 <code>plannedTrajectory</code>。C 区在显示车辆状态时，在 0 点的右侧，同样是显示数据库中记录的车辆的速度和加速度。</p>
-<h3 id="_3">示例分析<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
-<p>仿真回放的示例代码很简单，如下所示：</p>
+<h3 id="interface-layout">Interface Layout<a class="headerlink" href="#interface-layout" title="Permanent link">&para;</a></h3>
+<p>The above command will bring up the interface for replay functionality, as shown in the following image:</p>
+<p><img alt="img" src="../../assets/images/replayIllustration_en.png" /></p>
+<p>As you can see, compared to real-time simulation, the replay interface has an additional control panel. This panel allows controlling the start, pause, and speed of the replay, facilitating a detailed view of critical simulation aspects. Additionally, in Area B, you can see a pink curve in front of the vehicle. This curve represents the future trajectory of the vehicle recorded in the database, and the vehicle will travel precisely along this pink curve. We refer to it as <code>dbTrajectory</code>. On the other hand, the trajectory provided by the trajectory planning algorithm is represented by the purple curve, known as <code>plannedTrajectory</code>. In Area C, when displaying the vehicle's state at time 0, on the right side, it shows the vehicle's speed and acceleration as recorded in the database.</p>
+<h3 id="example-analysis">Example Analysis<a class="headerlink" href="#example-analysis" title="Permanent link">&para;</a></h3>
+<p>The example code for simulation replay is straightforward, as shown below:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
 <span class="normal"><a href="#__codelineno-1-3">3</a></span>
 <span class="normal"><a href="#__codelineno-1-4">4</a></span>
 <span class="normal"><a href="#__codelineno-1-5">5</a></span>
-<span class="normal"><a href="#__codelineno-1-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">rmodel</span> <span class="o">=</span> <span class="n">ReplayModel</span><span class="p">(</span><span class="n">dataBase</span> <span class="o">=</span> <span class="s1">&#39;egoTrackingTest.db&#39;</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">rmodel</span> <span class="o">=</span> <span class="n">ReplayModel</span><span class="p">(</span><span class="n">dataBase</span><span class="o">=</span><span class="s1">&#39;egoTrackingTest.db&#39;</span><span class="p">)</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="k">while</span> <span class="ow">not</span> <span class="n">rmodel</span><span class="o">.</span><span class="n">tpEnd</span><span class="p">:</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4"></a>    <span class="n">rmodel</span><span class="o">.</span><span class="n">moveStep</span><span class="p">()</span> <span class="c1"># (1)</span>
@@ -772,28 +760,28 @@
 <a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="n">rmodel</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
 <ol>
-<li><img alt="🙋‍♂️" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f64b-200d-2642-fe0f.svg" title=":man_raising_hand:" /> 这里由于不需要与 SUMO 交换数据，所以只需要运行 <code>rmodel.moveStep()</code> 即可。</li>
+<li><img alt="🙋‍♂️" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f64b-200d-2642-fe0f.svg" title=":man_raising_hand:" /> Since there is no need to exchange data with SUMO, only running <code>rmodel.moveStep()</code> is sufficient.</li>
 </ol>
-<p>仿真回放的初始化只需要指定数据库，且不需要同外部进行交互，因此该示例的代码相对简单。</p>
-<h2 id="_4">交互式回放<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>在自动驾驶测试仿真的过程中，可能会出现部分危险场景和失败场景，这些场景是自动驾驶测试升级的重要数据来源。因此，在危险场景上进行重新测试是很重要的一个功能。然而，如果仅对 Ego 进行重新控制，周围的车辆不对 Ego 的行为做出响应，测试就失去了本身的意义。因此，LimSim 提供了交互式回放的功能，让用户可以在危险场景中迭代算法。</p>
+<h2 id="interactive-replay">Interactive replay<a class="headerlink" href="#interactive-replay" title="Permanent link">&para;</a></h2>
+<p>The initialization of simulation replay only requires specifying the database, and no interaction with external elements is necessary. Therefore, the code in this example is relatively simple.</p>
+<p>During the process of autonomous driving test simulation, some dangerous and failure scenarios may occur. These scenarios are important sources of data for upgrading autonomous driving tests. Therefore, retesting on dangerous scenarios is an important function. However, if only Ego is re-controlled and the surrounding vehicles do not respond to Ego's behavior, the test loses its original meaning. Therefore, LimSim provides an interactive replay function that allows users to iterate algorithms in dangerous scenarios.</p>
 <p><img alt="img" src="../../assets/images/interactiveReplay.svg" /></p>
-<p>交互式仿真需要为场景中的车辆规划新的轨迹，也就需要处理新旧轨迹之间的冲突。如上图所示，两车按照原始轨迹行驶是没有冲突的，但是当 ego 改变轨迹的时候，就可能与其他车辆发生碰撞。这时，其他车辆需要做出响应来避免碰撞，也就是按照图中紫色的轨迹来行驶。然而，当ego 远离了这个场景，刚才被控制的车辆就面临一个问题——是否回到原轨迹上。如果回到原轨迹上，就会产生位置的突变，可能导致新的冲突，如果不回到原轨迹上，则车辆后续的轨迹就没有了只能停在原地或消失。</p>
-<p>LimSim 将上述问题拆成三个子问题来解决：1. 何时为车辆规划新的轨迹；2. 规划轨迹要持续多久；3. 轨迹规划结束后，如何处理这辆车。</p>
-<p>第一，为车辆规划新的轨迹并不是越早越好，如果车辆刚生成就为其规划新的轨迹，那对数据的利用程度太低，仅仅用到了车辆生成的位置。因此 LimSim 使用碰撞检测来判断是否需要为车辆规划新的轨迹。如果车辆的原始轨迹与其他车辆的新轨迹冲突（车辆首先要在 AoI 内），则需要为车辆重新规划轨迹，否则就维持原轨迹行驶。</p>
-<p>第二，前文提到车辆脱离控制后要么跳回原轨迹，要么停在原地或消失。这两种形式显然都会大大降低仿真的连贯性和有效性。因此 LimSim 会判断脱离控制的车辆是否还在 AoI 内，如果车辆仍在 AoI 内，即使不再冲突，LimSim 依然会继续为其规划轨迹，直到其离开 AoI。这样做主要是为了保证 AoI 内的场景是连贯的，而在 AoI 外的车辆则对 ego 的影响较小。</p>
-<p>第三，当车辆不再需要交互，且离开了 AoI，则控制阶段结束。这时如果让车辆回到原轨迹，则可能与其他车辆发生碰撞，因此 LimSim 选择直接销毁这辆车。如果数据集中还有这辆车的剩余轨迹，则会在对应的时刻重新生成这辆车。需要注意的是，LimSim 在生成车辆的时候，都会判断该车是否会与路网中现有的车辆产生冲突，如果不冲突则生成车辆，反之，则延迟到下一个时刻再生成。</p>
+<p>Interactive simulation requires planning new trajectories for vehicles in the scene, which also requires handling conflicts between new and old trajectories. As shown in the figure above, there is no conflict when the two cars drive according to the original trajectory, but when ego changes its trajectory, it may collide with other vehicles. At this time, other vehicles need to respond to avoid collisions, that is, to drive along the purple trajectory shown in the figure. However, when ego is far away from this scene, the vehicle that was just controlled faces a problem-whether to return to the original trajectory. If it returns to the original trajectory, it will cause a sudden change in position and may cause new conflicts. If it does not return to the original trajectory, the subsequent trajectory of the vehicle will be gone and can only stop in place or disappear.</p>
+<p>LimSim solves the above problems by dividing them into three sub-problems: 1. When to plan a new trajectory for a vehicle; 2. How long should the planned trajectory last; 3. How to deal with this vehicle after the trajectory planning is over.</p>
+<p>Firstly, planning a new trajectory for a vehicle is not as early as possible. If a new trajectory is planned for a vehicle as soon as it is generated, then the degree of data utilization is too low and only the position where the vehicle is generated is used. Therefore, LimSim uses collision detection to determine whether a new trajectory needs to be planned for a vehicle. If the original trajectory of a vehicle conflicts with the new trajectory of another vehicle (the vehicle must be within AoI first), then a new trajectory needs to be replanned for the vehicle, otherwise it will maintain its original trajectory.</p>
+<p>Secondly, after a vehicle loses control, it either jumps back to its original trajectory or stops in place or disappears. These two forms obviously greatly reduce the coherence and effectiveness of simulation. Therefore, LimSim will judge whether the out-of-control vehicle is still within AoI. If the vehicle is still within AoI, even if there is no longer a conflict, LimSim will continue to plan its trajectory until it leaves AoI. This is mainly to ensure that the scene within AoI is coherent, while vehicles outside AoI have little impact on ego.</p>
+<p>Thirdly, when a vehicle no longer needs interaction and leaves AoI, the control stage ends. At this time, if you let the vehicle return to its original trajectory, it may collide with other vehicles. Therefore LimSim chooses to directly destroy this car. If there is still remaining trajectory of this car in the dataset, it will regenerate this car at the corresponding time. It should be noted that when LimSim generates a vehicle, it will judge whether this car will conflict with existing cars in the road network. If there is no conflict, generate a car; otherwise delay until next time.</p>
 <div class="admonition info">
-<p class="admonition-title">碰撞检测</p>
-<p>一般的碰撞检测算法会使用分离轴定理判断两个矩形是否相交，这种方法可以判断某个时刻两车是否相撞。但是在仿真中，我们要为车辆留出足够的反应时间。比如 A 车生成时，前方 3 米处有一辆 B 车在行驶，即使这个时刻两车不相撞，未来几秒内两车还是有很大的可能性冲突。因此，LimSim 会使用车辆未来的轨迹（<code>dbTrajectory</code> 或 <code>plannedTrajectory</code>）来进行碰撞检测，以避免潜在的冲突。</p>
+<p class="admonition-title">Collision Detection</p>
+<p>General collision detection algorithms use separation axis theorem to determine whether two rectangles intersect. This method can determine whether two cars collide at a certain moment. But in simulation we need to leave enough reaction time for vehicles. For example when car A generates there is a car B driving 3 meters ahead even if these two cars do not collide at this moment there is still a high probability of conflict between them in future seconds. Therefore LimSim will use future trajectories (<code>dbTrajectory</code> or <code>plannedTrajectory</code>) of vehicles for collision detection to avoid potential conflicts.</p>
 </div>
-<h3 id="_5">仿真示例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p>介绍了实现方法之后，运行下面的指令，可以运行交互式仿真的示例：</p>
+<h2 id="simulation-example">Simulation example<a class="headerlink" href="#simulation-example" title="Permanent link">&para;</a></h2>
+<p>After introducing implementation methods run following command can run interactive simulation example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">python</span> <span class="n">InterReplayExample</span><span class="p">.</span><span class="n">py</span>
 </code></pre></div>
-<p>如果上述指令运行正常，则同样会调出图形界面。图形界面的整体结构与实时仿真一致，仅在 B 区有些许不同。如下图所示，车辆前面的曲线有粉红色和紫色两种，分别对应前文提及的 <code>dbTrajectory</code> 和 <code>plannedTrajectory</code>。车辆如果按照数据库中的轨迹行驶，则显示 <code>dbTrajectory</code>，如果受到决策规划算法的控制，则显示 <code>plannedTrajectory</code>。</p>
+<p>If above command runs normally same graphic interface will be called out as well. The overall structure of graphic interface consistent with real-time simulation only slightly different in B area. As shown below curve in front of car has pink and purple two kinds corresponding respectively <code>dbTrajectory</code> and <code>plannedTrajectory</code> mentioned earlier. If car drives according to database’s trajectory <code>dbTrajectory</code> displays if controlled by decision planning algorithm <code>plannedTrajectory</code> displays.</p>
 <p><img alt="img" src="../../assets/images/interReplayGui.png" /></p>
-<p>示例代码如下：</p>
+<p>Example code as follows:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">trafficManager.traffic_manager</span> <span class="kn">import</span> <span class="n">TrafficManager</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">simModel.egoTracking</span> <span class="kn">import</span> <span class="n">interReplay</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -821,9 +809,9 @@
 <a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="n">irmodel</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
 </code></pre></div>
 <ol>
-<li><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" />  运行交互式回放时，<code>irmodel.setTrajectories()</code> 函数是必须的，即使没有规划轨迹，也需要传入空的字典。</li>
+<li><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" />  When running interactive replay, <code>irmodel.setTrajectories()</code> function is necessary even if no trajectory planned empty dictionary needs to be passed in.</li>
 </ol>
-<p>示例代码整体与实时仿真差别不大，将路网文件和路径文件替换为对应的数据库即可。</p>
+<p>Example code overall not much different from real-time simulation replace road network file and path file with corresponding database.</p>
 
 
 
