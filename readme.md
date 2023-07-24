@@ -1,4 +1,4 @@
-![logo-full.svg](assets/logo-full.svg)
+![logo-full.svg](assets/limsimLOGO.png)
 
 [![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2307.06648)
 [![Custom badge](https://img.shields.io/badge/Docs-page-green?logo=document)](https://pjlab-adg.github.io/LimSim)
