@@ -10,6 +10,44 @@
 
 LimSim is a Long-term Interactive Multi-scenario traffic Simulator, which aims to provide a continuous simulation capability under the complex urban road network.
 
+## Quick Start
+
+- **3.9.0** <= [Python](https://www.python.org/) <= 3.11.0
+- [SUMO](https://www.eclipse.org/sumo/) >= 1.15.0 
+
+After configuring the runtime environment, download the LimSim source code to your local machine:
+
+```powershell
+git clone https://github.com/PJLab-ADG/LimSim.git
+```
+
+Finally, you need to install the required Python extensions:
+
+```powershell
+cd LimSim
+pip install -r requirements.txt
+```
+
+Now, the local installation and deployment of LimSim are complete.
+
+### 1. Real-time Sim
+Real-time simulation following the Ego vehicle is the fundamental feature of LimSim. To experience it, run the following command:
+
+```bash
+python ModelExample.py
+```
+
+### 2. Simulation replay
+In the root directory, running the following command will invoke LimSim's replay feature:
+
+```powershell
+python ReplayExample.py
+```
+
+**For more information of our code, please see our [Online Documentation](https://pjlab-adg.github.io/LimSim/)**.
+
+If you have any problem when installing and deployment, feel free to [open an issue here](https://github.com/PJLab-ADG/LimSim/issues)!
+
 
 ## 🎁 Main Features
 
