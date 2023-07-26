@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
          <loc>None./</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/"/>
@@ -10,7 +10,7 @@
     </url>
     <url>
          <loc>NoneAnalysisAndEvaluation/Database/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/AnalysisAndEvaluation/Database/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/AnalysisAndEvaluation/Database/"/>
@@ -18,7 +18,7 @@
     </url>
     <url>
          <loc>NoneAnalysisAndEvaluation/Evaluation/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/AnalysisAndEvaluation/Evaluation/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/AnalysisAndEvaluation/Evaluation/"/>
@@ -26,7 +26,7 @@
     </url>
     <url>
          <loc>NoneDecisionAndPlanning/Customization/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/DecisionAndPlanning/Customization/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/DecisionAndPlanning/Customization/"/>
@@ -34,7 +34,7 @@
     </url>
     <url>
          <loc>NoneDecisionAndPlanning/Decision/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/DecisionAndPlanning/Decision/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/DecisionAndPlanning/Decision/"/>
@@ -42,7 +42,7 @@
     </url>
     <url>
          <loc>NoneDecisionAndPlanning/Overview/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/DecisionAndPlanning/Overview/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/DecisionAndPlanning/Overview/"/>
@@ -50,15 +50,23 @@
     </url>
     <url>
          <loc>NoneDecisionAndPlanning/Planning/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/DecisionAndPlanning/Planning/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/DecisionAndPlanning/Planning/"/>
          
     </url>
     <url>
+         <loc>NoneGettingStarted/carla_cosim/</loc>
+         <lastmod>2023-07-26</lastmod>
+         <changefreq>daily</changefreq>
+         <xhtml:link rel="alternate" hreflang="en" href="Noneen/GettingStarted/carla_cosim/"/>
+         <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/GettingStarted/carla_cosim/"/>
+         
+    </url>
+    <url>
          <loc>NoneGettingStarted/installDeploy/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/GettingStarted/installDeploy/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/GettingStarted/installDeploy/"/>
@@ -66,7 +74,7 @@
     </url>
     <url>
          <loc>NoneGettingStarted/otherFunction/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/GettingStarted/otherFunction/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/GettingStarted/otherFunction/"/>
@@ -74,7 +82,7 @@
     </url>
     <url>
          <loc>NoneGettingStarted/realtimeSim/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/GettingStarted/realtimeSim/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/GettingStarted/realtimeSim/"/>
@@ -82,7 +90,7 @@
     </url>
     <url>
          <loc>NoneGettingStarted/replayAndIreplay/</loc>
-         <lastmod>2023-07-20</lastmod>
+         <lastmod>2023-07-26</lastmod>
          <changefreq>daily</changefreq>
          <xhtml:link rel="alternate" hreflang="en" href="Noneen/GettingStarted/replayAndIreplay/"/>
          <xhtml:link rel="alternate" hreflang="zh" href="Nonezh/GettingStarted/replayAndIreplay/"/>

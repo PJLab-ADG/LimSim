@@ -1,0 +1,98 @@
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 1 cars in scenario
+[DEBUG]:roadgraph.py get_lane_by_id [Line 181] - cannot find lane :1260_2_0
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 67 is in lane -19.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:trajectory_generator.py stop_trajectory_generator [Line 268] - Vehicle 69 No need to stop
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.002165555953979492
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 67 Total planning time: 0.0057544708251953125
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.005879640579223633
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 700. One loop Time: 0.01988983154296875
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 1 cars in scenario
+[DEBUG]:roadgraph.py get_lane_by_id [Line 181] - cannot find lane :1260_2_0
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 67 is in lane -19.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:trajectory_generator.py stop_trajectory_generator [Line 268] - Vehicle 69 No need to stop
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.0028848648071289062
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 67 Total planning time: 0.0060138702392578125
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.005787849426269531
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 705. One loop Time: 0.02032637596130371
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 0 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 67 is in lane -19.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:trajectory_generator.py stop_trajectory_generator [Line 268] - Vehicle 69 No need to stop
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.0021805763244628906
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 67 Total planning time: 0.005876779556274414
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.0057621002197265625
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 710. One loop Time: 0.018198490142822266
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 0 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 67 is in lane -19.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.0060040950775146484
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 67 Total planning time: 0.005723476409912109
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.005720376968383789
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 715. One loop Time: 0.02190852165222168
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 0 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 67 is in lane -19.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.00568699836730957
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 67 Total planning time: 0.005612611770629883
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.005724668502807617
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 720. One loop Time: 0.02138209342956543
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 0 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 67 is in lane -19.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.005774021148681641
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 67 Total planning time: 0.005576610565185547
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.005709648132324219
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 725. One loop Time: 0.021478652954101562
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 0 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 67 is in lane -19.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.005715131759643555
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 67 Total planning time: 0.005661725997924805
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.0057828426361083984
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 730. One loop Time: 0.021515607833862305
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 1 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 73 is in lane 13.0.00_0, In available_lanes? True
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.005522966384887695
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.00586247444152832
+[DEBUG]:trajectory_generator.py stop_trajectory_generator [Line 268] - Vehicle 73 No need to stop
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 73 Total planning time: 0.0014581680297851562
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 735. One loop Time: 0.017929792404174805
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 2 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 73 is in lane 13.0.00_0, In available_lanes? True
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.0059223175048828125
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.005990505218505859
+[DEBUG]:trajectory_generator.py stop_trajectory_generator [Line 268] - Vehicle 73 No need to stop
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 73 Total planning time: 0.0015680789947509766
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 740. One loop Time: 0.02001786231994629
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
+[INFO]:traffic_manager.py extract_vehicles [Line 267] - There's 1 ego cars, 2 cars in AOI, and 2 cars in scenario
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 69 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 41 is in lane 35.0.00_0, In available_lanes? True
+[DEBUG]:vehicle.py update_behaviour [Line 182] - Vehicle 73 is in lane 13.0.00_0, In available_lanes? True
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 69 Total planning time: 0.005831718444824219
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 41 Total planning time: 0.0058286190032958984
+[DEBUG]:trajectory_generator.py stop_trajectory_generator [Line 268] - Vehicle 73 No need to stop
+[DEBUG]:multi_vehicle_planner.py plan [Line 47] - Vehicle 73 Total planning time: 0.001455068588256836
+[INFO]:traffic_manager.py plan [Line 180] - Current frame: 745. One loop Time: 0.01958632469177246
+[INFO]:traffic_manager.py plan [Line 181] - ------------------------------
