@@ -124,7 +124,7 @@ If you use LimSim in your research , please use the following BibTeX entry.
 ```
 @misc{wen2023limsim,
       title={LimSim: A Long-term Interactive Multi-scenario Traffic Simulator}, 
-      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou and Yikang Li},
+      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou, Yikang Li and Yu Qiao},
       year={2023},
       eprint={2307.06648},
       archivePrefix={arXiv},
