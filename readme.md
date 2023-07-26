@@ -5,7 +5,11 @@
 [![Custom badge](https://img.shields.io/badge/video-Bilibili-74b9ff?logo=bilibili&logoColor=white)](https://www.bilibili.com/video/BV1rT411x7VF)
 [![Custom badge](https://img.shields.io/badge/video-YouTube-FF0000?logo=youtube&logoColor=white)](https://youtu.be/YR2A25v0hj4)
 
-## News: 🚀The code is now released!
+## 🚀News: 
+
+- **2023/07/26** Add [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) about co-sim with CARLA.
+- **2023/07/13** The code is now released!
+  
 # LimSim
 
 LimSim is a Long-term Interactive Multi-scenario traffic Simulator, which aims to provide a continuous simulation capability under the complex urban road network.
@@ -87,7 +91,7 @@ After running a long-term simulation with all kinds of scenarios contained in it
 
 ## 💡Co-sim with SUMO & CARLA
 
-LimSim supports co-simulation with CARLA and SUMO, guaranteeing that all three softwares show identical vehicle status. 
+LimSim supports co-simulation with CARLA and SUMO, guaranteeing that all three softwares show identical vehicle status.  Please see [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) for more information.
 
 <p align="center">
  <img src="assets/cosim.gif" title="" alt="cosim.gif" data-align="center" width="700">
