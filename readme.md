@@ -71,7 +71,10 @@ LimSim has a cross-platform user-friendly GUI, which includes not only a beautif
 </p>
 
 
-## 🛣️ Multi-scenarios support
+
+<details><summary><h2>🛣️ Multi-scenarios support</h2></summary>
+<p>
+  
 
 LimSim supports road scenarios not limited to freeways, signalized intersections, roundabouts and overpasses.
 
@@ -80,7 +83,13 @@ LimSim supports road scenarios not limited to freeways, signalized intersections
 </p>
 
 
-## 📊 Scenario Evaluation
+</p>
+</details>
+
+
+<details><summary><h2>📊 Scenario Evaluation</h2></summary>
+<p>
+  
 
 After running a long-term simulation with all kinds of scenarios contained in it, LimSim generates a log report and extract the key scenarios via the evaluation results.
 
@@ -89,13 +98,25 @@ After running a long-term simulation with all kinds of scenarios contained in it
 </p>
 
 
-## 💡Co-sim with SUMO & CARLA
+</p>
+</details>
+
+
+
+<details><summary><h2>💡Co-sim with SUMO & CARLA</h2></summary>
+<p>
 
 LimSim supports co-simulation with CARLA and SUMO, guaranteeing that all three softwares show identical vehicle status.  Please see [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) for more information.
 
 <p align="center">
  <img src="assets/cosim.gif" title="" alt="cosim.gif" data-align="center" width="700">
 </p>
+
+
+</p>
+</details>
+
+
 
 ## ➕Additional Maps
 
@@ -128,7 +149,7 @@ If you use LimSim in your research , please use the following BibTeX entry.
 ```
 @misc{wen2023limsim,
       title={LimSim: A Long-term Interactive Multi-scenario Traffic Simulator}, 
-      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou, Yikang Li and Yu Qiao},
+      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou and Yikang Li and Yu Qiao},
       year={2023},
       eprint={2307.06648},
       archivePrefix={arXiv},
