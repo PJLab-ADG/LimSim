@@ -790,7 +790,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 终端 2 </span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>../..<span class="w"> </span><span class="c1"># 回到 carla 根目录 </span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">cd</span><span class="w"> </span>Co-Simulation/Sumo<span class="w"> </span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>python3<span class="w"> </span>run_synchronization.py<span class="w"> </span>examples/Town05.sumocfg<span class="w"> </span>--sumo-host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--sumo-port<span class="w"> </span><span class="m">8813</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>python3<span class="w"> </span>run_synchronization.py<span class="w"> </span>examples/Town05.sumocfg<span class="w"> </span>--sumo-host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--sumo-port<span class="w"> </span><span class="m">8813</span><span class="w"> </span>--client-order<span class="w"> </span><span class="m">2</span>
 </code></pre></div>
 <p>终端应持续输出 <code>Could not connect to TraCI server at 127.0.0.1:8813 [Errno 111] Connection refused Retrying in 1 seconds</code>，不要担心，这意味着您的设置都已完成。现在继续下一步！</p>
 <h2 id="2-limsim">步骤 2：运行 LimSim 联合仿真<a class="headerlink" href="#2-limsim" title="Permanent link">&para;</a></h2>
