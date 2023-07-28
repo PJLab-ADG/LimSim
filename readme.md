@@ -159,4 +159,4 @@ If you use LimSim in your research , please use the following BibTeX entry.
 
 ## License
 
-LimSim is released under the [Apache 2.0 license](https://github.com/PJLab-ADG/SensorsCalibration/blob/master/LICENSE).
+LimSim is released under the [GNU GPL v3.0 license](https://github.com/PJLab-ADG/limsim/blob/master/LICENSE).
