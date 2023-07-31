@@ -737,7 +737,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Terminal 2</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>../..<span class="w"> </span><span class="c1">#back to carla root dir</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">cd</span><span class="w"> </span>Co-Simulation/Sumo
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>python3<span class="w"> </span>run_synchronization.py<span class="w"> </span>examples/Town05.sumocfg<span class="w"> </span>--sumo-host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w">  </span>--sumo-port<span class="w"> </span><span class="m">8813</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>python3<span class="w"> </span>run_synchronization.py<span class="w"> </span>examples/Town05.sumocfg<span class="w"> </span>--sumo-host<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>--sumo-port<span class="w"> </span><span class="m">8813</span><span class="w"> </span>--client-order<span class="w"> </span><span class="m">2</span>
 </code></pre></div>
 <p>The terminal should continuly output <code>Could not connect to TraCI server at 127.0.0.1:8813 [Errno 111] Connection refused  Retrying in 1 seconds</code>, don't panic,  it means your set up is all done. Now continue to next step!</p>
 <h2 id="step-2-run-limsim-co-simulation">Step 2: Run LimSim Co-simulation<a class="headerlink" href="#step-2-run-limsim-co-simulation" title="Permanent link">&para;</a></h2>
