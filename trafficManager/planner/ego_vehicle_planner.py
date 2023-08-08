@@ -18,9 +18,9 @@ logging = logger.get_logger(__name__)
 class EgoPlanner(AbstractEgoPlanner):
     def plan(self,
              ego_veh: Vehicle,
-             controlled_observation: Observation,
+             observation: Observation,
              roadgraph: RoadGraph,
-             uncontrolled_prediction: Prediction,
+             prediction: Prediction,
              T,
              config,
              ego_decision: MultiDecision = None) -> Trajectory:
@@ -31,48 +31,12 @@ class EgoPlanner(AbstractEgoPlanner):
 
         obs_list = []
         # Process static obstacle
-        for obs in controlled_observation.obstacles:
+        for obs in observation.obstacles:
             obs_list.append(obs)
 
         # Process dynamic_obstacles
-        for other_controlled_veh in controlled_observation.vehicles:
-            if other_controlled_veh.id == vehicle_id:
-                continue
-            if other_controlled_veh.id not in controlled_observation.history_track:
-                continue
-            other_track = controlled_observation.history_track[
-                other_controlled_veh.id]
-
-            shape = Rectangle(other_controlled_veh.length,
-                              other_controlled_veh.width)
-            current_state = State(x=other_track[0].x,
-                                  y=other_track[0].y,
-                                  s=other_track[0].s,
-                                  d=other_track[0].d,
-                                  yaw=other_track[0].yaw,
-                                  vel=other_track[0].vel)
-            dynamic_obs = DynamicObstacle(obstacle_id=other_controlled_veh.id,
-                                          shape=shape,
-                                          obstacle_type=ObsType.CAR,
-                                          current_state=current_state,
-                                          lane_id=other_controlled_veh.lane_id)
-            for i in range(1, len(other_track)):
-                state = State(x=other_track[i].x,
-                              y=other_track[i].y,
-                              s=other_track[i].s,
-                              d=other_track[i].d,
-                              yaw=other_track[i].yaw,
-                              vel=other_track[i].vel)
-                dynamic_obs.future_trajectory.states.append(state)
-
-            obs_list.append(dynamic_obs)
-
-        # Process uncontrolled_prediction
-        for predict_veh, prediction in uncontrolled_prediction.results.items():
+        for predict_veh, prediction in prediction.results.items():
             if predict_veh.id == vehicle_id:
-                logging.error(
-                    "SHOULD NOT BE HERE: Predicted vehicle is in controlled_observation"
-                )
                 continue
 
             shape = Rectangle(predict_veh.length, predict_veh.width)
