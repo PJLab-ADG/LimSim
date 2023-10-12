@@ -33,6 +33,9 @@ class MultiVehiclePlanner(AbstractMultiPlanner):
             start = time.time()
             if vehicle.vtype == VehicleType.OUT_OF_AOI:
                 continue
+            if config["EGO_PLANNER"] and vehicle.vtype == VehicleType.EGO:
+                continue
+
             current_lane = roadgraph.get_lane_by_id(vehicle.lane_id)
 
             obs_list = self.extract_obstacles(controlled_observation,

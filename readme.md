@@ -5,7 +5,11 @@
 [![Custom badge](https://img.shields.io/badge/video-Bilibili-74b9ff?logo=bilibili&logoColor=white)](https://www.bilibili.com/video/BV1rT411x7VF)
 [![Custom badge](https://img.shields.io/badge/video-YouTube-FF0000?logo=youtube&logoColor=white)](https://youtu.be/YR2A25v0hj4)
 
-## News: 🚀The code is now released!
+## 🚀News: 
+
+- **2023/07/26** Add [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) about co-sim with CARLA.
+- **2023/07/13** The code is now released!
+  
 # LimSim
 
 LimSim is a Long-term Interactive Multi-scenario traffic Simulator, which aims to provide a continuous simulation capability under the complex urban road network.
@@ -67,7 +71,10 @@ LimSim has a cross-platform user-friendly GUI, which includes not only a beautif
 </p>
 
 
-## 🛣️ Multi-scenarios support
+
+<details><summary><h2>🛣️ Multi-scenarios support</h2></summary>
+<p>
+  
 
 LimSim supports road scenarios not limited to freeways, signalized intersections, roundabouts and overpasses.
 
@@ -76,7 +83,13 @@ LimSim supports road scenarios not limited to freeways, signalized intersections
 </p>
 
 
-## 📊 Scenario Evaluation
+</p>
+</details>
+
+
+<details><summary><h2>📊 Scenario Evaluation</h2></summary>
+<p>
+  
 
 After running a long-term simulation with all kinds of scenarios contained in it, LimSim generates a log report and extract the key scenarios via the evaluation results.
 
@@ -85,13 +98,25 @@ After running a long-term simulation with all kinds of scenarios contained in it
 </p>
 
 
-## 💡Co-sim with SUMO & CARLA
+</p>
+</details>
 
-LimSim supports co-simulation with CARLA and SUMO, guaranteeing that all three softwares show identical vehicle status. 
+
+
+<details><summary><h2>💡Co-sim with SUMO & CARLA</h2></summary>
+<p>
+
+LimSim supports co-simulation with CARLA and SUMO, guaranteeing that all three softwares show identical vehicle status.  Please see [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) for more information.
 
 <p align="center">
  <img src="assets/cosim.gif" title="" alt="cosim.gif" data-align="center" width="700">
 </p>
+
+
+</p>
+</details>
+
+
 
 ## ➕Additional Maps
 
@@ -124,7 +149,7 @@ If you use LimSim in your research , please use the following BibTeX entry.
 ```
 @misc{wen2023limsim,
       title={LimSim: A Long-term Interactive Multi-scenario Traffic Simulator}, 
-      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou and Yikang Li},
+      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou and Yikang Li and Yu Qiao},
       year={2023},
       eprint={2307.06648},
       archivePrefix={arXiv},
@@ -134,4 +159,4 @@ If you use LimSim in your research , please use the following BibTeX entry.
 
 ## License
 
-LimSim is released under the [Apache 2.0 license](https://github.com/PJLab-ADG/SensorsCalibration/blob/master/LICENSE).
+LimSim is released under the [GNU GPL v3.0 license](https://github.com/PJLab-ADG/limsim/blob/master/LICENSE).
