@@ -131,7 +131,7 @@ class State(CertesianState, FrenetState):
         self.y = ry + cos_theta_r * self.d
         if self.s_d <= 1e-1:
             self.s_d = 1e-1
-            self.vel = 0
+            self.vel = 1e-1
             self.yaw = None
         else:
             one_minus_kappa_r_d = 1 - rkappa * self.d
