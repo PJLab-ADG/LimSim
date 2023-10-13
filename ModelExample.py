@@ -80,4 +80,4 @@ def run_model(
 
 if __name__ == "__main__":
     net_file, rou_file = file_paths['CarlaTown05']
-    run_model(net_file, rou_file, ego_veh_id="102", carla_cosim=False)
+    run_model(net_file, rou_file, ego_veh_id="30", carla_cosim=False)
