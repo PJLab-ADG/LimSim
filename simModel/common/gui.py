@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
 from utils.simBase import CoordTF
+from typing import Tuple
 
 
 class GUI:
@@ -153,8 +154,8 @@ class GUI:
                     )
 
                     dpg.add_button(label="Next frame",
-                                    callback=self.nextFrame)
-                
+                                   callback=self.nextFrame)
+
                 dpg.add_spacer(height=5)
 
                 with dpg.group(horizontal=True):
@@ -207,7 +208,7 @@ class GUI:
                     # series belong to a y axis
                     dpg.add_line_series(
                         [], [], parent="v_y_axis", tag="v_series_tag",
-                        label= 'Velocity'
+                        label='Velocity'
                     )
                     dpg.add_line_series(
                         [], [], parent="v_y_axis", tag="v_series_tag_future"
@@ -229,7 +230,7 @@ class GUI:
                     dpg.bind_item_theme("a_series_tag", "plot_theme_a")
                     dpg.bind_item_theme(
                         'a_series_tag_future', 'plot_theme_a_future'
-                    ) 
+                    )
             with dpg.window(
                 tag='sEvaluation',
                 label='Evaluation',
@@ -252,7 +253,6 @@ class GUI:
                 no_close=True,
             ):
                 dpg.add_draw_node(tag="infoText", parent="simInfo")
-
 
     def create_handlers(self):
         with dpg.handler_registry():
@@ -320,17 +320,17 @@ class GUI:
             dpg.set_item_pos("MainWindow", (10, 120))
         else:
             raise TypeError('Nonexistent mode!')
-        
-    def drawMainWindowWhiteBG(self, pmin: tuple[float], pmax: tuple[float]):
+
+    def drawMainWindowWhiteBG(self, pmin: Tuple[float], pmax: Tuple[float]):
         centerx = (pmin[0] + pmax[0]) / 2
         centery = (pmin[1] + pmax[1]) / 2
         dpg.draw_rectangle(
-            self.ctf.dpgCoord(pmin[0], pmin[1], centerx, centery), 
-            self.ctf.dpgCoord(pmax[0], pmax[1], centerx, centery), 
+            self.ctf.dpgCoord(pmin[0], pmin[1], centerx, centery),
+            self.ctf.dpgCoord(pmax[0], pmax[1], centerx, centery),
             thickness=0,
-            fill=(255, 255, 255), 
+            fill=(255, 255, 255),
             parent=self.BGnode
-            )
+        )
 
     def mouse_down(self):
         if not self.is_dragging:

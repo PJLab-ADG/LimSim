@@ -253,7 +253,12 @@ class NetworkBuild:
                 juncID = fromEdge.to_junction
                 junction = self.getJunction(juncID)
                 junctionLane.affJunc = juncID
-                jlAffGridIDs = self.affGridIDs(junctionLane.center_line)
+                try:
+                    jlAffGridIDs = self.affGridIDs(junctionLane.center_line)
+                except ValueError:
+                    print(junctionLane.id)
+                    print(junctionLane.next_lane_id)
+                    print(junctionLane.center_line)
                 junction.affGridIDs = junction.affGridIDs | jlAffGridIDs
                 junction.JunctionLanes.add(junctionLaneID)
 

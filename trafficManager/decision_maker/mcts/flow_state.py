@@ -9,6 +9,7 @@ Copyright (c) 2023 by PJLab, All Rights Reserved.
 import itertools
 import math
 import random
+from typing import Dict
 
 import numpy as np
 from common.vehicle import State, Vehicle, Behaviour, VehicleType
@@ -30,11 +31,11 @@ class FlowState:
         self,
         states_list: list,
         road_graph: RoadGraph,
-        actions: dict[str, list],
+        actions: Dict[str, list],
         complete_decisions: MultiDecision,
         prediction: Prediction,
         time: float,
-        config: dict,
+        config: Dict,
     ) -> None:
         self.states_list = states_list
         self.time = time
@@ -167,9 +168,11 @@ class FlowState:
                     veh_next_state.d = 0
             elif action == "AC":
                 veh_next_state.vel += (
-                    self.config["DEFAULT_ACC"] * self.config["DECISION_RESOLUTION"]
+                    self.config["DEFAULT_ACC"] *
+                    self.config["DECISION_RESOLUTION"]
                 )
-                veh_next_state.vel = min(veh_next_state.vel, veh_next_step.max_speed)
+                veh_next_state.vel = min(
+                    veh_next_state.vel, veh_next_step.max_speed)
                 veh_next_state.s += (
                     veh_next_state.vel * self.config["DECISION_RESOLUTION"]
                     + 0.5
@@ -179,7 +182,8 @@ class FlowState:
                 )
             elif action == "DC":
                 veh_next_state.vel -= (
-                    self.config["DEFAULT_ACC"] * self.config["DECISION_RESOLUTION"]
+                    self.config["DEFAULT_ACC"] *
+                    self.config["DECISION_RESOLUTION"]
                 )
                 veh_next_state.vel = max(veh_next_state.vel, 0)
                 veh_next_state.s += max(
@@ -194,14 +198,16 @@ class FlowState:
                 )
             elif action == "LCL":
                 veh_next_state.d += (
-                    self.config["LATERAL_SPEED"] * self.config["DECISION_RESOLUTION"]
+                    self.config["LATERAL_SPEED"] *
+                    self.config["DECISION_RESOLUTION"]
                 )
                 veh_next_state.s += (
                     veh_next_state.vel * self.config["DECISION_RESOLUTION"]
                 )
             elif action == "LCR":
                 veh_next_state.d -= (
-                    self.config["LATERAL_SPEED"] * self.config["DECISION_RESOLUTION"]
+                    self.config["LATERAL_SPEED"] *
+                    self.config["DECISION_RESOLUTION"]
                 )
                 veh_next_state.s += (
                     veh_next_state.vel * self.config["DECISION_RESOLUTION"]
@@ -214,7 +220,8 @@ class FlowState:
             # 车道更新
             if action == "LCL" or action == "LCR":
                 if veh_next_state.d > current_lane.width / 2:
-                    next_lane = self.road_graph.get_lane_by_id(current_lane.left_lane())
+                    next_lane = self.road_graph.get_lane_by_id(
+                        current_lane.left_lane())
                     if next_lane is None:  # 车道变更失败
                         veh_next_state.d = current_lane.width / 2
                     else:
@@ -230,7 +237,8 @@ class FlowState:
                         veh_next_step.lane_id = next_lane.id
                         veh_next_state.d += current_lane.width / 2 + next_lane.width / 2
 
-            current_lane = self.road_graph.get_lane_by_id(veh_next_step.lane_id)
+            current_lane = self.road_graph.get_lane_by_id(
+                veh_next_step.lane_id)
             # 处理超出 available lanes的情况
             while veh_next_state.s > current_lane.spline_length:
                 next_lane = self.road_graph.get_available_next_lane(
@@ -241,7 +249,8 @@ class FlowState:
                     break
                 veh_next_state.s -= current_lane.spline_length
                 veh_next_step.lane_id = next_lane.id
-                current_lane = self.road_graph.get_lane_by_id(veh_next_step.lane_id)
+                current_lane = self.road_graph.get_lane_by_id(
+                    veh_next_step.lane_id)
             if veh_next_step.lane_id == None:
                 # at the end of available_lanes range, not decision for this vehicle any more
                 continue
@@ -343,7 +352,8 @@ class FlowState:
             exit(1)
 
         dist = math.hypot(state1.x - state2.x, state1.y - state2.y)
-        dist_thershold = math.hypot(veh1.length + veh2.length, veh1.width + veh2.width)
+        dist_thershold = math.hypot(
+            veh1.length + veh2.length, veh1.width + veh2.width)
         if dist > dist_thershold:
             return False
 

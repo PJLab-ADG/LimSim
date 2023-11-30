@@ -15,6 +15,10 @@ file_paths = {
         "networkFiles/CarlaTown05/Town05.net.xml",
         "networkFiles/CarlaTown05/carlavtypes.rou.xml,networkFiles/CarlaTown05/Town05.rou.xml",
     ),
+    "CarlaTown06": (
+        "./networkFiles/CarlaTown06/Town06.net.xml",
+        "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
+    ),
     "bigInter": (
         "networkFiles/bigInter/bigInter.net.xml",
         "networkFiles/bigInter/bigInter.rou.xml",
@@ -79,5 +83,5 @@ def run_model(
 
 
 if __name__ == "__main__":
-    net_file, rou_file = file_paths['CarlaTown05']
-    run_model(net_file, rou_file, ego_veh_id="30", carla_cosim=False)
+    net_file, rou_file = file_paths['CarlaTown06']
+    run_model(net_file, rou_file, ego_veh_id="10", carla_cosim=False)

@@ -2,7 +2,7 @@ import os
 import sqlite3
 import threading
 import time
-from typing import List
+from typing import List, Dict
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from queue import Queue
@@ -79,7 +79,7 @@ class Model:
         self.simDescriptionCommit(simNote)
         self.dataQue = Queue()
         self.createTimer()
-        
+
         self.nb = NetworkBuild(self.dataBase, netFile, obsFile)
         self.nb.getData()
         self.nb.buildTopology()
@@ -276,7 +276,7 @@ class Model:
         return allvTypesID
 
     def start(self):
-        
+
         if self.carla_cosim:
             num_clients = "2"
         else:
@@ -298,7 +298,7 @@ class Model:
             'remove',
             "--num-clients",
             num_clients,
-        ], port = 8813)
+        ], port=8813)
         traci.setOrder(1)
 
         allvTypeID = self.getAllvTypeID()
@@ -520,7 +520,7 @@ class Model:
             for v in self.ms.currVehicles.values():
                 self.vehMoveStep(v)
 
-    def setTrajectories(self, trajectories: dict[str, Trajectory]):
+    def setTrajectories(self, trajectories: Dict[str, Trajectory]):
         for k, v in trajectories.items():
             if k == self.ego.id:
                 self.ego.plannedTrajectory = v
@@ -606,9 +606,9 @@ class Model:
                 text_points[j][0] + offset[j][0],
                 text_points[j][1] - offset[j][1]
             ],
-                          text=radarLabels[j],
-                          size=20,
-                          parent=bgNode)
+                text=radarLabels[j],
+                size=20,
+                parent=bgNode)
 
     def drawMapBG(self):
         # left-bottom: x1, y1
