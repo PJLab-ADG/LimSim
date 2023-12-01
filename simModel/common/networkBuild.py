@@ -496,8 +496,8 @@ class Rebuild(NetworkBuild):
     def __init__(self,
                  dataBase: str,
                  ) -> None:
-        networkFile: str = None,
-        obsFile: str = None
+        networkFile: str = ''
+        obsFile: str = ''
         super().__init__(dataBase, networkFile, obsFile)
 
     def getData(self):
