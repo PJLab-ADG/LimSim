@@ -276,7 +276,6 @@ class Model:
         return allvTypesID
 
     def start(self):
-
         if self.carla_cosim:
             num_clients = "2"
         else:

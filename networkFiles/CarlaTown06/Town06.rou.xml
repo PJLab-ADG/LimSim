@@ -31,11 +31,11 @@
         <route edges="23 22#1 22#0 21 -7 42 -18 -19 33 26 -62 -33 -34 -1" />
     </vehicle>
     <vehicle id="10" depart="20.00" type="vehicle.lincoln.mkz_2017" departLane="random">
-        <route edges="-29#1 -30 4 -48#0" />
-    </vehicle>
-    <vehicle id="11" depart="22.00" type="vehicle.carlamotors.carlacola" departLane="random">
         <route edges="-29#1 27 -48#0" />
     </vehicle>
+    <!-- <vehicle id="11" depart="22.00" type="vehicle.carlamotors.carlacola" departLane="random">
+        <route edges="-29#1 27 -48#0" />
+    </vehicle> -->
     <vehicle id="12" depart="24.00" type="vehicle.mini.cooper_s">
         <route edges="57 54 -46 -10 -54 -55 -58 1 0 -39 -32 68 -37 -38" />
     </vehicle>
@@ -61,7 +61,7 @@
         <route edges="27 -48#0 -48#1 -49 -50 54 -46 -10 -54" />
     </vehicle>
     <vehicle id="20" depart="40.00" type="vehicle.micro.microlino">
-        <route edges="0 33 26 -62 -33 -34 -1 58 57 54 -46 -10 -54 -51 -52#0 -52#1 -59 -13" />
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="21" depart="42.00" type="vehicle.tesla.cybertruck">
         <route edges="-32 68 -37 -70 24 -30 4 -48#0 -48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 33 26 -62 -33 -34 -35" />
@@ -90,8 +90,8 @@
     <vehicle id="29" depart="58.00" type="vehicle.dodge.charger_police">
         <route edges="-28 -29#0 -29#1 27 -48#0 -48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 -39 -40" />
     </vehicle>
-    <vehicle id="30" depart="60.00" type="vehicle.bmw.grandtourer">
-        <route edges="68 -37 -70 24 -30 4 -48#0 -48#1 -49 -50 -51 -52#0 -52#1 -59" />
+    <vehicle id="30" depart="60.00" type="vehicle.bmw.grandtourer" departLane="random">
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="31" depart="62.00" type="vehicle.mercedes.coupe">
         <route edges="-53 -18 -19 -39 -32 68 -37 -70" />
