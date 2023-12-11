@@ -13,7 +13,6 @@ from traci import TraCIException
 from simModel.common.networkBuild import NetworkBuild, Rebuild
 from utils.simBase import CoordTF, deduceEdge
 from utils.trajectory import Trajectory
-from utils.roadgraph import NormalLane, JunctionLane
 
 
 class Vehicle:

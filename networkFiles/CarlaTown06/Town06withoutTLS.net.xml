@@ -3,7 +3,7 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
-        <type-files value="D:\CARLA\Co-Simulation\Sumo\util\data/opendrive_netconvert.typ.xml"/>
+        <type-files value="D:\CARLA\Co-Simulation\Sumo\utils\data/opendrive_netconvert.typ.xml"/>
         <opendrive-files value=".\Town06.xodr"/>
     </input>
 

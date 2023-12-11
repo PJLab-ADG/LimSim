@@ -20,6 +20,7 @@ from simModel.egoTracking.movingScene import MovingScene
 from simModel.common.networkBuild import NetworkBuild
 from utils.trajectory import State, Trajectory
 from utils.simBase import MapCoordTF, vehType
+from utils.dbBridge import DBBridge
 
 from evaluation.evaluation import RealTimeEvaluation
 
@@ -75,7 +76,10 @@ class Model:
             self.dataBase = datetime.strftime(
                 datetime.now(), '%Y-%m-%d_%H-%M-%S') + '_egoTracking' + '.db'
 
-        self.createDatabase()
+        if os.path.exists(self.dataBase):
+            os.remove(self.dataBase)
+        self.dbBridge = DBBridge(self.dataBase)
+        self.dbBridge.createTable()
         self.simDescriptionCommit(simNote)
         self.dataQue = Queue()
         self.createTimer()
@@ -91,128 +95,6 @@ class Model:
         self.gui = GUI('real-time-ego')
 
         self.evaluation = RealTimeEvaluation(dt=0.1)
-
-    def createDatabase(self):
-        # if database exist then delete it
-        if os.path.exists(self.dataBase):
-            os.remove(self.dataBase)
-        conn = sqlite3.connect(self.dataBase)
-        cur = conn.cursor()
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS simINFO(
-                        startTime TIMESTAMP PRIMARY KEY,
-                        localPosx REAL,
-                        localPosy REAL,
-                        radius REAL,
-                        egoID TEXT,
-                        netBoundary TEXT,
-                        description TEXT,
-                        note TEXT);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS frameINFO(
-                            frame INT NOT NULL,
-                            vid TEXT NOT NULL,
-                            vtag TEXT NOT NULL,
-                            x REAL NOT NULL,
-                            y REAL NOT NULL,
-                            yaw REAL NOT NULL,
-                            speed REAL NOT NULL,
-                            accel REAL NOT NULL,
-                            laneID TEXT NOT NULL,
-                            lanePos REAL NOT NULL,
-                            routeIdx INT NOT NULL,
-                            PRIMARY KEY (frame, vid));''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS vehicleINFO(
-                            vid TEXT PRIMARY KEY,
-                            length REAL NOT NULL,
-                            width REAL NOT NULL,
-                            maxAccel REAL,
-                            maxDecel REAL,
-                            maxSpeed REAL,
-                            vTypeID TEXT NOT NULL,
-                            routes TEXT NOT NULL);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS edgeINFO(
-                            id TEXT RRIMARY KEY,
-                            laneNumber INT NOT NULL,
-                            from_junction TEXT,
-                            to_junction TEXT);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS laneINFO(
-                            id TEXT PRIMARY KEY,
-                            rawShape TEXT,
-                            width REAL,
-                            maxSpeed REAL,
-                            edgeID TEXT,
-                            length REAL);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS junctionLaneINFO(
-                            id TEXT PRIMARY KEY,
-                            width REAL,
-                            maxSpeed REAL,
-                            length REAL,
-                            tlLogicID TEXT,
-                            tlsIndex INT);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS junctionINFO(
-                            id TEXT PRIMARY KEY,
-                            rawShape TEXT);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS tlLogicINFO(
-                            id TEXT PRIMARY KEY,
-                            tlType TEXT,
-                            preDefPhases TEXT)''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS connectionINFO(
-                            fromLane TEXT NOT NULL,
-                            toLane TEXT NOT NULL,
-                            direction TEXT,
-                            via TEXT,
-                            PRIMARY KEY (fromLane, toLane));''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS trafficLightStates(
-                            frame INT NOT NULL,
-                            id TEXT NOT NULL,
-                            currPhase TEXT,
-                            nextPhase TEXT,
-                            switchTime REAL,
-                            PRIMARY KEY (frame, id));''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS circleObsINFO(
-                            id TEXT PRIMARY KEY,
-                            edgeID TEXT NOT NULL,
-                            centerx REAL NOT NULL,
-                            centery REAL NOT NULL,
-                            radius REAL NOT NULL);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS rectangleObsINFO(
-                            id TEXT PRIMARY KEY,
-                            edgeID TEXT NOT NULL,
-                            centerx REAL NOT NULL,
-                            centery REAL NOT NULL,
-                            length REAL NOT NULL,
-                            width REAL NOT NULL,
-                            yaw REAL NOT NULL);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS geohashINFO(
-                            ghx INT NOT NULL,
-                            ghy INT NOT NULL,
-                            edges TEXT,
-                            junctions TEXT,
-                            PRIMARY KEY (ghx, ghy));''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS evaluationINFO(
-                    frame INT PRIMARY KEY,
-                    offset REAL,
-                    discomfort REAL,
-                    collision REAL,
-                    orientation REAL,
-                    consumption REAL);''')
-
-        conn.commit()
-        cur.close()
-        conn.close()
 
     def simDescriptionCommit(self, simNote: str):
         currTime = datetime.now()

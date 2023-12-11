@@ -41,6 +41,7 @@ except IndexError:
 import carla  # pylint: disable=import-error
 import cv2
 import numpy as np
+import base64
 # ==================================================================================================
 # -- find traci module -----------------------------------------------------------------------------
 # ==================================================================================================
@@ -72,6 +73,7 @@ def processImage(image):
     image_data = np.reshape(image_data, (image.height, image.width, 4))
     # 将图像数据存储到缓冲区
     image_buffer = image_data
+
 
 
 class SimulationSynchronization(object):
@@ -259,8 +261,8 @@ class SimulationSynchronization(object):
         
     def getFrontViewImage(self):
         global image_buffer
-        plt.imshow(image_buffer)
-        plt.pause(0.1)
+        return image_buffer
+    
 
     def getEgo(self):
         vehicle_list = self.carla.world.get_actors().filter('vehicle.*')
@@ -304,10 +306,8 @@ class Arguments:
             carla_port: int,
             step_length: float,
             tls_manager: str,
-            sync_vehicle_color: bool,
-            sync_vehicle_lights: bool,
-            debug: bool,
-            clear_images: bool
+            sync_vehicle_color: bool = True,
+            sync_vehicle_lights: bool = True,
             ) -> None:
         self.sumo_cfg_file = sumo_cfg_file
         self.sumo_gui = sumo_gui
@@ -317,8 +317,6 @@ class Arguments:
         self.tls_manager = tls_manager   # ['none', 'sumo', 'carla']
         self.sync_vehicle_color = sync_vehicle_color
         self.sync_vehicle_lights = sync_vehicle_lights
-        self.debug = debug
-        self.clear_images = clear_images
 
 
 def synchronization_loop(args: Arguments, ego_id):
@@ -370,6 +368,8 @@ def synchronization_loop(args: Arguments, ego_id):
 
 
 if __name__ == '__main__':
+    debug = 0
+
     arguments = Arguments(
         sumo_cfg_file='./networkFiles/CarlaTown06/Town06.sumocfg',
         sumo_gui=True,
@@ -378,19 +378,13 @@ if __name__ == '__main__':
         step_length=0.1,
         tls_manager='sumo',
         sync_vehicle_color=False,
-        sync_vehicle_lights=True,
-        debug=False,
-        clear_images=True
+        sync_vehicle_lights=True
     )
 
-    if arguments.debug:
+    if debug:
         logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
     else:
         logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
-
-    if arguments.clear_images:
-        for file in os.listdir('./FVCFigs'):
-            os.remove('./FVCFigs/' + file)
 
     traci.start(
         [

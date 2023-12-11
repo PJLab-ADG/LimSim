@@ -1,0 +1,11 @@
+## Description
+It was a sunny, clear day and I was driving my vehicle on a city road. There were no other vehicles in my current lane. On my right was the lawn. There was a blue vehicle in front of me in the adjacent lane to my left who was very close to me.
+
+## Reasoning
+According to the navigation information, I need to travel to the far left lane as quickly as possible. Therefore I first need to attempt a left turn. There is a blue vehicle in the adjacent lane to my left who is so close that if I change lanes to the left I will collide with him, therefore I cannot turn left.
+Then I want to try to accelerate. Since the vehicle to my left is in front of me, if I accelerate I will be traveling side by side with it, which is not conducive to changing lanes to the left.
+Perhaps I could maintain my current speed so that we would maintain this distance between us, again not conducive to changing lanes to the left.
+Finally, if I slow down, the distance between us will increase so that I can safely change lanes, so I can choose to slow down.
+
+## Decison
+DEC

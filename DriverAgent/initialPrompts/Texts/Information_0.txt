@@ -1,0 +1,10 @@
+# Case 0
+
+## Available Actions
+ - ACC: increasing your speed.
+ - DEC: slow down your speed.
+ - MCV: Maintain your current speed.
+ - CL: Change lanes to the left.
+
+## Navigation Information
+Move to the far left lane as soon as possible

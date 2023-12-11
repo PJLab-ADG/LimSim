@@ -1,0 +1,8 @@
+## Description
+It was a sunny, clear day and I was driving my vehicle on a city road. There were no other vehicles in my current lane. There were no other vehicles in my adjacent right lane. There were no other vehicles in the adjacent lane to my left.
+
+## Reasoning
+According to the navigation information, I need to travel to the far left lane as quickly as possible. Therefore I first need to attempt a left turn. There was no traffic in the adjacent lane to my left, so if I switched lanes to the left, it would be safe.
+
+## Decison
+CL
