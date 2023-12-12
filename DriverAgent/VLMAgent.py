@@ -8,6 +8,8 @@ from rich import print
 from openai import OpenAI
 from typing import Dict, List, Union
 
+from DriverAgent.Informer import Informer
+
 
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
@@ -20,8 +22,9 @@ def getText(filePath: str) -> str:
         return res
 
 class PrompsWrap:
-    def __init__(self) -> None:
+    def __init__(self, API_KEY: str) -> None:
         self.content = []
+        self.api_key = API_KEY
 
     def addTextPrompt(self, textPrompt: str) -> Dict[str, str]:
         textPrompt = {
@@ -41,10 +44,20 @@ class PrompsWrap:
         }
         self.content.append(imagePrompt)
 
-    def request(self, API_KEY: str, max_tokens: int = 4000):
+    def addImageBase64(self, image_base64: str):
+        imagePrompt = {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{image_base64}",
+                "detail": "low"
+            }
+        }
+        self.content.append(imagePrompt)
+
+    def request(self, max_tokens: int = 4000):
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {API_KEY}"
+            "Authorization": f"Bearer {self.api_key}"
         }
 
         payload = {
@@ -64,6 +77,10 @@ class PrompsWrap:
         )
 
         return response.json()
+    
+class VLMAgent:
+    def __init__(self) -> None:
+        pass
 
 
 if __name__ == '__main__':
@@ -73,7 +90,7 @@ if __name__ == '__main__':
 
     client = OpenAI(api_key=API_KEY)
 
-    testPrompts = PrompsWrap()
+    testPrompts = PrompsWrap(API_KEY)
     testPrompts.addTextPrompt(getText('./initialPrompts/Texts/systemMessage.txt'))
 
     # add few-shots message
@@ -94,6 +111,6 @@ if __name__ == '__main__':
     testPrompts.addTextPrompt(getText('./initialPrompts/Texts/Information_4.txt'))
     testPrompts.addImagePrompt(f'./initialPrompts/Images/Fig_4.jpg')
 
-    response = testPrompts.request(API_KEY)
+    response = testPrompts.request()
 
     print(response)
