@@ -15,7 +15,7 @@ Functions:
 """
 from copy import copy, deepcopy
 from enum import IntEnum, Enum
-from typing import Any, Dict, Set, Tuple
+from typing import Any, Dict, Set, Tuple, Self
 
 from trafficManager.common.coord_conversion import cartesian_to_frenet2D
 from utils.roadgraph import AbstractLane, JunctionLane, NormalLane, RoadGraph
@@ -35,8 +35,8 @@ class Behaviour(IntEnum):
     STOP = 5
     IN_JUNCTION = 6
     OVERTAKE = 7
+    IDLE = 8
     OTHER = 100
-
 
 class VehicleType(str, Enum):
     EGO = "Ego_Car"

@@ -120,10 +120,11 @@ class DBBridge:
                     orientation REAL,
                     consumption REAL);''')
         
-        cur.execute('''CREATE TABLE IF NOT EXISTS imageINFO(
+        cur.execute('''CREATE TABLE IF NOT EXISTS visualPromptsINFO(
                     frame INT PRIMARY KEY,
                     frontView TEXT,
-                    surroundingView TEXT);''')
+                    surroundingView TEXT,
+                    information TEXT);''')
 
         conn.commit()
         cur.close()

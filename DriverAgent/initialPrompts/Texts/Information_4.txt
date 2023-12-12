@@ -1,7 +1,7 @@
 ## Available Actions
- - ACC: increasing your speed.
- - DEC: slow down your speed.
- - MCV: Maintain your current speed.
+ - AC: increasing your speed.
+ - DC: slow down your speed.
+ - IDLE: Maintain your current speed.
 
 ## Navigation Information
 Please drive carefully along the current road

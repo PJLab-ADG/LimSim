@@ -5,4 +5,4 @@ It was a sunny, clear day and I was driving my vehicle on a city road. There wer
 According to the navigation information, I need to travel to the far left lane as quickly as possible. Therefore I first need to attempt a left turn. The vehicle in front of me on my left is moderately close enough that I will not collide with it if I choose to change lanes to the left, so I can change lanes to the left.
 
 ## Decison
-CL
+LCL

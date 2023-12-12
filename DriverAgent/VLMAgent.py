@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import yaml
 import base64
@@ -9,6 +10,8 @@ from openai import OpenAI
 from typing import Dict, List, Union
 
 from DriverAgent.Informer import Informer
+
+from trafficManager.common.vehicle import Behaviour
 
 
 def encode_image(image_path):
@@ -80,7 +83,32 @@ class PrompsWrap:
     
 class VLMAgent:
     def __init__(self) -> None:
-        pass
+        self.lastDecision: Behaviour = None
+
+    def str2behavior(self, decision) -> Behaviour:
+        if decision == 'IDLE':
+            return Behaviour.IDLE
+        elif decision == 'AC':
+            return Behaviour.AC
+        elif decision == 'DC':
+            return Behaviour.DC
+        elif decision == 'LCR':
+            return Behaviour.LCR
+        elif decision == 'LCL':
+            return Behaviour.LCL
+        else:
+            errorStr = f'The decision `{decision}` is not implemented yet!'
+            raise NotImplementedError(errorStr)
+
+    def makeDecision(self, prompts: PrompsWrap) -> Behaviour:
+        response = prompts.request()
+        ans = response['choices']['message']['content']
+        match = re.search(r'## Decision\n(.*)', ans)
+        if match:
+            decision = match.group(1)
+            behavior = self.str2behavior(decision)
+            self.lastDecision = behavior
+            return behavior
 
 
 if __name__ == '__main__':
