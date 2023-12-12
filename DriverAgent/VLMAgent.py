@@ -25,7 +25,7 @@ def getText(filePath: str) -> str:
         return res
 
 class PromptsWrap:
-    def __init__(self, API_KEY: str) -> None:
+    def __init__(self, API_KEY: str = os.environ.get('OPENAI_API_KEY')) -> None:
         self.content = []
         self.api_key = API_KEY
 
@@ -85,6 +85,7 @@ class VLMAgent:
     def __init__(self) -> None:
         self.lastDecision: Behaviour = None
 
+
     def str2behavior(self, decision) -> Behaviour:
         if decision == 'IDLE':
             return Behaviour.IDLE
@@ -100,7 +101,34 @@ class VLMAgent:
             errorStr = f'The decision `{decision}` is not implemented yet!'
             raise NotImplementedError(errorStr)
 
-    def makeDecision(self, prompts: PromptsWrap) -> Behaviour:
+    def generatePrompt(self, information: str, image_base64: str) -> PromptsWrap:
+        prompts = PromptsWrap()
+        prompts.addTextPrompt(getText('./DriverAgent/initialPrompts/Texts/SystemMessage.txt'))
+
+        # add few-shots message
+        # todo: memory retrive
+        few_shot_num = 4
+        for i in range(few_shot_num):
+            prompts.addTextPrompt(
+                getText(f'./DriverAgent/initialPrompts/Texts/Information_{i}.txt')
+            )
+            prompts.addImagePrompt(
+                f'./DriverAgent/initialPrompts/Images/Fig_{i}.jpg'
+            )
+            prompts.addTextPrompt(
+                getText(f'./DriverAgent/initialPrompts/Texts/Decision_{i}.txt')
+            )
+
+        prompts.addTextPrompt(textwrap.dedent(
+            "The example ends here, please start describing, reasoning and making decision."
+        ))
+        prompts.addTextPrompt(information)
+        prompts.addImageBase64(image_base64)
+        
+        return prompts
+
+    def makeDecision(self, information: str, image_base64: str) -> Behaviour:
+        prompts = self.generatePrompt(information, image_base64)
         response = prompts.request()
         ans = response['choices']['message']['content']
         match = re.search(r'## Decision\n(.*)', ans)
