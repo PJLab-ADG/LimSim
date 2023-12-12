@@ -17,7 +17,7 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 # BASIC_SETTINGS
 ego_id = 10
-sumo_gui = True
+sumo_gui = False
 sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
 sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
 sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"

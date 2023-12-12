@@ -24,7 +24,7 @@ def getText(filePath: str) -> str:
         res = f.read()
         return res
 
-class PrompsWrap:
+class PromptsWrap:
     def __init__(self, API_KEY: str) -> None:
         self.content = []
         self.api_key = API_KEY
@@ -100,7 +100,7 @@ class VLMAgent:
             errorStr = f'The decision `{decision}` is not implemented yet!'
             raise NotImplementedError(errorStr)
 
-    def makeDecision(self, prompts: PrompsWrap) -> Behaviour:
+    def makeDecision(self, prompts: PromptsWrap) -> Behaviour:
         response = prompts.request()
         ans = response['choices']['message']['content']
         match = re.search(r'## Decision\n(.*)', ans)
@@ -113,31 +113,31 @@ class VLMAgent:
 
 if __name__ == '__main__':
     # OpenAI API Key
-    CONFIG = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
-    API_KEY = CONFIG['API_KEY']
+    # use system environment variable
+    API_KEY = os.environ.get('OPENAI_API_KEY')
 
     client = OpenAI(api_key=API_KEY)
 
-    testPrompts = PrompsWrap(API_KEY)
-    testPrompts.addTextPrompt(getText('./initialPrompts/Texts/systemMessage.txt'))
+    testPrompts = PromptsWrap(API_KEY)
+    testPrompts.addTextPrompt(getText('./DriverAgent/initialPrompts/Texts/SystemMessage.txt'))
 
     # add few-shots message
     for i in [0, 1, 2, 3]:
         testPrompts.addTextPrompt(
-            getText(f'./initialPrompts/Texts/Information_{i}.txt')
+            getText(f'./DriverAgent/initialPrompts/Texts/Information_{i}.txt')
         )
         testPrompts.addImagePrompt(
-            f'./initialPrompts/Images/Fig_{i}.jpg'
+            f'./DriverAgent/initialPrompts/Images/Fig_{i}.jpg'
         )
         testPrompts.addTextPrompt(
-            getText(f'./initialPrompts/Texts/Decision_{i}.txt')
+            getText(f'./DriverAgent/initialPrompts/Texts/Decision_{i}.txt')
         )
 
     testPrompts.addTextPrompt(textwrap.dedent(
         "The example ends here, please start describing, reasoning and making decision."
     ))
-    testPrompts.addTextPrompt(getText('./initialPrompts/Texts/Information_4.txt'))
-    testPrompts.addImagePrompt(f'./initialPrompts/Images/Fig_4.jpg')
+    testPrompts.addTextPrompt(getText('./DriverAgent/initialPrompts/Texts/Information_4.txt'))
+    testPrompts.addImagePrompt(f'./DriverAgent/initialPrompts/Images/Fig_4.jpg')
 
     response = testPrompts.request()
 
