@@ -24,7 +24,6 @@ from utils.dbBridge import DBBridge
 
 from evaluation.evaluation import RealTimeEvaluation
 
-
 class Model:
     '''
         egoID: id of ego car;

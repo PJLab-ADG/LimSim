@@ -5,4 +5,4 @@ It is a sunny, clear day, and I am driving a vehicle on a curved city road. Ther
 Given that there are no other vehicles in my current lane and I am instructed to drive carefully, my main focus should be on adhering to traffic rules and road conditions. With the presence of a speed limit sign suggesting 40 mph, it's important to ensure I am not exceeding this limit. The road ahead is curving, so maintaining an appropriate speed for the curve is essential for safety. Since the instruction did not explicitly state a need to change lanes or adjust speed dramatically, the best course of action is to continue at a safe speed that complies with the speed limit while navigating the curve.
 
 ## Decision
-MCV
+IDLE

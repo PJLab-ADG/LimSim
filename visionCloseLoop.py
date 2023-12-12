@@ -10,6 +10,7 @@ from run_synchronization import SimulationSynchronization
 
 from simModel.egoTracking.model import Model
 from trafficManager.traffic_manager import TrafficManager
+from DriverAgent.Informer import Informer
 
 # logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -67,7 +68,10 @@ if __name__ == '__main__':
                         plt.pause(0.1)
                         _, buffer = cv2.imencode('.png', image_buffer)
                         image_base64 = base64.b64encode(buffer).decode('utf-8')
-                        model.dbBridge.commitData('imageINFO', (model.timeStep, image_base64, ''))
+                        model.dbBridge.commitData(
+                            'visualPromptsINFO', 
+                            (model.timeStep, image_base64, '', '')
+                            )
                     except NameError:
                         continue
                 trajectories = planner.plan(

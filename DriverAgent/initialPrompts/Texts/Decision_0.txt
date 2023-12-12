@@ -8,4 +8,4 @@ Perhaps I could maintain my current speed so that we would maintain this distanc
 Finally, if I slow down, the distance between us will increase so that I can safely change lanes, so I can choose to slow down.
 
 ## Decison
-DEC
+DC

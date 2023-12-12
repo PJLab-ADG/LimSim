@@ -9,11 +9,11 @@ class Informer:
     @staticmethod
     def getActionInfo(vehicles: Dict[str, Dict], roadgraph: RoadGraph):
         ActionInfo = '## Available Actions\n'
-        ACCInfo = ' - ACC: increasing your speed\n'
-        DECInfo = ' - DEC: slow down your speed\n'
-        MVCInfo = ' - MCV: Maintain your current speed\n'
-        CLInfo = ' - CL: Change lanes to the left\n'
-        CRInfo = ' - CR: Change lanes to the right\n'
+        ACCInfo = ' - AC: increasing your speed\n'
+        DECInfo = ' - DC: slow down your speed\n'
+        MVCInfo = ' - IDLE: Maintain your current speed\n'
+        CLInfo = ' - LCL: Change lanes to the left\n'
+        CRInfo = ' - LCR: Change lanes to the right\n'
         ego_info = vehicles['egoCar']
         curr_lane_id: str = ego_info['laneIDQ'][-1]
         curr_lane = roadgraph.get_lane_by_id(curr_lane_id)
