@@ -16,7 +16,7 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 # BASIC_SETTINGS
 ego_id = 10
-sumo_gui = False
+sumo_gui = True
 sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
 sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
 sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
@@ -42,6 +42,7 @@ if __name__ == '__main__':
     carla_simulation = CarlaSimulation(
         carla_host, carla_port, step_length
     )
+    carla_simulation.client.reload_world()
     synchronization = SimulationSynchronization(
         sumo_simulation, carla_simulation, 
         str(ego_id), tls_manager,
@@ -73,7 +74,8 @@ if __name__ == '__main__':
                 trajectories = planner.plan(
                     model.timeStep * 0.1, roadgraph, vehicles
                 )
-                model.setTrajectories(trajectories)
+                # model.setTrajectories(trajectories)
+                model.setTrajectories({})
             else:
                 model.ego.exitControlMode()
         model.updateVeh()
