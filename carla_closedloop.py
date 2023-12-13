@@ -86,11 +86,10 @@ def main_loop(model: Model, agents: edict, traffic_manager: TrafficManager, sync
                     synchronization.moveSpectator(carla_ego)
                     synchronization.setFrontViewCamera(carla_ego)
 
-                    ego_traj = handle_ego_car(
+                    trajectories = handle_ego_car(
                         synchronization, model, agents, traffic_manager, roadgraph, vehicles, config)
 
-                # model.setTrajectories(trajectories)
-                model.setTrajectories({ego_id: ego_traj})
+                model.setTrajectories(trajectories)
             else:
                 model.ego.exitControlMode()
         model.updateVeh()
@@ -157,12 +156,14 @@ def handle_ego_car(synchronization, model: Model, agents: edict(), traffic_manag
                 information, image_base64, descriptions)
 
         # Step 3: Plan the ego car's trajectory
-        # ego_path = self.ego_planner.plan(vehicles[ego_id], observation,     roadgraph, prediction, T, self.config) 
-        ego_path = planner.plan(vehicles, roadgraph,
-                                traffic_manager, ego_behaviour)
+        # todo: modify original traffic manager plan function
+        #       to accept ego car's behaviour and can choose weather plan for other cars
+        paths = traffic_manager.plan(vehicles,roadgraph,ego_behaviour)
 
     except NameError:
         pass
+
+    return paths
 
 
 if __name__ == '__main__':
