@@ -317,7 +317,6 @@ class Model:
     def putRenderData(self):
         if self.tpStart:
             roadgraphRenderData, VRDDict = self.ms.exportRenderData()
-            print('VRDDict exported: ', VRDDict['carInAoI'])
             self.RDQ.put((roadgraphRenderData, VRDDict))
 
     def exportSce(self):

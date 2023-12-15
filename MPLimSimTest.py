@@ -11,7 +11,7 @@ ego_id = 10
 sumo_gui = False
 sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
 sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
-database = 'visionCloseLoop.db'
+database = 'MPModelTest.db'
 
 
 
@@ -41,6 +41,8 @@ if __name__ == '__main__':
             else:
                 model.ego.exitControlMode()
         model.updateVeh()
-        
+
+
     model.destroy()
     gui.join()
+    gui.terminate()

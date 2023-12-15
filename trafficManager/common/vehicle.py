@@ -244,7 +244,10 @@ class Vehicle:
             if isinstance(current_lane, NormalLane):
                 next_lane = roadgraph.get_available_next_lane(
                     current_lane.id, self.available_lanes)
-                self.lane_id = next_lane.id
+                try:
+                    self.lane_id = next_lane.id
+                except AttributeError:
+                    print(self.id)
                 self.current_state = self.get_state_in_lane(next_lane)
                 current_lane = next_lane
             elif isinstance(current_lane, JunctionLane):

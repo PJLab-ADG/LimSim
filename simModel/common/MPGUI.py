@@ -1,5 +1,5 @@
 from utils.simBase import CoordTF, MapCoordTF
-from simModel.common.RenderDataQueue import RenderDataQueue, VRD, RRD
+from simModel.common.RenderDataQueue import RenderDataQueue, VRD, RGRD, ERD, LRD, JLRD
 from simModel.common.networkBuild import NetworkBuild
 from utils.roadgraph import RoadGraph
 
@@ -156,7 +156,7 @@ class GUI(Process):
         dpg.set_item_height('macroMap', 500)
         dpg.set_item_pos('macroMap', (10, 120))
 
-    def drawMainWindowWhiteBG(self, pmin: Tuple[float], pmax: Tuple[float]):
+    def drawMainWindowWhiteBG(self):
         pmin, pmax =  self.netBoundary
         centerx = (pmin[0] + pmax[0]) / 2
         centery = (pmin[1] + pmax[1]) / 2
@@ -194,14 +194,6 @@ class GUI(Process):
             self.zoom_speed = 1+(self.zoom_speed - 1) / 1.05
         if abs(self.zoom_speed - 1) < clip:
             self.zoom_speed = 1
-
-    # def drawMapBG(self):
-    #     self.mapCoordTF = MapCoordTF(
-    #         self.netBoundary[0], self.netBoundary[1], 'macroMap'
-    #         )
-    #     mNode = dpg.add_draw_node(parent='mapBackground')
-    #     for jid in self.nb.junctions.keys():
-    #         self.nb.plotMapJunction(jid, mNode, self.mapCoordTF)
 
     def plotVehicle(self, node, ex: float, ey: float, vtag: str, vrd: VRD):
         rotateMat = np.array(
@@ -248,8 +240,8 @@ class GUI(Process):
             dpg.draw_circle(
                 (cx, cy),
                 self.ctf.zoomScale * egoVRD.deArea,
-                thickness=0,
-                fill=(243, 156, 18, 20),
+                thickness=2,
+                fill=(243, 156, 18),
                 parent=node
             )
         except Exception as e:
@@ -268,22 +260,12 @@ class GUI(Process):
             parent=node, thickness=2
         )
 
-    # def drawRoadgraph(
-    #     self, node, roadgraphRenderData: RRD, 
-    #     ex: float, ey: float
-    # ):
-    #     for ed in roadgraphRenderData.edges:
-    #         self.nb.plotEdge(ed, node, ex, ey, self.ctf)
-
-    #     for jc in roadgraphRenderData.junctions:
-    #         self.nb.plotJunction(jc, node, ex, ey, self.ctf)
-
     def drawVehicles(
         self, node, VRDDict:Dict[str, List[VRD]], ex: float, ey: float
     ):
         egoVRD = VRDDict['egoCar'][0]
         self.plotVehicle(node, ex, ey, 'ego', egoVRD)
-        # self.plotdeArea(node, egoVRD, ex, ey)
+        self.plotdeArea(node, egoVRD, ex, ey)
         if egoVRD.trajectoryXQ:
             self.plotTrajectory(node, ex, ey, egoVRD)
         for avrd in VRDDict['carInAoI']:
@@ -293,17 +275,74 @@ class GUI(Process):
         for svrd in VRDDict['outOfAoI']:
             self.plotVehicle(node, ex, ey, 'other', svrd)
 
-    # def drawMovingSce(self, node, egoVRD: VRD):
-    #     mvCenterx, mvCentery = self.mapCoordTF.dpgCoord(egoVRD.x, egoVRD.y)
-    #     dpg.draw_circle((mvCenterx, mvCentery),
-    #                     egoVRD.deArea * self.mapCoordTF.zoomScale,
-    #                     thickness=0,
-    #                     fill=(243, 156, 18, 60),
-    #                     parent=node)
+    
+    def get_line_tf(self, line: List[float], ex, ey) -> List[float]:
+        return [
+            self.ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in line
+        ]
+    
+
+    def drawLane(self, node, lrd: LRD, ex, ey, flag: int):
+        if flag & 0b10:
+            return
+        else:
+            left_bound_tf = self.get_line_tf(lrd.left_bound, ex, ey)
+            dpg.draw_polyline(
+                left_bound_tf, color=(0, 0, 0, 100), 
+                thickness=2, parent=node
+            )
+
+    def drawEdge(self, node, erd: ERD, rgrd: RGRD, ex, ey):
+        for lane_index in range(erd.num_lanes):
+            lane_id = erd.id + '_' + str(lane_index)
+            lrd = rgrd.get_lane_by_id(lane_id)
+            flag = 0b00
+            if  lane_index == 0:
+                flag += 1
+                right_bound_tf = self.get_line_tf(lrd.right_bound, ex, ey)
+            if lane_index == erd.num_lanes - 1:
+                flag += 2
+                left_bound_tf = self.get_line_tf(lrd.left_bound, ex, ey)
+            self.drawLane(node, lrd, ex, ey, flag)
+
+        left_bound_tf.reverse()
+        right_bound_tf.extend(left_bound_tf)
+        right_bound_tf.append(right_bound_tf[0])
+        dpg.draw_polygon(
+            right_bound_tf, color=(0, 0, 0),
+            thickness=2, fill=(0, 0, 0, 30), parent=node
+        )
+
+    def drawJunctionLane(self, node, jlrd: JLRD, ex, ey):
+        if jlrd.center_line:
+            center_line_tf = self.get_line_tf(jlrd.center_line, ex, ey)
+            if jlrd.currTlState:
+                if jlrd.currTlState == 'r':
+                    # jlColor = (232, 65, 24)
+                    jlColor = (255, 107, 129, 100)
+                elif jlrd.currTlState == 'y':
+                    jlColor = (251, 197, 49, 100)
+                elif jlrd.currTlState == 'g' or jlrd.currTlState == 'G':
+                    jlColor = (39, 174, 96, 50)
+            else:
+                jlColor = (0, 0, 0, 30)
+            dpg.draw_polyline(
+                center_line_tf, color=jlColor,
+                thickness=17,  parent=node
+            )
+        
+
+    def drawRoadgraph(self, node, rgrd: RGRD, ex, ey):
+        for eid, erd in rgrd.edges.items():
+            self.drawEdge(node, erd, rgrd, ex, ey)
+
+        for jlid, jlrd in rgrd.junction_lanes.items():
+            self.drawJunctionLane(node, jlrd, ex, ey)
+
 
     def render_loop(self):
         self.update_inertial_zoom()
-        # self.drawMainWindowWhiteBG()
+        self.drawMainWindowWhiteBG()
         dpg.delete_item("Canvas", children_only=True)
         dpg.delete_item("movingScene", children_only=True)
         canvasNode = dpg.add_draw_node(parent="Canvas")
@@ -313,7 +352,7 @@ class GUI(Process):
             egoVRD = VRDDict['egoCar'][0]
             ex = egoVRD.x
             ey = egoVRD.y
-            # self.drawRoadgraph(canvasNode, roadgraphRenderData, ex, ey)
+            self.drawRoadgraph(canvasNode, roadgraphRenderData, ex, ey)
             self.drawVehicles(canvasNode, VRDDict, ex, ey)
             # self.drawMovingSce(movingSceNode, egoVRD)
         except TypeError:
