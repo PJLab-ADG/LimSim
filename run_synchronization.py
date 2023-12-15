@@ -71,6 +71,8 @@ def processImage(image):
     global image_buffer
     image_data = np.frombuffer(image.raw_data, dtype=np.dtype("uint8"))
     image_data = np.reshape(image_data, (image.height, image.width, 4))
+    # image_data rgb 
+    image_data = image_data[:,:,[2,1,0,3 ]]
     # 将图像数据存储到缓冲区
     image_buffer = image_data
 
