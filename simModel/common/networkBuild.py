@@ -25,14 +25,11 @@ class geoHash:
 
 
 class NetworkBuild:
-    def __init__(self,
-                 dataBase: str,
-                 networkFile: str,
-                 obsFile: str = None
-                 ) -> None:
+    def __init__(
+        self,  dataBase: str, networkFile: str,
+    ) -> None:
         self.dataBase = dataBase
         self.networkFile = networkFile
-        self.obsFile = obsFile
         self.edges: dict[str, Edge] = {}
         self.lanes: dict[str, NormalLane] = {}
         self.junctions: dict[str, Junction] = {}

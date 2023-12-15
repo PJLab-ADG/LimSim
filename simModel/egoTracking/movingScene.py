@@ -8,6 +8,7 @@ import sqlite3
 
 from simModel.common.networkBuild import NetworkBuild, Rebuild
 from simModel.common.carFactory import Vehicle, egoCar, DummyVehicle
+from simModel.common.RenderDataQueue import RRD
 from utils.roadgraph import RoadGraph
 from utils.simBase import CoordTF
 
@@ -167,6 +168,18 @@ class MovingScene:
         if self.junctions:
             for jc in self.junctions:
                 self.netInfo.plotJunction(jc, node, ex, ey, ctf)
+
+    def exportRenderData(self):
+        roadgraphRenderData = RRD(self.edges, self.junctions)
+
+        # export vehicles' information using dict.
+        VRDDict = {
+            'egoCar': [self.ego.exportVRD(),],
+            'carInAoI': [av.exportVRD() for av in self.vehINAoI.values()],
+            'outOfAoI': [sv.exportVRD() for sv in self.outOfAoI.values()]
+        }
+
+        return roadgraphRenderData, VRDDict
 
     def exportScene(self):
         roadgraph = RoadGraph()

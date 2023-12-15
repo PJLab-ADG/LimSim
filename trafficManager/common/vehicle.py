@@ -15,7 +15,7 @@ Functions:
 """
 from copy import copy, deepcopy
 from enum import IntEnum, Enum
-from typing import Any, Dict, Set, Tuple, Self
+from typing import Any, Dict, Set, Tuple
 
 from trafficManager.common.coord_conversion import cartesian_to_frenet2D
 from utils.roadgraph import AbstractLane, JunctionLane, NormalLane, RoadGraph

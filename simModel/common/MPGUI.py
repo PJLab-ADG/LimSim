@@ -1,37 +1,28 @@
+from utils.simBase import CoordTF, MapCoordTF
+from simModel.common.RenderDataQueue import RenderDataQueue, VRD, RRD
+from simModel.common.networkBuild import NetworkBuild
+from utils.roadgraph import RoadGraph
+
+from rich import print
+import numpy as np 
+from math import cos, pi, sin
+from typing import Tuple, List, Dict
 import dearpygui.dearpygui as dpg
-from utils.simBase import CoordTF
-from typing import Tuple
 from multiprocessing import Process
-from simModel.common.RenderDataQueue import RenderDataQueue
 
 
 class GUI(Process):
-    '''
-        mode: type of simulation, available mode: `real-time-ego`, `real-time-local`,
-            `replay-ego`, `replay-local`. The interactive replay has the same mode
-            with real-time simulation, for example, the mode of interactive replay 
-            for ego tracking should be set as `real-time-ego`. the mode of 
-            interactive replay for local are should be set as `real-time-local`.
-    '''
-
-    def __init__(self, queue: RenderDataQueue) -> None:
-        super.__init__()
+    def __init__(
+        self, queue: RenderDataQueue, 
+        netBoundary: Tuple[Tuple[float, float], Tuple[float, float]]
+    ) -> None:
+        super().__init__()
         self.queue = queue
-        self.is_running = True
-        self.replayDelay = 0
-        self.frameIncre = 0
+        self.netBoundary = netBoundary
 
         self.zoom_speed: float = 1.0
         self.is_dragging: bool = False
         self.old_offset = (0, 0)
-
-        self.setup()
-        self.setup_themes()
-        self.create_windows()
-        self.create_handlers()
-        self.resize_windows()
-
-        self.ctf = CoordTF(120, 'MainWindow')
 
     def setup(self):
         dpg.create_context()
@@ -129,35 +120,6 @@ class GUI(Process):
 
         dpg.bind_font(default_font)
 
-        with dpg.window(
-            tag='ControlWindow',
-            label='Menu',
-            no_close=True,
-            # no_collapse=True,
-            # no_resize=True
-        ):
-            with dpg.group(horizontal=True):
-                dpg.add_button(
-                    label="Pause", tag="PauseResumeButton",
-                    callback=self.toggle
-                )
-
-                dpg.add_button(
-                    label="Next frame",
-                    callback=self.nextFrame)
-
-            dpg.add_spacer(height=5)
-
-            with dpg.group(horizontal=True):
-                dpg.add_text('Time delay: ')
-                dpg.add_slider_float(
-                    tag="DelayInput",
-                    min_value=0, max_value=1,
-                    default_value=0, callback=self.setDelay
-                )
-
-        dpg.bind_item_theme('PauseResumeButton', 'PauseButtonTheme')
-
         dpg.add_window(
             tag="MainWindow",
             label="Microscopic simulation",
@@ -171,77 +133,12 @@ class GUI(Process):
         dpg.add_draw_node(tag="Canvas", parent="MainWindow")
 
         with dpg.window(
-            tag='vState',
-            label='Vehicle states',
-            no_close=True,
-            # no_collapse=True,
-            # no_resize=True,
-            # no_move=True
-        ):
-            with dpg.plot(tag='vehicleStates', height=305, width=400):
-                dpg.add_plot_legend()
-
-                dpg.add_plot_axis(
-                    dpg.mvXAxis, label="time steps (s)", tag='v_x_axis'
-                )
-                dpg.add_plot_axis(
-                    dpg.mvYAxis, label="Velocity (m/s)", tag="v_y_axis"
-                )
-                dpg.add_plot_axis(
-                    dpg.mvYAxis, label="Acceleration (m/s^2)", tag="a_y_axis"
-                )
-                dpg.set_axis_limits('v_y_axis', 0, 15)
-                dpg.set_axis_limits('v_x_axis', -49, 50)
-                dpg.set_axis_limits('a_y_axis', -5, 5)
-
-                # series belong to a y axis
-                dpg.add_line_series(
-                    [], [], parent="v_y_axis", tag="v_series_tag",
-                    label='Velocity'
-                )
-                dpg.add_line_series(
-                    [], [], parent="v_y_axis", tag="v_series_tag_future"
-                )
-
-                dpg.add_line_series(
-                    [], [], parent="a_y_axis", tag="a_series_tag",
-                    label='Acceleration'
-                )
-                dpg.add_line_series(
-                    [], [], parent="a_y_axis", tag="a_series_tag_future"
-                )
-
-                dpg.bind_item_theme("v_series_tag", "plot_theme_v")
-                dpg.bind_item_theme(
-                    'v_series_tag_future', 'plot_theme_v_future'
-                )
-
-                dpg.bind_item_theme("a_series_tag", "plot_theme_a")
-                dpg.bind_item_theme(
-                    'a_series_tag_future', 'plot_theme_a_future'
-                )
-        with dpg.window(
-            tag='sEvaluation',
-            label='Evaluation',
-            no_close=True,
-        ):
-            dpg.add_draw_node(tag="radarBackground", parent="sEvaluation")
-            dpg.add_draw_node(tag="radarPlot", parent="sEvaluation")
-
-        with dpg.window(
             tag='macroMap',
             label='City-level map',
             no_close=True,
         ):
             dpg.add_draw_node(tag="mapBackground", parent="macroMap")
             dpg.add_draw_node(tag="movingScene", parent="macroMap")
-
-        with dpg.window(
-            tag='simInfo',
-            label='Simulation information',
-            no_close=True,
-        ):
-            dpg.add_draw_node(tag="infoText", parent="simInfo")
 
     def create_handlers(self):
         with dpg.handler_registry():
@@ -251,31 +148,16 @@ class GUI(Process):
             dpg.add_mouse_wheel_handler(callback=self.mouse_wheel)
 
     def resize_windows(self):
-        dpg.set_item_width('ControlWindow', 1635)
-        dpg.set_item_height('ControlWindow', 0)
-        dpg.set_item_pos('ControlWindow', (10, 10))
-
         dpg.set_item_width("MainWindow", 700)
         dpg.set_item_height("MainWindow", 700)
         dpg.set_item_pos("MainWindow", (520, 120))
-
-        dpg.set_item_width('vState', 415)
-        dpg.set_item_height('vState', 345)
-        dpg.set_item_pos('vState', (1230, 120))
-
-        dpg.set_item_width('sEvaluation', 415)
-        dpg.set_item_height('sEvaluation', 345)
-        dpg.set_item_pos('sEvaluation', (1230, 475))
 
         dpg.set_item_width('macroMap', 500)
         dpg.set_item_height('macroMap', 500)
         dpg.set_item_pos('macroMap', (10, 120))
 
-        dpg.set_item_width('simInfo', 500)
-        dpg.set_item_height('simInfo', 190)
-        dpg.set_item_pos('simInfo', (10, 630))
-
     def drawMainWindowWhiteBG(self, pmin: Tuple[float], pmax: Tuple[float]):
+        pmin, pmax =  self.netBoundary
         centerx = (pmin[0] + pmax[0]) / 2
         centery = (pmin[1] + pmax[1]) / 2
         dpg.draw_rectangle(
@@ -313,48 +195,138 @@ class GUI(Process):
         if abs(self.zoom_speed - 1) < clip:
             self.zoom_speed = 1
 
-    def setDelay(self):
-        self.replayDelay = dpg.get_value('DelayInput')
+    # def drawMapBG(self):
+    #     self.mapCoordTF = MapCoordTF(
+    #         self.netBoundary[0], self.netBoundary[1], 'macroMap'
+    #         )
+    #     mNode = dpg.add_draw_node(parent='mapBackground')
+    #     for jid in self.nb.junctions.keys():
+    #         self.nb.plotMapJunction(jid, mNode, self.mapCoordTF)
 
-    def start(self):
-        self.is_running = True
-        dpg.show_viewport()
+    def plotVehicle(self, node, ex: float, ey: float, vtag: str, vrd: VRD):
+        rotateMat = np.array(
+            [
+                [cos(vrd.yaw), -sin(vrd.yaw)],
+                [sin(vrd.yaw), cos(vrd.yaw)]
+            ]
+        )
+        vertexes = [
+            np.array([[vrd.length/2], [vrd.width/2]]),
+            np.array([[vrd.length/2], [-vrd.width/2]]),
+            np.array([[-vrd.length/2], [-vrd.width/2]]),
+            np.array([[-vrd.length/2], [vrd.width/2]])
+        ]
+        rotVertexes = [np.dot(rotateMat, vex) for vex in vertexes]
+        relativeVex = [
+            [vrd.x+rv[0]-ex, vrd.y+rv[1]-ey] for rv in rotVertexes
+        ]
+        drawVex = [
+            [
+                self.ctf.zoomScale*(self.ctf.drawCenter+rev[0]+self.ctf.offset[0]),
+                self.ctf.zoomScale*(self.ctf.drawCenter-rev[1]+self.ctf.offset[1])
+            ] for rev in relativeVex
+        ]
+        if vtag == 'ego':
+            vcolor = (211, 84, 0)
+        elif vtag == 'AoI':
+            vcolor = (41, 128, 185)
+        else:
+            vcolor = (99, 110, 114)
+
+        dpg.draw_polygon(drawVex, color=vcolor, fill=vcolor, parent=node)
+        dpg.draw_text(
+            self.ctf.dpgCoord(vrd.x, vrd.y, ex, ey),
+            vrd.id,
+            color=(0, 0, 0),
+            size=20,
+            parent=node
+        )
+
+    def plotdeArea(self, node, egoVRD: VRD, ex: float, ey: float):
+        cx, cy = self.ctf.dpgCoord(egoVRD.x, egoVRD.y, ex, ey)
+        try:
+            dpg.draw_circle(
+                (cx, cy),
+                self.ctf.zoomScale * egoVRD.deArea,
+                thickness=0,
+                fill=(243, 156, 18, 20),
+                parent=node
+            )
+        except Exception as e:
+            raise e
+
+    def plotTrajectory(self, node, ex: float, ey: float, vrd: VRD):
+        tps = [
+            self.ctf.dpgCoord(
+                vrd.trajectoryXQ[i],
+                vrd.trajectoryYQ[i],
+                ex, ey
+            ) for i in range(len(vrd.trajectoryXQ))
+        ]
+        dpg.draw_polyline(
+            tps, color=(205, 132, 241),
+            parent=node, thickness=2
+        )
+
+    # def drawRoadgraph(
+    #     self, node, roadgraphRenderData: RRD, 
+    #     ex: float, ey: float
+    # ):
+    #     for ed in roadgraphRenderData.edges:
+    #         self.nb.plotEdge(ed, node, ex, ey, self.ctf)
+
+    #     for jc in roadgraphRenderData.junctions:
+    #         self.nb.plotJunction(jc, node, ex, ey, self.ctf)
+
+    def drawVehicles(
+        self, node, VRDDict:Dict[str, List[VRD]], ex: float, ey: float
+    ):
+        egoVRD = VRDDict['egoCar'][0]
+        self.plotVehicle(node, ex, ey, 'ego', egoVRD)
+        # self.plotdeArea(node, egoVRD, ex, ey)
+        if egoVRD.trajectoryXQ:
+            self.plotTrajectory(node, ex, ey, egoVRD)
+        for avrd in VRDDict['carInAoI']:
+            self.plotVehicle(node, ex, ey, 'AoI', avrd)
+            if avrd.trajectoryXQ:
+                self.plotTrajectory(node, ex, ey, avrd)
+        for svrd in VRDDict['outOfAoI']:
+            self.plotVehicle(node, ex, ey, 'other', svrd)
+
+    # def drawMovingSce(self, node, egoVRD: VRD):
+    #     mvCenterx, mvCentery = self.mapCoordTF.dpgCoord(egoVRD.x, egoVRD.y)
+    #     dpg.draw_circle((mvCenterx, mvCentery),
+    #                     egoVRD.deArea * self.mapCoordTF.zoomScale,
+    #                     thickness=0,
+    #                     fill=(243, 156, 18, 60),
+    #                     parent=node)
 
     def render_loop(self):
-        pass
+        self.update_inertial_zoom()
+        # self.drawMainWindowWhiteBG()
+        dpg.delete_item("Canvas", children_only=True)
+        dpg.delete_item("movingScene", children_only=True)
+        canvasNode = dpg.add_draw_node(parent="Canvas")
+        movingSceNode = dpg.add_draw_node(parent='movingScene')
+        try:
+            roadgraphRenderData, VRDDict = self.queue.get()
+            egoVRD = VRDDict['egoCar'][0]
+            ex = egoVRD.x
+            ey = egoVRD.y
+            # self.drawRoadgraph(canvasNode, roadgraphRenderData, ex, ey)
+            self.drawVehicles(canvasNode, VRDDict, ex, ey)
+            # self.drawMovingSce(movingSceNode, egoVRD)
+        except TypeError:
+            return
 
-    def show(self):
+    def run(self):
+        self.setup()
+        self.create_windows()
+        self.create_handlers()
+        self.resize_windows()
+        self.ctf = CoordTF(120, 'MainWindow')
         dpg.show_viewport()
+        # self.drawMapBG()
         while dpg.is_dearpygui_running():
             self.render_loop()
             dpg.render_dearpygui_frame()
-        dpg.destroy_context()
-
-    def nextFrame(self):
-        # when the replay model is suspended, click "next frame" button will move
-        # one single step
-        if not self.is_running:
-            self.frameIncre += 1
-
-    def destroy(self):
-        self.is_running = False
-        dpg.destroy_context()
-
-    def resume(self):
-        self.is_running = True
-        dpg.set_item_label('PauseResumeButton', 'Pause')
-        dpg.bind_item_theme('PauseResumeButton', 'PauseButtonTheme')
-
-    def pause(self):
-        self.is_running = False
-        dpg.set_item_label('PauseResumeButton', 'Resume')
-        dpg.bind_item_theme('PauseResumeButton', 'ResumeButtonTheme')
-
-    def toggle(self):
-        if self.is_running:
-            self.pause()
-        else:
-            self.resume()
-
-    def run(self):
-        pass

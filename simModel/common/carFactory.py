@@ -11,6 +11,7 @@ import traci
 from traci import TraCIException
 
 from simModel.common.networkBuild import NetworkBuild, Rebuild
+from simModel.common.RenderDataQueue import VRD
 from utils.simBase import CoordTF, deduceEdge
 from utils.trajectory import Trajectory
 
@@ -311,6 +312,21 @@ class Vehicle:
             'availableLanes': self.availableLanes(nb),
             'routeIdxQ': self.routeIdxQ
         }
+    
+    def exportVRD(self) -> VRD:
+        if self.plannedTrajectory and self.plannedTrajectory.xQueue:
+            return VRD(
+                self.id, self.x, self.y, self.yaw, None,
+                self.length, self.width,
+                self.plannedTrajectory.xQueue,
+                self.plannedTrajectory.yQueue
+            )
+        else:
+            return VRD(
+                self.id, self.x, self.y, self.yaw, None,
+                self.length, self.width,
+                None, None
+            )
 
     def plotSelf(self, vtag: str, node: dpg.node, ex: float, ey: float, ctf: CoordTF):
         if not self.xQ:
@@ -465,6 +481,21 @@ class egoCar(Vehicle):
         self.deArea = deArea
         self.sceMargin = sceMargin
 
+    def exportVRD(self) -> VRD:
+        if self.plannedTrajectory and self.plannedTrajectory.xQueue:
+            return VRD(
+                self.id, self.x, self.y, self.yaw, None,
+                self.length, self.width,
+                self.plannedTrajectory.xQueue,
+                self.plannedTrajectory.yQueue
+            )
+        else:
+            return VRD(
+                self.id, self.x, self.y, self.yaw, None,
+                self.length, self.width,
+                None, None
+            )
+
     def plotdeArea(self, node: dpg.node, ex: float, ey: float, ctf: CoordTF):
         cx, cy = ctf.dpgCoord(self.x, self.y, ex, ey)
         dpg.draw_circle(
@@ -475,12 +506,6 @@ class egoCar(Vehicle):
             parent=node
         )
 
-        # dpg.draw_circle(
-        #     (cx, cy),
-        #     2 * zoomScale * self.deArea,
-        #     color=(37, 204, 247),
-        #     parent=node
-        #     )
 
 
 class DummyVehicle:

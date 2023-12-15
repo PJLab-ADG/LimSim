@@ -183,3 +183,7 @@ report/
 *.pptx
 
 FVCFigs/
+
+*Test.py
+
+*Test.ipynb

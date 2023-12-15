@@ -33,6 +33,9 @@
     <vehicle id="10" depart="20.00" type="vehicle.lincoln.mkz_2017" departLane="random">
         <route edges="-29#1 27 -48#0" />
     </vehicle>
+    <vehicle id="11" depart="21.00" type="vehicle.lincoln.mkz_2017" departLane="random">
+        <route edges="-29#1 27 -48#0" />
+    </vehicle>
     <!-- <vehicle id="11" depart="22.00" type="vehicle.carlamotors.carlacola" departLane="random">
         <route edges="-29#1 27 -48#0" />
     </vehicle> -->
