@@ -1,0 +1,32 @@
+{
+    "basic_description":{
+        "current_lane_scenario_description": {
+            "normal_lane": "You are driving on a road with {edge_num} lanes in your direction, and you are currently driving in the number {left_lane_num} lane from the left. The length of the current lane is {lane_length} $m$.",
+            "junction_lane": "You are driving on a junction. "
+        },
+        "next_lane_scenario_description": {
+            "normal_lane": "The type of next road is normal lane, and the number of the next road is {edge_num}. ",
+            "junction_lane": "The type of next road is junction {tl_state} a traffic light. The stop line at the junction is {dis_stop_line} meters ahead of you. "
+        },
+        "traffic_info_description": "The limit speed of the current lane is {speed_limit} $m/s$. ",
+        "traffic_light_description": "The traffic light is currently {curr_tl_state}, it will be {next_tl_state} in {switch_time} seconds. ",
+
+        "ego_state_description": "Your current position is {ego_position}, speed is {ego_speed} $m/s$, acceleration is {ego_acceleration} $m/s^2$, and lane position is {ego_lane_position} $m$. ",
+
+        "surrond_vehicle_on_normal_description": "- Vehicle '{sv_id}' is driving on the {lane_relative_position} and is {relative_position} of you. The position of it is {sv_position}, speed is {sv_speed} $m/s$, acceleration is {sv_acceleration} $m/s^2$, and lane position is {sv_lane_position} $m$. The distance between you and vehicle '{sv_id}' is {distance} $m$. ",
+        "surrond_vehicle_on_junction_description": "- Vehicle '{sv_id}' is driving on the same junction as you and will have collision with you. The speed of it is {sv_speed} $m/s$, acceleration is {sv_acc} $m/s^2$. The collision will occur at {ego_s} $m$ in front of you, {sv_s} $m$ in front of the vehicle '{sv_id}'. The time required for you to reach the collide point is {ego_time} $s$, and the vehicle '{sv_id}' to reach the collide point is {sv_time} $s$. ",
+
+        "last_decision_description":{
+            "basic": "The last action you made {delta_time} $s$ ago was {decision}. ",
+            "changing_lane": "You are changing lane to the {direction} of the current lane. Please keep the lane change decision as long as possible until the lane change is completed. ",
+            "changed_lane": "You have changed lane to the {direction} of the current lane. "
+        } 
+    },
+    "import_description":{
+        "traffic_notice": "Attention, you are approaching a junction with a traffic light. ",
+        "change_lane_notice": "You should turn {direction} in the next junction. Please change lanes to the number {index} lane on your {direction}. The stop line at the junction is {dis_stop_line} meters ahead of you, you'd better change lanes {dis_change_lane} $m$ behind the stop line. "
+    },
+    "intension":{
+        "normal": "your driving intension is to drive safety and avoid collisions while reaching the destination as quickly as possible. "
+    }
+}

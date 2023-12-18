@@ -187,3 +187,7 @@ FVCFigs/
 *Test.py
 
 *Test.ipynb
+
+DriverAgent/GT/config.yaml
+
+db/

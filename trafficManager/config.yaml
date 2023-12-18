@@ -1,7 +1,7 @@
 ANIMATION: False
 VERBOSE: False # print detailed debug message
 CSV: False # write trajectories in trajectories.csv
-EGO_PLANNER: False # whether exist an ego planner
+EGO_PLANNER: True # whether exist an ego planner
 USE_DECISION_MAKER: False # whether use decision maker results in planning module
 
 MAX_ROAD_WIDTH: 3.5 # [DEPRECATED]: maximum road width [m]
@@ -59,3 +59,13 @@ vehicle:
     max_accel: 2.0
     max_decel: -4.0
     max_speed: 40
+
+##############
+# LLMDriver module
+##############
+ACC_DEFAULT: 0.5 # acceleration [m/s^2]
+DCC_DEFAULT: 2.0
+DESCRIBE_JSON: "DriverAgent/GT/prompt_template.json" # describe json file
+DECISION_TIME: 1.0 # decision time [s]
+ACC_MAX: 2.6 # max acceleration [m/s^2]
+ACC_MIN: -4.5 # min acceleration [m/s^2]

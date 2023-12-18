@@ -14,7 +14,7 @@ from trafficManager.decision_maker.mcts_decision_maker import (
     EgoDecisionMaker,
     MultiDecisionMaker,
 )
-from planner.ego_vehicle_planner import EgoPlanner
+from planner.ego_vehicle_planner import LLMEgoPlanner
 from planner.multi_vehicle_planner import MultiVehiclePlanner
 from predictor.simple_predictor import UncontrolledPredictor
 from simModel.egoTracking.model import Model
@@ -70,7 +70,7 @@ class TrafficManager:
 
         self.predictor = predictor if predictor is not None else UncontrolledPredictor()
         self.ego_decision = ego_decision if ego_decision is not None else EgoDecisionMaker()
-        self.ego_planner = ego_planner if ego_planner is not None else EgoPlanner()
+        self.ego_planner = ego_planner if ego_planner is not None else LLMEgoPlanner()
         self.multi_decision = multi_decision if multi_decision is not None else MultiDecisionMaker()
         self.multi_veh_planner = multi_veh_planner if multi_veh_planner is not None else MultiVehiclePlanner()
 
@@ -94,7 +94,7 @@ class TrafficManager:
         listener.start()  # start to listen on a separate thread
 
     def plan(self, T: float, roadgraph: RoadGraph,
-             vehicles_info: dict) -> Dict[int, Trajectory]:
+             vehicles_info: dict, ego_behaviour: Behaviour = Behaviour(8), other_plan: bool = True) -> Dict[int, Trajectory]:
         """
         This function plans the trajectories of vehicles in a given roadgraph. 
         It takes in the total time T, the roadgraph, and the vehicles_info as parameters. 
@@ -150,30 +150,39 @@ class TrafficManager:
             self.mul_decisions = self.multi_decision.make_decision(
                 T, observation, roadgraph, prediction, self.config)
             self.last_decision_time = T
-        # Planner
-        result_paths = self.multi_veh_planner.plan(observation, roadgraph,
-                                                   prediction,
-                                                   multi_decision=self.mul_decisions,
-                                                   T=T, config=self.config)
 
-        # an example of ego planner
-        if self.config["EGO_PLANNER"]:
-            ego_path = self.ego_planner.plan(vehicles[ego_id], observation,
-                                             roadgraph, prediction, T,
-                                             self.config, ego_decision)
-            result_paths[ego_id] = ego_path
+        result_paths = dict()
+        # Planner
+        if other_plan:
+            result_paths = self.multi_veh_planner.plan(observation, roadgraph,
+                                                    prediction,
+                                                    multi_decision=self.mul_decisions,
+                                                    T=T, config=self.config)
+
+        # default: use the ego_planner, in trafficManager/planner/ego_vehicle_planner.py
+        # if self.config["EGO_PLANNER"]:
+        vehicles[ego_id].behaviour = ego_behaviour
+        ego_path = self.ego_planner.plan(vehicles[ego_id], observation,
+                                            roadgraph, prediction, T,
+                                            self.config)
+        result_paths[ego_id] = ego_path
 
         # Update Last Seen
         output_trajectories = {}
-        self.lastseen_vehicles = dict(
-            (vehicle_id, vehicle)
-            for vehicle_id, vehicle in vehicles.items()
-            if vehicle.vtype != VehicleType.OUT_OF_AOI)
+        if other_plan:
+            self.lastseen_vehicles = dict(
+                (vehicle_id, vehicle)
+                for vehicle_id, vehicle in vehicles.items()
+                if vehicle.vtype != VehicleType.OUT_OF_AOI)
+        else:
+            self.lastseen_vehicles = dict(
+                (vehicle_id, vehicle)
+                for vehicle_id, vehicle in vehicles.items()
+                if vehicle.vtype == VehicleType.EGO)
         for vehicle_id, trajectory in result_paths.items():
             self.lastseen_vehicles[vehicle_id].trajectory = trajectory
             output_trajectories[vehicle_id] = data_copy.deepcopy(trajectory)
             del output_trajectories[vehicle_id].states[0]
-
         # update self.T
         self.time_step = current_time_step
 

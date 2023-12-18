@@ -495,7 +495,7 @@ class Rebuild(NetworkBuild):
                  ) -> None:
         networkFile: str = ''
         obsFile: str = ''
-        super().__init__(dataBase, networkFile, obsFile)
+        super().__init__(dataBase, networkFile)
 
     def getData(self):
         conn = sqlite3.connect(self.dataBase)

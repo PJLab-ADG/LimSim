@@ -83,7 +83,7 @@ class Model:
         self.dataQue = Queue()
         self.createTimer()
 
-        self.nb = NetworkBuild(self.dataBase, netFile, obsFile)
+        self.nb = NetworkBuild(self.dataBase, netFile)
         self.nb.getData()
         self.nb.buildTopology()
 

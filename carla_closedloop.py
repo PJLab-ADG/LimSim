@@ -148,17 +148,20 @@ def handle_ego_car(synchronization, model: Model, agents: edict(), traffic_manag
             if config["descriptor_type"] == "VLM":
                 descriptions = agents.descriptor.getDescription()
             elif config["descriptor_type"] == "GT":
-                # env_describe = self.env_scenario.describe(observation, roadgraph, prediction, T, self.last_decision_time)
+
                 descriptions = agents.descriptor.getDescription(
-                    roadgraph, vehicles, traffic_manager)
-            #  action, response, human_question, fewshot_answer = self.llm_driver.few_shot_decision(env_describe[0], env_describe[1], env_describe[2], T)
-            ego_behaviour = agents.agent.makeDecision(
+                    roadgraph, vehicles, traffic_manager, model.timeStep * 0.1)
+
+            ego_behaviour, response, human_question, fewshot, result = agents.agent.makeDecision(
                 information, image_base64, descriptions)
+             
+            agents.agent.dbBridge.insertPrompts(model.timeStep * 0.1, vehicles["egoCar"]["id"], result, human_question, fewshot, response)
+            
 
         # Step 3: Plan the ego car's trajectory
         # todo: modify original traffic manager plan function
         #       to accept ego car's behaviour and can choose weather plan for other cars
-        paths = traffic_manager.plan(vehicles,roadgraph,ego_behaviour)
+        paths = traffic_manager.plan(model.timeStep, roadgraph, vehicles, ego_behaviour, other_plan=True)
 
     except NameError:
         pass
