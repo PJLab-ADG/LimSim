@@ -1,5 +1,6 @@
 from utils.simBase import CoordTF, MapCoordTF
-from simModel.common.RenderDataQueue import RenderDataQueue, VRD, RGRD, ERD, LRD, JLRD
+from simModel.common.RenderDataQueue import (
+    RenderDataQueue, VRD, RGRD, ERD, LRD, JLRD, DecisionDataQueue)
 from simModel.common.networkBuild import NetworkBuild
 from utils.roadgraph import RoadGraph
 
@@ -13,11 +14,13 @@ from multiprocessing import Process
 
 class GUI(Process):
     def __init__(
-        self, queue: RenderDataQueue, 
+        self, renderQueue: RenderDataQueue, 
+        decisionQueue: DecisionDataQueue,
         netBoundary: Tuple[Tuple[float, float], Tuple[float, float]]
     ) -> None:
         super().__init__()
-        self.queue = queue
+        self.renderQueue = renderQueue
+        self.decisionQueue = decisionQueue
         self.netBoundary = netBoundary
 
         self.zoom_speed: float = 1.0
@@ -28,7 +31,7 @@ class GUI(Process):
         dpg.create_context()
         dpg.create_viewport(
             title="TrafficSimulator",
-            width=1670, height=870)
+            width=1630, height=820)
         dpg.setup_dearpygui()
 
     def setup_themes(self):
@@ -52,68 +55,6 @@ class GUI(Process):
 
         dpg.bind_theme(global_theme)
 
-        with dpg.theme(tag="ResumeButtonTheme"):
-            with dpg.theme_component(dpg.mvButton):
-                dpg.add_theme_color(dpg.mvThemeCol_Button, (5, 150, 18))
-                dpg.add_theme_color(
-                    dpg.mvThemeCol_ButtonHovered, (12, 207, 23))
-                dpg.add_theme_color(
-                    dpg.mvThemeCol_ButtonActive, (2, 120, 10))
-
-        with dpg.theme(tag="PauseButtonTheme"):
-            with dpg.theme_component(dpg.mvButton):
-                dpg.add_theme_color(dpg.mvThemeCol_Button, (150, 5, 18))
-                dpg.add_theme_color(
-                    dpg.mvThemeCol_ButtonHovered, (207, 12, 23))
-                dpg.add_theme_color(
-                    dpg.mvThemeCol_ButtonActive, (120, 2, 10))
-
-        with dpg.theme(tag="plot_theme_v"):
-            with dpg.theme_component(dpg.mvLineSeries):
-                dpg.add_theme_color(
-                    dpg.mvPlotCol_Line, (255, 165, 2),
-                    category=dpg.mvThemeCat_Plots
-                )
-                dpg.add_theme_style(
-                    dpg.mvPlotStyleVar_LineWeight, 3,
-                    category=dpg.mvThemeCat_Plots
-                )
-
-        with dpg.theme(tag="plot_theme_v_future"):
-            with dpg.theme_component(dpg.mvLineSeries):
-                dpg.add_theme_color(
-                    dpg.mvPlotCol_Line,
-                    (255, 165, 2, 70),
-                    category=dpg.mvThemeCat_Plots
-                )
-                dpg.add_theme_style(
-                    dpg.mvPlotStyleVar_LineWeight, 3,
-                    category=dpg.mvThemeCat_Plots
-                )
-
-        with dpg.theme(tag="plot_theme_a"):
-            with dpg.theme_component(dpg.mvLineSeries):
-                dpg.add_theme_color(
-                    dpg.mvPlotCol_Line, (0, 148, 50),
-                    category=dpg.mvThemeCat_Plots
-                )
-                dpg.add_theme_style(
-                    dpg.mvPlotStyleVar_LineWeight, 3,
-                    category=dpg.mvThemeCat_Plots
-                )
-
-        with dpg.theme(tag="plot_theme_a_future"):
-            with dpg.theme_component(dpg.mvLineSeries):
-                dpg.add_theme_color(
-                    dpg.mvPlotCol_Line,
-                    (0, 148, 50, 70),
-                    category=dpg.mvThemeCat_Plots
-                )
-                dpg.add_theme_style(
-                    dpg.mvPlotStyleVar_LineWeight, 3,
-                    category=dpg.mvThemeCat_Plots
-                )
-
     def create_windows(self):
         with dpg.font_registry():
             default_font = dpg.add_font("simModel/common/fonts/Meslo.ttf", 18)
@@ -132,13 +73,24 @@ class GUI(Process):
         self.BGnode = dpg.add_draw_node(tag="CanvasBG", parent="MainWindow")
         dpg.add_draw_node(tag="Canvas", parent="MainWindow")
 
-        with dpg.window(
-            tag='macroMap',
-            label='City-level map',
-            no_close=True,
-        ):
-            dpg.add_draw_node(tag="mapBackground", parent="macroMap")
-            dpg.add_draw_node(tag="movingScene", parent="macroMap")
+        texture_data = []
+        for i in range(0, 800 * 600):
+            texture_data.append(255 / 255)
+            texture_data.append(255 / 255)
+            texture_data.append(255 / 255)
+            texture_data.append(255 / 255)
+
+        print('texture_data length: ', len(texture_data))
+
+        texture_registry = dpg.add_texture_registry(show = True)
+        dpg.add_dynamic_texture(
+            width=800, height=600, 
+            default_value=texture_data, tag='texture_tag',
+            parent=texture_registry
+        )
+
+        with dpg.window(tag='FrontViewCamera', label='Front view camera'):
+            dpg.add_image('texture_tag')
 
     def create_handlers(self):
         with dpg.handler_registry():
@@ -148,13 +100,14 @@ class GUI(Process):
             dpg.add_mouse_wheel_handler(callback=self.mouse_wheel)
 
     def resize_windows(self):
-        dpg.set_item_width("MainWindow", 700)
-        dpg.set_item_height("MainWindow", 700)
-        dpg.set_item_pos("MainWindow", (520, 120))
+        dpg.set_item_width("MainWindow", 800)
+        dpg.set_item_height("MainWindow", 800)
+        dpg.set_item_pos("MainWindow", (10, 10))
 
-        dpg.set_item_width('macroMap', 500)
-        dpg.set_item_height('macroMap', 500)
-        dpg.set_item_pos('macroMap', (10, 120))
+        dpg.set_item_width('FrontViewCamera', 800)
+        dpg.set_item_height('FrontViewCamera', 600)
+        dpg.set_item_pos('FrontViewCamera', (810, 10))
+
 
     def drawMainWindowWhiteBG(self):
         pmin, pmax =  self.netBoundary
@@ -265,7 +218,7 @@ class GUI(Process):
     ):
         egoVRD = VRDDict['egoCar'][0]
         self.plotVehicle(node, ex, ey, 'ego', egoVRD)
-        self.plotdeArea(node, egoVRD, ex, ey)
+        # self.plotdeArea(node, egoVRD, ex, ey)
         if egoVRD.trajectoryXQ:
             self.plotTrajectory(node, ex, ey, egoVRD)
         for avrd in VRDDict['carInAoI']:
@@ -274,14 +227,12 @@ class GUI(Process):
                 self.plotTrajectory(node, ex, ey, avrd)
         for svrd in VRDDict['outOfAoI']:
             self.plotVehicle(node, ex, ey, 'other', svrd)
-
     
     def get_line_tf(self, line: List[float], ex, ey) -> List[float]:
         return [
             self.ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in line
         ]
     
-
     def drawLane(self, node, lrd: LRD, ex, ey, flag: int):
         if flag & 0b10:
             return
@@ -331,14 +282,17 @@ class GUI(Process):
                 thickness=17,  parent=node
             )
         
-
     def drawRoadgraph(self, node, rgrd: RGRD, ex, ey):
-        for eid, erd in rgrd.edges.items():
+        for erd in rgrd.edges.values():
             self.drawEdge(node, erd, rgrd, ex, ey)
 
-        for jlid, jlrd in rgrd.junction_lanes.items():
+        for jlrd in rgrd.junction_lanes.values():
             self.drawJunctionLane(node, jlrd, ex, ey)
 
+    def showImage(self, image_data: np.ndarray):
+        image_data = image_data / 255
+        new_texture_data = image_data.flatten().tolist()
+        dpg.set_value('texture_tag', data=new_texture_data)
 
     def render_loop(self):
         self.update_inertial_zoom()
@@ -346,15 +300,24 @@ class GUI(Process):
         dpg.delete_item("Canvas", children_only=True)
         dpg.delete_item("movingScene", children_only=True)
         canvasNode = dpg.add_draw_node(parent="Canvas")
-        movingSceNode = dpg.add_draw_node(parent='movingScene')
         try:
-            roadgraphRenderData, VRDDict = self.queue.get()
+            roadgraphRenderData, VRDDict = self.renderQueue.get()
             egoVRD = VRDDict['egoCar'][0]
             ex = egoVRD.x
             ey = egoVRD.y
             self.drawRoadgraph(canvasNode, roadgraphRenderData, ex, ey)
             self.drawVehicles(canvasNode, VRDDict, ex, ey)
             # self.drawMovingSce(movingSceNode, egoVRD)
+        except TypeError:
+            return
+        
+        try:
+            image_data = self.decisionQueue.get()
+            if isinstance(image_data, np.ndarray):
+                print(image_data.shape)
+                self.showImage(image_data)
+            else:
+                return
         except TypeError:
             return
 

@@ -336,6 +336,6 @@ class Model:
             
 
     def destroy(self):
+        traci.close()
         # stop the saveThread.
         time.sleep(1.1)
-        traci.close()

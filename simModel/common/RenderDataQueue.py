@@ -2,6 +2,7 @@ import multiprocessing
 from typing import Tuple, Dict, List, Union
 from utils.roadgraph import RoadGraph
 from rich import print
+import numpy as np
 
 class ERD:
     # edge render data
@@ -89,4 +90,17 @@ class RenderDataQueue:
 
     def get(self) -> Tuple[RGRD, Dict[str, List[VRD]]]:
         return self.queue[-1] if self.queue else None
+    
 
+class DecisionDataQueue:
+    def __init__(self, max_size: int) -> None:
+        self.queue = multiprocessing.Manager().list()
+        self.max_size = max_size
+
+    def put(self, item: np.ndarray):
+        if len(self.queue) >= self.max_size:
+            self.queue.pop(0)
+        self.queue.append(item)
+
+    def get(self) -> np.ndarray:
+        return self.queue[-1] if self.queue else None

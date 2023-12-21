@@ -82,8 +82,9 @@ class PromptsWrap:
         return response.json()
     
 class VLMAgent:
-    def __init__(self) -> None:
+    def __init__(self, api_key: str) -> None:
         self.lastDecision: Behaviour = None
+        self.api_key = api_key
 
 
     def str2behavior(self, decision) -> Behaviour:
@@ -102,7 +103,7 @@ class VLMAgent:
             raise NotImplementedError(errorStr)
 
     def generatePrompt(self, information: str, image_base64: str) -> PromptsWrap:
-        prompts = PromptsWrap()
+        prompts = PromptsWrap(self.api_key)
         prompts.addTextPrompt(getText('./DriverAgent/initialPrompts/Texts/SystemMessage.txt'))
 
         # add few-shots message
@@ -130,13 +131,16 @@ class VLMAgent:
     def makeDecision(self, information: str, image_base64: str) -> Behaviour:
         prompts = self.generatePrompt(information, image_base64)
         response = prompts.request()
+        print(response)
         ans = response['choices']['message']['content']
         match = re.search(r'## Decision\n(.*)', ans)
         if match:
             decision = match.group(1)
             behavior = self.str2behavior(decision)
             self.lastDecision = behavior
-            return behavior
+            return response, behavior
+        else:
+            return response, None
 
 
 if __name__ == '__main__':

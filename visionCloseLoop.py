@@ -2,15 +2,17 @@ import cv2
 import time
 import base64
 import logging
+import traci
 from matplotlib import pyplot as plt
 
 from sumo_integration.carla_simulation import CarlaSimulation
 from sumo_integration.sumo_simulation import SumoSimulation
 from run_synchronization import SimulationSynchronization
 
-from simModel.egoTracking.model import Model
+from simModel.egoTracking.MPModel import Model
+from simModel.common.MPGUI import GUI
+from simModel.common.RenderDataQueue import RenderDataQueue, DecisionDataQueue
 from trafficManager.traffic_manager import TrafficManager
-from DriverAgent.Informer import Informer
 
 # logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -29,14 +31,20 @@ sync_vehicle_color = True
 sync_vehicle_lights = True
 database = 'visionCloseLoop.db'
 
-model = Model(
-    egoID=str(ego_id), netFile=sumo_net_file, rouFile=sumo_rou_file,
-    dataBase=database, SUMOGUI=sumo_gui, simNote=''
-    )
 
 if __name__ == '__main__':
+    renderQueue = RenderDataQueue(5)
+    decisionQueue = DecisionDataQueue(5)
+    model = Model(
+        egoID=str(ego_id), netFile=sumo_net_file, rouFile=sumo_rou_file,
+        RDQ=renderQueue, dataBase=database, SUMOGUI=sumo_gui, simNote=''
+    )
     model.start()
     planner = TrafficManager(model)
+    netBoundary = traci.simulation.getNetBoundary()
+
+    gui = GUI(renderQueue, decisionQueue, netBoundary)
+    gui.start()
 
     # CARLA Co-simulation initialization
     sumo_simulation = SumoSimulation(sumo_cfg_file)
@@ -65,8 +73,8 @@ if __name__ == '__main__':
                     synchronization.setFrontViewCamera(carla_ego)
                     try:
                         image_buffer = synchronization.getFrontViewImage()
-                        plt.imshow(image_buffer)
-                        plt.pause(0.1)
+                        print('put data shape: ', image_buffer.shape)
+                        decisionQueue.put(image_buffer)
                         _, buffer = cv2.imencode('.png', image_buffer)
                         image_base64 = base64.b64encode(buffer).decode('utf-8')
                         model.dbBridge.commitData(
@@ -75,10 +83,6 @@ if __name__ == '__main__':
                             )
                     except NameError:
                         continue
-                trajectories = planner.plan(
-                    model.timeStep * 0.1, roadgraph, vehicles
-                )
-                # model.setTrajectories(trajectories)
                 model.setTrajectories({})
             else:
                 model.ego.exitControlMode()
@@ -86,3 +90,5 @@ if __name__ == '__main__':
     
     synchronization.close()
     model.destroy()
+    gui.join()
+    gui.terminate()
