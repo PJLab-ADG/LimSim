@@ -64,7 +64,7 @@ if __name__ == '__main__':
         model.moveStep()
         synchronization.tick()
 
-        if model.timeStep % 5 == 0:
+        if model.timeStep % 1 == 0:
             roadgraph, vehicles = model.exportSce()
             if model.tpStart and roadgraph:
                 carla_ego = synchronization.getEgo()
@@ -73,7 +73,6 @@ if __name__ == '__main__':
                     synchronization.setFrontViewCamera(carla_ego)
                     try:
                         image_buffer = synchronization.getFrontViewImage()
-                        print('put data shape: ', image_buffer.shape)
                         decisionQueue.put(image_buffer)
                         _, buffer = cv2.imencode('.png', image_buffer)
                         image_base64 = base64.b64encode(buffer).decode('utf-8')

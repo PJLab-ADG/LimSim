@@ -82,11 +82,11 @@ class GUI(Process):
 
         print('texture_data length: ', len(texture_data))
 
-        texture_registry = dpg.add_texture_registry(show = True)
+        self.texture_registry = dpg.add_texture_registry(show = True)
         dpg.add_dynamic_texture(
             width=800, height=600, 
             default_value=texture_data, tag='texture_tag',
-            parent=texture_registry
+            parent=self.texture_registry
         )
 
         with dpg.window(tag='FrontViewCamera', label='Front view camera'):
@@ -290,9 +290,8 @@ class GUI(Process):
             self.drawJunctionLane(node, jlrd, ex, ey)
 
     def showImage(self, image_data: np.ndarray):
-        image_data = image_data / 255
-        new_texture_data = image_data.flatten().tolist()
-        dpg.set_value('texture_tag', data=new_texture_data)
+        image_data = image_data / 255        
+        dpg.set_value('texture_tag', image_data.flatten().tolist())
 
     def render_loop(self):
         self.update_inertial_zoom()
@@ -314,7 +313,6 @@ class GUI(Process):
         try:
             image_data = self.decisionQueue.get()
             if isinstance(image_data, np.ndarray):
-                print(image_data.shape)
                 self.showImage(image_data)
             else:
                 return
