@@ -61,26 +61,23 @@ class GUI(Process):
 
         dpg.bind_font(default_font)
 
+        # BEV 视图窗口
         dpg.add_window(
-            tag="MainWindow",
-            label="Microscopic simulation",
-            no_close=True,
-            # no_collapse=True,
-            # no_resize=True,
-            # no_move=True
+            tag="MainWindow", label="Microscopic simulation",
+            no_close=True, # no_collapse=True,
+            # no_resize=True, # no_move=True
         )
 
-        self.BGnode = dpg.add_draw_node(tag="CanvasBG", parent="MainWindow")
+        dpg.add_draw_node(tag="CanvasBG", parent="MainWindow")
         dpg.add_draw_node(tag="Canvas", parent="MainWindow")
 
+        # 前视相机窗口
         texture_data = []
         for i in range(0, 800 * 600):
             texture_data.append(255 / 255)
             texture_data.append(255 / 255)
             texture_data.append(255 / 255)
             texture_data.append(255 / 255)
-
-        print('texture_data length: ', len(texture_data))
 
         self.texture_registry = dpg.add_texture_registry(show = True)
         dpg.add_dynamic_texture(
@@ -92,6 +89,10 @@ class GUI(Process):
         with dpg.window(tag='FrontViewCamera', label='Front view camera'):
             dpg.add_image('texture_tag')
 
+        # 辅助信息窗口
+        dpg.add_window(tag="InformationWindow", label='Information')
+        dpg.add_draw_node(tag="informationCanvas", parent='InformationWindow')
+
     def create_handlers(self):
         with dpg.handler_registry():
             dpg.add_mouse_down_handler(callback=self.mouse_down)
@@ -100,13 +101,17 @@ class GUI(Process):
             dpg.add_mouse_wheel_handler(callback=self.mouse_wheel)
 
     def resize_windows(self):
-        dpg.set_item_width("MainWindow", 800)
-        dpg.set_item_height("MainWindow", 800)
+        dpg.set_item_width("MainWindow", 1000)
+        dpg.set_item_height("MainWindow", 1000)
         dpg.set_item_pos("MainWindow", (10, 10))
 
         dpg.set_item_width('FrontViewCamera', 800)
         dpg.set_item_height('FrontViewCamera', 600)
-        dpg.set_item_pos('FrontViewCamera', (810, 10))
+        dpg.set_item_pos('FrontViewCamera', (1010, 10))
+
+        dpg.set_item_width('InformationWindow', 800)
+        dpg.set_item_height('InformationWindow', 390)
+        dpg.set_item_pos('InformationWindow', (1010, 820))
 
 
     def drawMainWindowWhiteBG(self):
@@ -118,7 +123,7 @@ class GUI(Process):
             self.ctf.dpgCoord(pmax[0], pmax[1], centerx, centery),
             thickness=0,
             fill=(255, 255, 255),
-            parent=self.BGnode
+            parent="CanvasBG"
         )
 
     def mouse_down(self):
@@ -293,12 +298,22 @@ class GUI(Process):
         image_data = image_data / 255        
         dpg.set_value('texture_tag', image_data.flatten().tolist())
 
+    def showInformation(self, node, information: str):
+        dpg.draw_text(
+            (10, 10),
+            information,
+            color=(255, 255, 255),
+            size=20,
+            parent=node
+        )
+
     def render_loop(self):
         self.update_inertial_zoom()
         self.drawMainWindowWhiteBG()
         dpg.delete_item("Canvas", children_only=True)
-        dpg.delete_item("movingScene", children_only=True)
+        dpg.delete_item("informationCanvas", children_only=True)
         canvasNode = dpg.add_draw_node(parent="Canvas")
+        informationNode = dpg.add_draw_node(parent="informationCanvas")
         try:
             roadgraphRenderData, VRDDict = self.renderQueue.get()
             egoVRD = VRDDict['egoCar'][0]
@@ -311,9 +326,10 @@ class GUI(Process):
             return
         
         try:
-            image_data = self.decisionQueue.get()
+            image_data, information = self.decisionQueue.get()
             if isinstance(image_data, np.ndarray):
                 self.showImage(image_data)
+                self.showInformation(informationNode, information)
             else:
                 return
         except TypeError:

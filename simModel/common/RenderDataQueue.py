@@ -97,10 +97,10 @@ class DecisionDataQueue:
         self.queue = multiprocessing.Manager().list()
         self.max_size = max_size
 
-    def put(self, item: np.ndarray):
+    def put(self, item: Tuple[np.ndarray, str]):
         if len(self.queue) >= self.max_size:
             self.queue.pop(0)
         self.queue.append(item)
 
-    def get(self) -> np.ndarray:
+    def get(self) -> Tuple[np.ndarray, str]:
         return self.queue[-1] if self.queue else None
