@@ -128,7 +128,7 @@ class VLMAgent:
         
         return prompts
 
-    def makeDecision(self, information: str, image_base64: str) -> Behaviour:
+    def makeDecision(self, information: str, image_base64: str):
         prompts = self.generatePrompt(information, image_base64)
         response = prompts.request()
         print(response)

@@ -2,8 +2,9 @@ import cv2
 import time
 import base64
 import logging
+import yaml
 import traci
-from matplotlib import pyplot as plt
+import json
 
 from sumo_integration.carla_simulation import CarlaSimulation
 from sumo_integration.sumo_simulation import SumoSimulation
@@ -13,6 +14,8 @@ from simModel.egoTracking.MPModel import Model
 from simModel.common.MPGUI import GUI
 from simModel.common.RenderDataQueue import RenderDataQueue, DecisionDataQueue
 from trafficManager.traffic_manager import TrafficManager
+from DriverAgent.Informer import Informer
+from DriverAgent.VLMAgent import VLMAgent
 
 # logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -58,6 +61,9 @@ if __name__ == '__main__':
         sync_vehicle_color, 
         sync_vehicle_lights
     )
+    informer = Informer()
+    api_key = yaml.load_all(open('./llmConfig.yaml'), Loader=yaml.FullLoader)
+    vlmagent = VLMAgent(api_key)
 
     while not model.tpEnd:
         start = time.time()
@@ -76,13 +82,29 @@ if __name__ == '__main__':
                         decisionQueue.put(image_buffer)
                         _, buffer = cv2.imencode('.png', image_buffer)
                         image_base64 = base64.b64encode(buffer).decode('utf-8')
+                        actionInfo = informer.getActionInfo(vehicles, roadgraph)
+                        naviInfo = informer.getNaviInfo(vehicles)
+                        if naviInfo:
+                            information = actionInfo + naviInfo
+                        else:
+                            information = actionInfo
+                        response, ego_behavior = vlmagent.makeDecision(information, image_base64)
+                        print('ego behavior: ', ego_behavior)
                         model.dbBridge.commitData(
                             'visualPromptsINFO', 
-                            (model.timeStep, image_base64, '', '')
+                            (model.timeStep, image_base64, '', information)
                             )
+                        model.dbBridge.commitData(
+                            'promptsINFO',
+                            (model.timeStep, json.dumps(response))
+                        )
+                        trajectories = planner.plan(
+                            model.timeStep * 0.1, roadgraph, vehicles, ego_behavior
+                        )
+
                     except NameError:
                         continue
-                model.setTrajectories({})
+                model.setTrajectories(trajectories)
             else:
                 model.ego.exitControlMode()
         model.updateVeh()

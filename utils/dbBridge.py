@@ -125,6 +125,10 @@ class DBBridge:
                     frontView TEXT,
                     surroundingView TEXT,
                     information TEXT);''')
+        
+        cur.execute('''CREATE TABLE IF NOT EXISTS promptsINFO(
+                    frame INT PRIMARY KEY,
+                    response TEXT)''')
 
         conn.commit()
         cur.close()
