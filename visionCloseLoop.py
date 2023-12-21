@@ -1,8 +1,8 @@
+import os
 import cv2
 import time
 import base64
 import logging
-import yaml
 import traci
 import json
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         sync_vehicle_lights
     )
     informer = Informer()
-    api_key = yaml.load_all(open('./llmConfig.yaml'), Loader=yaml.FullLoader)
+    api_key = os.environ.get('OPENAI_API_KEY')
     vlmagent = VLMAgent(api_key)
 
     while not model.tpEnd:
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         model.moveStep()
         synchronization.tick()
 
-        if model.timeStep % 1 == 0:
+        if model.timeStep % 20 == 0:
             roadgraph, vehicles = model.exportSce()
             if model.tpStart and roadgraph:
                 carla_ego = synchronization.getEgo()
@@ -79,7 +79,6 @@ if __name__ == '__main__':
                     synchronization.setFrontViewCamera(carla_ego)
                     try:
                         image_buffer = synchronization.getFrontViewImage()
-                        decisionQueue.put(image_buffer)
                         _, buffer = cv2.imencode('.png', image_buffer)
                         image_base64 = base64.b64encode(buffer).decode('utf-8')
                         actionInfo = informer.getActionInfo(vehicles, roadgraph)
@@ -88,6 +87,8 @@ if __name__ == '__main__':
                             information = actionInfo + naviInfo
                         else:
                             information = actionInfo
+                        print('information: ', information)
+                        decisionQueue.put((image_buffer, information))
                         response, ego_behavior = vlmagent.makeDecision(information, image_base64)
                         print('ego behavior: ', ego_behavior)
                         model.dbBridge.commitData(

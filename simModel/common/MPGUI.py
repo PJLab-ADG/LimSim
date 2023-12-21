@@ -111,7 +111,7 @@ class GUI(Process):
 
         dpg.set_item_width('InformationWindow', 800)
         dpg.set_item_height('InformationWindow', 390)
-        dpg.set_item_pos('InformationWindow', (1010, 820))
+        dpg.set_item_pos('InformationWindow', (1010, 620))
 
 
     def drawMainWindowWhiteBG(self):

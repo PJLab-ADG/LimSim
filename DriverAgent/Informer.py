@@ -56,15 +56,15 @@ class Informer:
         ego_info = vehicles['egoCar']
         curr_lane_id: str = ego_info['laneIDQ'][-1]
         availableLanes: Set[str] = ego_info['availableLanes']
+        NaviTitle = '## Navigation Information\n'
         if curr_lane_id[0] == ':':
             # 在交叉口内部，没有导航信息
-            return
+            return NaviTitle + "You should just drive carefully.\n"
         else:
             if curr_lane_id in availableLanes:
                 # 已经在正确的车道上，不需要导航信息
-                return
+                return NaviTitle + "You are on the proper lane.\n"
             else:
-                NaviTitle = '## Navigation Information\n'
                 curr_lane_idx = int(curr_lane_id.split('_')[-1])
                 for al in availableLanes:
                     if al[0] != ':':

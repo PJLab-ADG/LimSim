@@ -132,7 +132,7 @@ class VLMAgent:
         prompts = self.generatePrompt(information, image_base64)
         response = prompts.request()
         print(response)
-        ans = response['choices']['message']['content']
+        ans = response['choices'][0]['message']['content']
         match = re.search(r'## Decision\n(.*)', ans)
         if match:
             decision = match.group(1)
