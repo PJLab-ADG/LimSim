@@ -1,6 +1,6 @@
 from utils.simBase import CoordTF, MapCoordTF
 from simModel.common.RenderDataQueue import (
-    RenderDataQueue, VRD, RGRD, ERD, LRD, JLRD, DecisionDataQueue)
+    RenderDataQueue, VRD, RGRD, ERD, LRD, JLRD, ImageQueue, DecisionQueue)
 from simModel.common.networkBuild import NetworkBuild
 from utils.roadgraph import RoadGraph
 
@@ -15,11 +15,13 @@ from multiprocessing import Process
 class GUI(Process):
     def __init__(
         self, renderQueue: RenderDataQueue, 
-        decisionQueue: DecisionDataQueue,
+        iamgeQueue: ImageQueue,
+        decisionQueue: DecisionQueue,
         netBoundary: Tuple[Tuple[float, float], Tuple[float, float]]
     ) -> None:
         super().__init__()
         self.renderQueue = renderQueue
+        self.imageQueue = iamgeQueue
         self.decisionQueue = decisionQueue
         self.netBoundary = netBoundary
 
@@ -31,7 +33,7 @@ class GUI(Process):
         dpg.create_context()
         dpg.create_viewport(
             title="TrafficSimulator",
-            width=1630, height=820)
+            width=1900, height=1050)
         dpg.setup_dearpygui()
 
     def setup_themes(self):
@@ -105,13 +107,13 @@ class GUI(Process):
         dpg.set_item_height("MainWindow", 1000)
         dpg.set_item_pos("MainWindow", (10, 10))
 
-        dpg.set_item_width('FrontViewCamera', 800)
-        dpg.set_item_height('FrontViewCamera', 600)
-        dpg.set_item_pos('FrontViewCamera', (1010, 10))
+        dpg.set_item_width('FrontViewCamera', 825)
+        dpg.set_item_height('FrontViewCamera', 650)
+        dpg.set_item_pos('FrontViewCamera', (1020, 10))
 
-        dpg.set_item_width('InformationWindow', 800)
-        dpg.set_item_height('InformationWindow', 390)
-        dpg.set_item_pos('InformationWindow', (1010, 620))
+        dpg.set_item_width('InformationWindow', 825)
+        dpg.set_item_height('InformationWindow', 340)
+        dpg.set_item_pos('InformationWindow', (1020, 670))
 
 
     def drawMainWindowWhiteBG(self):
@@ -326,12 +328,18 @@ class GUI(Process):
             return
         
         try:
-            image_data, information = self.decisionQueue.get()
+            image_data = self.imageQueue.get()
             if isinstance(image_data, np.ndarray):
                 self.showImage(image_data)
-                self.showInformation(informationNode, information)
             else:
                 return
+        except TypeError:
+            return
+        
+        try:
+            information, reasoning = self.decisionQueue.get()
+            if information:
+                self.showInformation(informationNode, information)
         except TypeError:
             return
 

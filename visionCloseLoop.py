@@ -1,10 +1,11 @@
 import os
 import cv2
 import time
+import json
+import traci
 import base64
 import logging
-import traci
-import json
+from datetime import datetime
 
 from sumo_integration.carla_simulation import CarlaSimulation
 from sumo_integration.sumo_simulation import SumoSimulation
@@ -12,7 +13,7 @@ from run_synchronization import SimulationSynchronization
 
 from simModel.egoTracking.MPModel import Model
 from simModel.common.MPGUI import GUI
-from simModel.common.RenderDataQueue import RenderDataQueue, DecisionDataQueue
+from simModel.common.RenderDataQueue import RenderDataQueue, ImageQueue, DecisionQueue
 from trafficManager.traffic_manager import TrafficManager
 from DriverAgent.Informer import Informer
 from DriverAgent.VLMAgent import VLMAgent
@@ -32,12 +33,14 @@ step_length = 0.1
 tls_manager = 'sumo'
 sync_vehicle_color = True
 sync_vehicle_lights = True
-database = 'visionCloseLoop.db'
 
+stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
+database = './results/' + stringTimestamp + '.db'
 
 if __name__ == '__main__':
     renderQueue = RenderDataQueue(5)
-    decisionQueue = DecisionDataQueue(5)
+    imageQueue = ImageQueue(5)
+    decisionQueue = DecisionQueue(5)
     model = Model(
         egoID=str(ego_id), netFile=sumo_net_file, rouFile=sumo_rou_file,
         RDQ=renderQueue, dataBase=database, SUMOGUI=sumo_gui, simNote=''
@@ -46,7 +49,7 @@ if __name__ == '__main__':
     planner = TrafficManager(model)
     netBoundary = traci.simulation.getNetBoundary()
 
-    gui = GUI(renderQueue, decisionQueue, netBoundary)
+    gui = GUI(renderQueue, imageQueue, decisionQueue, netBoundary)
     gui.start()
 
     # CARLA Co-simulation initialization
@@ -69,42 +72,43 @@ if __name__ == '__main__':
         start = time.time()
         model.moveStep()
         synchronization.tick()
+        carla_ego = synchronization.getEgo()
+        if carla_ego:
+            synchronization.moveSpectator(carla_ego)
+            synchronization.setFrontViewCamera(carla_ego)
+            try:
+                image_buffer = synchronization.getFrontViewImage()
+                imageQueue.put(image_buffer)
+            except NameError:
+                continue
 
-        if model.timeStep % 20 == 0:
+        if model.timeStep % 10 == 0:
             roadgraph, vehicles = model.exportSce()
             if model.tpStart and roadgraph:
-                carla_ego = synchronization.getEgo()
-                if carla_ego:
-                    synchronization.moveSpectator(carla_ego)
-                    synchronization.setFrontViewCamera(carla_ego)
-                    try:
-                        image_buffer = synchronization.getFrontViewImage()
-                        _, buffer = cv2.imencode('.png', image_buffer)
-                        image_base64 = base64.b64encode(buffer).decode('utf-8')
-                        actionInfo = informer.getActionInfo(vehicles, roadgraph)
-                        naviInfo = informer.getNaviInfo(vehicles)
-                        if naviInfo:
-                            information = actionInfo + naviInfo
-                        else:
-                            information = actionInfo
-                        print('information: ', information)
-                        decisionQueue.put((image_buffer, information))
-                        response, ego_behavior = vlmagent.makeDecision(information, image_base64)
-                        print('ego behavior: ', ego_behavior)
-                        model.dbBridge.commitData(
-                            'visualPromptsINFO', 
-                            (model.timeStep, image_base64, '', information)
-                            )
-                        model.dbBridge.commitData(
-                            'promptsINFO',
-                            (model.timeStep, json.dumps(response))
-                        )
-                        trajectories = planner.plan(
-                            model.timeStep * 0.1, roadgraph, vehicles, ego_behavior
-                        )
+                _, buffer = cv2.imencode('.png', image_buffer)
+                image_base64 = base64.b64encode(buffer).decode('utf-8')
+                actionInfo = informer.getActionInfo(vehicles, roadgraph)
+                naviInfo = informer.getNaviInfo(vehicles)
+                if naviInfo:
+                    information = actionInfo + '\n' + naviInfo
+                else:
+                    information = actionInfo
+                response, ego_behavior = vlmagent.makeDecision(information, image_base64)
+                model.dbBridge.commitData(
+                    'imageINFO', 
+                    (model.timeStep, image_base64, '')
+                )
+                model.dbBridge.commitData(
+                    'promptsINFO',
+                    (model.timeStep, information, json.dumps(response))
+                )
+                decisionQueue.put(
+                    (information, response['choices'][0]['message']['content'])
+                )
+                trajectories = planner.plan(
+                    model.timeStep * 0.1, roadgraph, vehicles, ego_behavior
+                )
 
-                    except NameError:
-                        continue
                 model.setTrajectories(trajectories)
             else:
                 model.ego.exitControlMode()

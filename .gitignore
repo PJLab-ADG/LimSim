@@ -191,3 +191,5 @@ FVCFigs/
 DriverAgent/GT/config.yaml
 
 db/
+
+results/
