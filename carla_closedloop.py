@@ -163,6 +163,8 @@ def handle_ego_car(synchronization, model: Model, agents: edict(), traffic_manag
         #       to accept ego car's behaviour and can choose weather plan for other cars
         paths = traffic_manager.plan(model.timeStep, roadgraph, vehicles, ego_behaviour, other_plan=True)
 
+        # Step 4: evaluate the ego car's decision
+        
     except NameError:
         pass
 
