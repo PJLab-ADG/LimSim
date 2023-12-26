@@ -1,5 +1,5 @@
-from simModel.egoTracking.MPModel import Model
-from simModel.common.MPGUI import GUI
+from simModel.egoTracking.VCLModel import Model
+from simModel.common.VCLGUI import GUI
 from simModel.common.RenderDataQueue import RenderDataQueue
 from trafficManager.traffic_manager import TrafficManager
 

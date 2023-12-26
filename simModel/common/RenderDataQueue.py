@@ -92,15 +92,29 @@ class RenderDataQueue:
         return self.queue[-1] if self.queue else None
     
 
-class DecisionDataQueue:
+class ImageQueue:
     def __init__(self, max_size: int) -> None:
         self.queue = multiprocessing.Manager().list()
         self.max_size = max_size
 
-    def put(self, item: Tuple[np.ndarray, str]):
+    def put(self, item: np.ndarray):
         if len(self.queue) >= self.max_size:
             self.queue.pop(0)
         self.queue.append(item)
 
-    def get(self) -> Tuple[np.ndarray, str]:
+    def get(self) -> np.ndarray:
+        return self.queue[-1] if self.queue else None
+
+
+class DecisionQueue:
+    def __init__(self, max_size: int) -> None:
+        self.queue = multiprocessing.Manager().list()
+        self.max_size = max_size
+
+    def put(self, item: Tuple[str, str]):
+        if len(self.queue) >= self.max_size:
+            self.queue.pop(0)
+        self.queue.append(item)
+
+    def get(self) -> Tuple[str, str]:
         return self.queue[-1] if self.queue else None
