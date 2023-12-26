@@ -1,8 +1,7 @@
-from utils.simBase import CoordTF, MapCoordTF
+from utils.simBase import CoordTF
 from simModel.common.RenderDataQueue import (
     RenderDataQueue, VRD, RGRD, ERD, LRD, JLRD, ImageQueue, DecisionQueue)
-from simModel.common.networkBuild import NetworkBuild
-from utils.roadgraph import RoadGraph
+
 
 from rich import print
 import numpy as np 
@@ -33,7 +32,7 @@ class GUI(Process):
         dpg.create_context()
         dpg.create_viewport(
             title="TrafficSimulator",
-            width=1900, height=1050)
+            width=1270, height=1300)
         dpg.setup_dearpygui()
 
     def setup_themes(self):
@@ -75,7 +74,7 @@ class GUI(Process):
 
         # 前视相机窗口
         texture_data = []
-        for i in range(0, 800 * 600):
+        for i in range(0, 700 * 500):
             texture_data.append(255 / 255)
             texture_data.append(255 / 255)
             texture_data.append(255 / 255)
@@ -83,7 +82,7 @@ class GUI(Process):
 
         self.texture_registry = dpg.add_texture_registry(show = True)
         dpg.add_dynamic_texture(
-            width=800, height=600, 
+            width=700, height=500, 
             default_value=texture_data, tag='texture_tag',
             parent=self.texture_registry
         )
@@ -92,8 +91,10 @@ class GUI(Process):
             dpg.add_image('texture_tag')
 
         # 辅助信息窗口
-        dpg.add_window(tag="InformationWindow", label='Information')
-        dpg.add_draw_node(tag="informationCanvas", parent='InformationWindow')
+        dpg.add_window(tag="InformationWindow", label='Navigation')
+
+        # response 窗口
+        dpg.add_window(tag="ResponseWindow", label='Reasoning and decision')
 
     def create_handlers(self):
         with dpg.handler_registry():
@@ -103,18 +104,21 @@ class GUI(Process):
             dpg.add_mouse_wheel_handler(callback=self.mouse_wheel)
 
     def resize_windows(self):
-        dpg.set_item_width("MainWindow", 1000)
-        dpg.set_item_height("MainWindow", 1000)
-        dpg.set_item_pos("MainWindow", (10, 10))
+        dpg.set_item_width('FrontViewCamera', 725)
+        dpg.set_item_height('FrontViewCamera', 550)
+        dpg.set_item_pos('FrontViewCamera', (10, 10))
 
-        dpg.set_item_width('FrontViewCamera', 825)
-        dpg.set_item_height('FrontViewCamera', 650)
-        dpg.set_item_pos('FrontViewCamera', (1020, 10))
+        dpg.set_item_width("MainWindow", 725)
+        dpg.set_item_height("MainWindow", 725)
+        dpg.set_item_pos("MainWindow", (10, 570))
 
-        dpg.set_item_width('InformationWindow', 825)
-        dpg.set_item_height('InformationWindow', 340)
-        dpg.set_item_pos('InformationWindow', (1020, 670))
+        dpg.set_item_width('InformationWindow', 500)
+        dpg.set_item_height('InformationWindow', 250)
+        dpg.set_item_pos('InformationWindow', (750, 10))
 
+        dpg.set_item_width('ResponseWindow', 500)
+        dpg.set_item_height('ResponseWindow', 1025)
+        dpg.set_item_pos('ResponseWindow', (750, 270))
 
     def drawMainWindowWhiteBG(self):
         pmin, pmax =  self.netBoundary
@@ -300,22 +304,28 @@ class GUI(Process):
         image_data = image_data / 255        
         dpg.set_value('texture_tag', image_data.flatten().tolist())
 
-    def showInformation(self, node, information: str):
-        dpg.draw_text(
-            (10, 10),
-            information,
-            color=(255, 255, 255),
-            size=20,
-            parent=node
-        )
+    def showInformation(self, information: str):
+        dpg.delete_item('informationText')
+        dpg.add_text(
+            information, parent='InformationWindow',
+            tag='informationText', wrap=470
+            )
+
+
+    def showResponse(self, response: str):
+        dpg.delete_item('responseText')
+        dpg.add_text(
+            response, parent='ResponseWindow', 
+            tag='responseText', wrap=470
+            )
 
     def render_loop(self):
         self.update_inertial_zoom()
         self.drawMainWindowWhiteBG()
         dpg.delete_item("Canvas", children_only=True)
         dpg.delete_item("informationCanvas", children_only=True)
+        dpg.delete_item('responseCanvas', children_only=True)
         canvasNode = dpg.add_draw_node(parent="Canvas")
-        informationNode = dpg.add_draw_node(parent="informationCanvas")
         try:
             roadgraphRenderData, VRDDict = self.renderQueue.get()
             egoVRD = VRDDict['egoCar'][0]
@@ -337,9 +347,10 @@ class GUI(Process):
             return
         
         try:
-            information, reasoning = self.decisionQueue.get()
+            information, response = self.decisionQueue.get()
             if information:
-                self.showInformation(informationNode, information)
+                self.showInformation(information)
+                self.showResponse(response)
         except TypeError:
             return
 

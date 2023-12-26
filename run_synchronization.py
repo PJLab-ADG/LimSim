@@ -250,8 +250,8 @@ class SimulationSynchronization(object):
     def setFrontViewCamera(self, vehicle):
         if not self.record:
             cam_bp = self.carla.world.get_blueprint_library().find('sensor.camera.rgb')
-            cam_bp.set_attribute('image_size_x', '800')
-            cam_bp.set_attribute('image_size_y', '600')
+            cam_bp.set_attribute('image_size_x', '700')
+            cam_bp.set_attribute('image_size_y', '500')
             cam_bp.set_attribute('fov', '90')
             cam_bp.set_attribute('sensor_tick', '0.1')
             cam_transform = carla.Transform(carla.Location(x=0.5, z=2.4))

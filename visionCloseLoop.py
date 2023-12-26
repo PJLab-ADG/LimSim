@@ -11,8 +11,8 @@ from sumo_integration.carla_simulation import CarlaSimulation
 from sumo_integration.sumo_simulation import SumoSimulation
 from run_synchronization import SimulationSynchronization
 
-from simModel.egoTracking.MPModel import Model
-from simModel.common.MPGUI import GUI
+from simModel.egoTracking.VCLModel import Model
+from simModel.common.VCLGUI import GUI
 from simModel.common.RenderDataQueue import RenderDataQueue, ImageQueue, DecisionQueue
 from trafficManager.traffic_manager import TrafficManager
 from DriverAgent.Informer import Informer
@@ -72,6 +72,8 @@ if __name__ == '__main__':
         start = time.time()
         model.moveStep()
         synchronization.tick()
+
+        # 生成前视图片，在 GUI 中展示，并存储到数据库中
         carla_ego = synchronization.getEgo()
         if carla_ego:
             synchronization.moveSpectator(carla_ego)
@@ -79,14 +81,18 @@ if __name__ == '__main__':
             try:
                 image_buffer = synchronization.getFrontViewImage()
                 imageQueue.put(image_buffer)
+                _, buffer = cv2.imencode('.png', image_buffer)
+                image_base64 = base64.b64encode(buffer).decode('utf-8')
+                model.dbBridge.commitData(
+                    'imageINFO', 
+                    (model.timeStep, image_base64, '')
+                )
             except NameError:
                 continue
 
         if model.timeStep % 10 == 0:
             roadgraph, vehicles = model.exportSce()
             if model.tpStart and roadgraph:
-                _, buffer = cv2.imencode('.png', image_buffer)
-                image_base64 = base64.b64encode(buffer).decode('utf-8')
                 actionInfo = informer.getActionInfo(vehicles, roadgraph)
                 naviInfo = informer.getNaviInfo(vehicles)
                 if naviInfo:
@@ -94,10 +100,6 @@ if __name__ == '__main__':
                 else:
                     information = actionInfo
                 response, ego_behavior = vlmagent.makeDecision(information, image_base64)
-                model.dbBridge.commitData(
-                    'imageINFO', 
-                    (model.timeStep, image_base64, '')
-                )
                 model.dbBridge.commitData(
                     'promptsINFO',
                     (model.timeStep, information, json.dumps(response))
