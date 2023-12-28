@@ -5,6 +5,7 @@ import json
 import traci
 import base64
 import logging
+from rich import print
 from datetime import datetime
 
 from sumo_integration.carla_simulation import CarlaSimulation
@@ -100,6 +101,7 @@ if __name__ == '__main__':
                 else:
                     information = actionInfo
                 response, ego_behavior = vlmagent.makeDecision(information, image_base64)
+                print('[yellow]Ego behavior: [/yellow]', ego_behavior)
                 model.dbBridge.commitData(
                     'promptsINFO',
                     (model.timeStep, information, json.dumps(response))

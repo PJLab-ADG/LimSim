@@ -54,16 +54,18 @@ class Informer:
     @staticmethod
     def getNaviInfo(vehicles: Dict[str, Dict]) -> Optional[str]:
         ego_info = vehicles['egoCar']
+        curr_speed = ego_info['speedQ'][-1]
+        SpeedINFO = f'Your current speed is {round(curr_speed, 2)} m/s, the speed limit is 13.89 m/s.\n'
         curr_lane_id: str = ego_info['laneIDQ'][-1]
         availableLanes: Set[str] = ego_info['availableLanes']
         NaviTitle = '## Navigation Information\n'
         if curr_lane_id[0] == ':':
             # 在交叉口内部，没有导航信息
-            return NaviTitle + "You should just drive carefully.\n"
+            return NaviTitle + SpeedINFO + "You should just drive carefully.\n"
         else:
             if curr_lane_id in availableLanes:
                 # 已经在正确的车道上，不需要导航信息
-                return NaviTitle + "You are on the proper lane.\n"
+                return NaviTitle + SpeedINFO + "You are on the proper lane.\n"
             else:
                 curr_lane_idx = int(curr_lane_id.split('_')[-1])
                 for al in availableLanes:
@@ -71,8 +73,8 @@ class Informer:
                         al_idx = int(al.split('_')[-1])
                         if al_idx > curr_lane_idx:
                             NaviInfo = 'Please change lane to the left as soon as possible.\n'
-                            return NaviTitle + NaviInfo
+                            return NaviTitle + SpeedINFO + NaviInfo
                         else:
                             NaviInfo = 'Please change lane to the right as soon as possible.\n'
-                            return NaviTitle + NaviInfo
+                            return NaviTitle + SpeedINFO + NaviInfo
     

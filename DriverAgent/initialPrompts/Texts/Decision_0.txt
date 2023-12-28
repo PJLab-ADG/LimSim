@@ -7,5 +7,5 @@ Then I want to try to accelerate. Since the vehicle to my left is in front of me
 Perhaps I could maintain my current speed so that we would maintain this distance between us, again not conducive to changing lanes to the left.
 Finally, if I slow down, the distance between us will increase so that I can safely change lanes, so I can choose to slow down.
 
-## Decison
+## Decision
 DC

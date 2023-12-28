@@ -32,7 +32,7 @@ class GUI(Process):
         dpg.create_context()
         dpg.create_viewport(
             title="TrafficSimulator",
-            width=1270, height=1300)
+            width=1490, height=1010)
         dpg.setup_dearpygui()
 
     def setup_themes(self):
@@ -63,11 +63,7 @@ class GUI(Process):
         dpg.bind_font(default_font)
 
         # BEV 视图窗口
-        dpg.add_window(
-            tag="MainWindow", label="Microscopic simulation",
-            no_close=True, # no_collapse=True,
-            # no_resize=True, # no_move=True
-        )
+        dpg.add_window(tag="MainWindow", label="Microscopic simulation")
 
         dpg.add_draw_node(tag="CanvasBG", parent="MainWindow")
         dpg.add_draw_node(tag="Canvas", parent="MainWindow")
@@ -104,21 +100,21 @@ class GUI(Process):
             dpg.add_mouse_wheel_handler(callback=self.mouse_wheel)
 
     def resize_windows(self):
-        dpg.set_item_width('FrontViewCamera', 725)
-        dpg.set_item_height('FrontViewCamera', 550)
-        dpg.set_item_pos('FrontViewCamera', (10, 10))
-
         dpg.set_item_width("MainWindow", 725)
         dpg.set_item_height("MainWindow", 725)
-        dpg.set_item_pos("MainWindow", (10, 570))
+        dpg.set_item_pos("MainWindow", (10, 10))
 
-        dpg.set_item_width('InformationWindow', 500)
+        dpg.set_item_width('FrontViewCamera', 725)
+        dpg.set_item_height('FrontViewCamera', 550)
+        dpg.set_item_pos('FrontViewCamera', (750, 10))
+
+        dpg.set_item_width('InformationWindow', 725)
         dpg.set_item_height('InformationWindow', 250)
-        dpg.set_item_pos('InformationWindow', (750, 10))
+        dpg.set_item_pos('InformationWindow', (10, 750))
 
-        dpg.set_item_width('ResponseWindow', 500)
-        dpg.set_item_height('ResponseWindow', 1025)
-        dpg.set_item_pos('ResponseWindow', (750, 270))
+        dpg.set_item_width('ResponseWindow', 725)
+        dpg.set_item_height('ResponseWindow', 430)
+        dpg.set_item_pos('ResponseWindow', (750, 570))
 
     def drawMainWindowWhiteBG(self):
         pmin, pmax =  self.netBoundary
@@ -308,7 +304,7 @@ class GUI(Process):
         dpg.delete_item('informationText')
         dpg.add_text(
             information, parent='InformationWindow',
-            tag='informationText', wrap=470
+            tag='informationText', wrap=720
             )
 
 
@@ -316,12 +312,11 @@ class GUI(Process):
         dpg.delete_item('responseText')
         dpg.add_text(
             response, parent='ResponseWindow', 
-            tag='responseText', wrap=470
+            tag='responseText', wrap=720
             )
 
     def render_loop(self):
         self.update_inertial_zoom()
-        self.drawMainWindowWhiteBG()
         dpg.delete_item("Canvas", children_only=True)
         dpg.delete_item("informationCanvas", children_only=True)
         dpg.delete_item('responseCanvas', children_only=True)
@@ -361,6 +356,7 @@ class GUI(Process):
         self.resize_windows()
         self.ctf = CoordTF(120, 'MainWindow')
         dpg.show_viewport()
+        self.drawMainWindowWhiteBG()
         # self.drawMapBG()
         while dpg.is_dearpygui_running():
             self.render_loop()
