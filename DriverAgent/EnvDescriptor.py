@@ -11,14 +11,6 @@ from typing import List
 import numpy as np
 import json
 
-ACTIONS_ALL = {
-    Behaviour.LCL: 'LANE_LEFT',
-    Behaviour.IDLE: 'IDLE',
-    Behaviour.LCR: 'LANE_RIGHT',
-    Behaviour.AC: 'FASTER',
-    Behaviour.DC: 'SLOWER'
-}
-
 ACTIONS_DESCRIPTION = {
     Behaviour.LCL: 'Turn-left - change lane to the left of the current lane',
     Behaviour.IDLE: 'IDLE - remain in the current lane with current speed',
@@ -53,6 +45,14 @@ class EnvDescriptor:
 
         self.logger = logger.setup_app_level_logger(logger_name = "prompt", file_name="prompt_debug.log")
         self.logging = logging.getLogger("prompt").getChild(__name__)
+        
+    def __InitSubscribe__(self):
+        self.current_lane_describe = "### Current lane description:\n"
+        self.next_lane_describe = "### Next lane description:\n"
+        self.current_state_describe = "### Your current state:\n"
+        self.other_vehicle_describe = "### Nearby vehicles description:\n"
+        self.last_decision_describe = "### Last decision:\n"
+
 
     def getLaneInfo(self, roadgraph: RoadGraph) -> str:
         """获取当前和下一车道的信息，包括车道的长度，车道的宽度，车道的类型以及可以行驶的车道信息等，如果包括junction lane，还需要包括交通灯信息
@@ -63,6 +63,7 @@ class EnvDescriptor:
         Returns:
             str: 对当前和下一车道的描述
         """
+        # ============= current lane ============= #
         if isinstance(self.current_lane, NormalLane):
             edge = self.current_lane.affiliated_edge
             edge_num = 0
@@ -101,31 +102,16 @@ class EnvDescriptor:
                 right_lane_id = right_lane.right_lane()
                 right_lane_num += 1
 
-            current_lane_description = self.des_json["basic_description"]["current_lane_scenario_description"]["normal_lane"].format(edge_num = edge_num, left_lane_num = left_lane_num, lane_length = round(self.current_lane.course_spline.s[-1], 3))
+            self.current_lane_describe += self.des_json["basic_description"]["current_lane_scenario_description"]["normal_lane"].format(edge_num = edge_num, left_lane_num = left_lane_num, lane_length = round(self.current_lane.course_spline.s[-1], 3))
 
-            current_lane_description += self.des_json["basic_description"]["traffic_info_description"].format(speed_limit = self.current_lane.speed_limit)
-
-            # 方案 2
-            if len(disavailable_lane) != 0:
-                current_lane_description += "\nThere are the available lanes you can drive, and below is their basic information:\n"
-                available_lane_discribe = ""
-                if left_available_lane != "":
-                    available_lane_discribe += "- You can drive on the number {left_lane_num} lane on your left. \n".format(left_lane_num = left_available_lane)
-                if right_available_lane != "":
-                    available_lane_discribe += "- You can drive on the number {right_lane_num} lane on your right. \n".format(right_lane_num = right_available_lane)
-                if self.current_lane.id in self.ego_vehicle.available_lanes:
-                    available_lane_discribe += "- You can drive on the lane you are currently driving. \n"
-                available_lane_discribe += "The other lane is not available for you to drive. Please check if you are driving on the available lane, if not, please change lanes to the available lane. "
-                current_lane_description += available_lane_discribe
-            else:
-                current_lane_description += "You can drive on the lane you are currently driving. "
-
+            self.current_lane_describe += self.des_json["basic_description"]["traffic_info_description"].format(speed_limit = self.current_lane.speed_limit)
 
         else:
-            current_lane_description = self.des_json["basic_description"]["current_lane_scenario_description"]["junction_lane"]
+            self.current_lane_describe += self.des_json["basic_description"]["current_lane_scenario_description"]["junction_lane"]
 
-            current_lane_description += self.des_json["basic_description"]["traffic_info_description"].format(speed_limit = self.current_lane.speed_limit)
+            self.current_lane_describe += self.des_json["basic_description"]["traffic_info_description"].format(speed_limit = self.current_lane.speed_limit)
 
+        # ================= next lane ================= #
         next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
         if next_lane != None:
             if isinstance(next_lane, NormalLane):
@@ -135,21 +121,21 @@ class EnvDescriptor:
                     lane = roadgraph.get_lane_by_id(lane_id)
                     if lane.width > self.config["vehicle"]["car"]["width"]:
                         edge_num += 1
-                next_lane_description = self.des_json["basic_description"]["next_lane_scenario_description"]["normal_lane"].format(edge_num = edge_num)
+                self.next_lane_describe += self.des_json["basic_description"]["next_lane_scenario_description"]["normal_lane"].format(edge_num = edge_num)
             else:
                 if next_lane.tlLogic != None:
                     tl_state = "with"
                 else:
                     tl_state = "without"
                 dis_stop_line = round(self.current_lane.spline_length - self.ego_vehicle.current_state.s, 3)
-                next_lane_description = self.des_json["basic_description"]["next_lane_scenario_description"]["junction_lane"].format(tl_state = tl_state, dis_stop_line = dis_stop_line)
+                self.next_lane_describe += self.des_json["basic_description"]["next_lane_scenario_description"]["junction_lane"].format(tl_state = tl_state, dis_stop_line = dis_stop_line)
 
                 if tl_state == "with":
-                    next_lane_description += self.des_json["basic_description"]["traffic_light_description"].format(curr_tl_state = self.trafficLightProcess(next_lane.currTlState), next_tl_state = self.trafficLightProcess(next_lane.nexttTlState), switch_time = next_lane.switchTime)
+                    self.next_lane_describe += self.des_json["basic_description"]["traffic_light_description"].format(curr_tl_state = self.trafficLightProcess(next_lane.currTlState), time = next_lane.switchTime)
         else:
-            next_lane_description = ""
+            self.next_lane_describe += self.des_json["basic_description"]["next_lane_scenario_description"]["none"]
         
-        return current_lane_description + "\n" + next_lane_description + "\n"
+        return self.current_lane_describe + "\n" + self.next_lane_describe + "\n"
 
     def trafficLightProcess(self, state) -> str:
         if state == "G" or state == "g":
@@ -159,7 +145,6 @@ class EnvDescriptor:
         else:
             return "yellow"
         
-
     def getEgoInfo(self) -> str:
         """获取自车的信息，包括自车的位置，自车的速度，自车的加速度等
 
@@ -172,78 +157,96 @@ class EnvDescriptor:
         ego_lane_position = round(self.ego_vehicle.current_state.s, 3)
         ego_speed = round(self.ego_vehicle.current_state.vel, 3)
         ego_acceleration = round(self.ego_vehicle.current_state.acc, 3)
-        ego_description = self.des_json["basic_description"]["ego_state_description"].format(ego_position = ego_position, ego_lane_position = ego_lane_position, ego_speed = ego_speed, ego_acceleration = ego_acceleration)
-        return ego_description + "\n"
+        self.current_state_describe += self.des_json["basic_description"]["ego_state_description"].format(ego_position = ego_position, ego_lane_position = ego_lane_position, ego_speed = ego_speed, ego_acceleration = ego_acceleration)
+        return self.current_state_describe + "\n"
 
-    def judge_state(self, roadgraph: RoadGraph):
-        next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
-        if isinstance(next_lane, JunctionLane) and self.current_lane.spline_length - self.ego_vehicle.current_state.s < 35:
-            if next_lane.tlLogic == None:
-                self.env_state = 1
-            else:
-                self.env_state = 2
-        elif isinstance(self.current_lane, JunctionLane):
-            self.env_state = 3
-        elif isinstance(self.current_lane, NormalLane) and self.current_lane.id not in self.ego_vehicle.available_lanes:
-            self.env_state = 4
-        else:
-            self.env_state = 0
-
-
-
-    def getEmergencyInfo(self, roadgraph: RoadGraph) -> str:
-        """对于紧急情况的描述，包括交通灯的状态，是否需要换道等
+    def getNavigationInfo(self, roadgraph: RoadGraph) -> str:
+        """对于导航信息的描述，包括交通灯的状态，是否需要换道等
 
         Args:
             roadgraph (RoadGraph): 路网信息
 
         Returns:
-            str: 对于紧急情况的描述
+            str: 对于导航信息的描述
         """
-        emergency_description = ""
-        # 1. 距离交叉路口停止线小于20米，进行提示
         next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
-        if isinstance(next_lane, JunctionLane) and next_lane.tlLogic != None and self.current_lane.spline_length - self.ego_vehicle.current_state.s < 20:
-            emergency_description = self.des_json["import_description"]["traffic_notice"] + "\n"
-        # 2. 需要换道，进行提示
+
+        # ============== change lane ================= #
         if isinstance(self.current_lane, NormalLane) and self.current_lane.id not in self.ego_vehicle.available_lanes:
             direction = None # 0表示左转，1表示右转
-            index = 0 # 用于记录需要换道的lane相对于当前lane的位置
             # find left available lanes
             lane = self.current_lane
             while lane.left_lane() is not None:
                 lane_id = lane.left_lane()
-                index += 1
                 if lane_id in self.ego_vehicle.available_lanes:
                     direction = 0
                     self.logging.info(
                         f"Ego vehicle choose to change Left lane")
+                    navigation_instruction = self.des_json["navigation_instruction"]["left"]
                     break
                 lane = roadgraph.get_lane_by_id(lane_id)
+
+            # find right available lanes
             if direction == None:
-                # find right available lanes
                 lane = self.current_lane
-                index = 0
                 while lane.right_lane() is not None:
                     lane_id = lane.right_lane()
-                    index += 1
                     if lane_id in self.ego_vehicle.available_lanes:
                         direction = 1
                         self.logging.info(
                             f"Ego vehicle choose to change Right lane"
                         )
+                        navigation_instruction = self.des_json["navigation_instruction"]["right"]
                         break
                     lane = roadgraph.get_lane_by_id(lane_id)
+
+            # no avaliable lanes
             if direction == None:
-                # can not reach to available lanes
                 self.logging.error(
-                    f"Vehicle {self.id} cannot change to available lanes, "
-                    f"current lane {self.lane_id}, available lanes {self.available_lanes}"
+                    f"Vehicle {self.ego_vehicle.id} cannot change to available lanes"
                 )
-            else:
-                emergency_description += self.des_json["import_description"]["change_lane_notice"].format(direction = "right" if direction else "left", index = index, dis_stop_line = round(self.current_lane.spline_length - self.ego_vehicle.current_state.s, 3), dis_change_lane = 10) + "\n"
+                raise ValueError("No avaliable lanes!")
+
+        # ============== junction when distance below 25 m ================= #
+        elif isinstance(next_lane, JunctionLane) and self.current_lane.spline_length - self.ego_vehicle.current_state.s < 25:
+            navigation_instruction = self.des_json["navigation_instruction"]["junction"]
+            
+        # ============== normal straight ================= #
+        else:
+            navigation_instruction = self.des_json["navigation_instruction"]["straight"]
         
-        return emergency_description
+        return navigation_instruction
+
+    def getNoticeInfo(self, roadgraph: RoadGraph) -> str:
+        """对于注意事项的描述，包括交通灯的状态，是否需要换道等
+
+        Args:
+            roadgraph (RoadGraph): 路网信息
+
+        Returns:
+            str: 对于注意事项的描述
+        """
+        notice_description = self.des_json["intension"]["basic"]
+        # 1. 距离交叉路口停止线小于30米，进行提示
+        next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
+        if isinstance(next_lane, JunctionLane) and self.current_lane.spline_length - self.ego_vehicle.current_state.s < 30:
+            notice_description += self.des_json["intension"]["junction"]
+            if next_lane.tlLogic != None:
+                notice_description += self.des_json["intension"]["traffic_light"]
+
+        # 2. 速度提示
+        elif self.ego_vehicle.current_state.vel < 5.0:
+            notice_description += self.des_json["intension"]["low_speed"]
+        
+        elif self.ego_vehicle.current_state.vel > self.current_lane.speed_limit * 0.9:
+            notice_description += self.des_json["intension"]["high_speed"]
+        
+        # 3. 他车提示
+        if not ("There are no other vehicles" in self.other_vehicle_describe):
+            notice_description += self.des_json["intension"]["other_vehicles"]
+
+        return notice_description
+    
 
     def getLastDecisionDescription(self, current_decision_time: float, last_decision_time: float) -> str:
         """获取上一次决策的描述，包括上一次决策的时间，上一次决策的动作，上一次决策的结果
@@ -256,17 +259,14 @@ class EnvDescriptor:
             str: 上一次决策的描述
         """
         if self.decision != None and current_decision_time - last_decision_time < 5:
-            last_decision_description = self.des_json["basic_description"]["last_decision_description"]["basic"].format(delta_time = current_decision_time - last_decision_time, decision = self.decision)
-            # add change lane description
+            self.last_decision_describe += self.des_json["basic_description"]["last_decision_description"]["basic"].format(delta_time = current_decision_time - last_decision_time, decision = self.decision)
             if self.decision == Behaviour.LCL or self.decision == Behaviour.LCR:
-                print("current lane is ", self.current_lane.id)
-                print("last lane is ", self.last_lane.id)
                 if self.last_lane.id != self.current_lane.id:
-                    last_decision_description += self.des_json["basic_description"]["last_decision_description"]["changed_lane"].format(direction = "right" if self.decision == Behaviour.LCR else "left")
+                    self.last_decision_describe += self.des_json["basic_description"]["last_decision_description"]["changed_lane"]
                 else:
-                    last_decision_description += self.des_json["basic_description"]["last_decision_description"]["changing_lane"].format(direction = "right" if self.decision == Behaviour.LCR else "left")
+                    self.last_decision_describe += self.des_json["basic_description"]["last_decision_description"]["changing_lane"].format(direction = "right" if self.decision == Behaviour.LCR else "left")
 
-            return last_decision_description
+            return self.last_decision_describe + "\n"
         else:
             return ""
 
@@ -335,46 +335,50 @@ class EnvDescriptor:
         # 对AOI区域内的车辆进行描述，只需要描述会发生碰撞的车辆+{如果在junction lane上，只需描述同个lane的车辆信息}+{如果在normal lane上，描述当前lane以及两边的车辆信息}
         svDescription = "There are other vehicles driving around you, and below is their basic information:\n"
         is_sv = False
+        sv_list = self.SV[:]
         # 这里需要在交叉路口前面一定距离的时候就同时考虑junction lane上的同方向车辆
         if isinstance(self.current_lane, NormalLane):
-            for sv in self.SV:
+            for sv in sv_list:
                 sv_lane = roadgraph.get_lane_by_id(sv.lane_id)
                 if isinstance(sv_lane, NormalLane) and sv_lane.affiliated_edge.id == self.current_lane.affiliated_edge.id:
-                    self.SV.remove(sv)
                     same_edge_sv = self.describeSVNormalLane(sv)
                     if same_edge_sv != "":
                         is_sv = True
                         svDescription += same_edge_sv
-        
+                    self.SV.remove(sv)
+
+        sv_list = self.SV[:]
         if isinstance(self.current_lane, JunctionLane):
         # 描述同一个junction lane上的车辆
-            for sv in self.SV:
+            for sv in sv_list:
                 if sv.lane_id == self.current_lane.id:
-                    self.SV.remove(sv)
                     is_sv = True
                     svDescription += self.describeSVNormalLane(sv)
+                    self.SV.remove(sv)
 
         # 描述下一个normal lane的车辆
+            sv_list = self.SV[:]
             next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
             if next_lane != None:
-                for sv in self.SV:
+                for sv in sv_list:
                     if sv.lane_id == next_lane.id:
                         self.SV.remove(sv)
                         is_sv = True
                         svDescription += self.describeSVNormalLane(sv, next_lane = True)
-
+        sv_list = self.SV[:]
         if isinstance(self.current_lane, NormalLane) and self.ego_vehicle.current_state.s > self.current_lane.course_spline.s[-1] - 10:
         # 描述下一个junction lane上的车辆
             next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
             if next_lane != None:
-                for sv in self.SV:
+                for sv in sv_list:
                     if sv.lane_id == next_lane.id:
                         self.SV.remove(sv)
                         is_sv = True
                         svDescription += self.describeSVNormalLane(sv, next_lane = True)
 
+        sv_list = self.SV[:]
         # 描述在AOI区域内可能发生碰撞的车辆
-        for sv in self.SV:
+        for sv in sv_list:
             collision_des = self.describeSVInAOI(sv, prediction.get(sv, None))
             if collision_des != "":
                 svDescription += collision_des
@@ -382,7 +386,9 @@ class EnvDescriptor:
 
         if not is_sv:
             svDescription = 'There are no other vehicles driving near you, so you can drive completely according to your own ideas.\n'
-        return svDescription
+        
+        self.other_vehicle_describe += svDescription
+        return self.other_vehicle_describe
     
     def describeSVNormalLane(self, vehicle: Vehicle, next_lane: bool = False) -> str:
         """当 ego 在 StraightLane 上时，车道信息是重要的，需要处理车道信息
@@ -395,7 +401,6 @@ class EnvDescriptor:
         Returns:
             str: 在normal lane上的车辆的描述
         """
-        # TODO:考虑周围车辆可能的换道信息
         if next_lane:
             lane_relative_position = "same lane as you"
             relative_position = "ahead"
@@ -404,13 +409,13 @@ class EnvDescriptor:
         else:
             if vehicle.lane_id == self.current_lane.id:
                 # 车辆和 ego 在同一条 lane 上行驶
-                lane_relative_position = "same lane as you"
+                lane_relative_position = "the same lane as you"
             elif vehicle.lane_id == self.current_lane.left_lane():
                 # 车辆和 ego 在左侧 lane 上行驶
-                lane_relative_position = "lane to your left"
+                lane_relative_position = "your left lane"
             elif vehicle.lane_id == self.current_lane.right_lane():
                 # 车辆和 ego 在右侧 lane 上行驶
-                lane_relative_position = "lane to your right"
+                lane_relative_position = "your right lane"
             else:
                 return ''
         
@@ -518,8 +523,9 @@ class EnvDescriptor:
                  vehicles_info: Dict, 
                  traffic_manager: TrafficManager, 
                  T) -> List[str]:
-        
-        # get vehicles and prediction
+        # step 1. init describe
+        self.__InitSubscribe__()
+        # step 2. get vehicles and prediction
         current_time_step = int(T / self.config["DT"])
         through_timestep = current_time_step - traffic_manager.time_step
         vehicles = traffic_manager.extract_vehicles(vehicles_info, roadgraph, T,
@@ -534,7 +540,8 @@ class EnvDescriptor:
                                             traffic_manager.lastseen_vehicles,
                                             through_timestep, self.config)
 
-        # step1: 获取ego和AoI内的车辆信息
+        # step 3. get description
+        # step 3.1 获取ego和AoI内的车辆信息
         self.SV = []
         for vehicle in vehicles.values():
             if vehicle.vtype == VehicleType.EGO:
@@ -551,25 +558,34 @@ class EnvDescriptor:
         egoDecription = self.getEgoInfo()
         SVDescription = self.getSVInfo(prediction.results, roadgraph)
 
-        # step2: 获取lane信息
+        # step 3.2 获取lane信息
         laneDescription = self.getLaneInfo(roadgraph)
 
-        # step3: 决策连续性描述
+        # step 3.3 决策连续性描述
         lastDecisionDescription = self.getLastDecisionDescription(T, self.last_decision_time)
 
-        # step4: 获取紧急情况描述
-        emergencyDescription = self.getEmergencyInfo(roadgraph)
-
-        # step5: 获取可用的action
+        # step 3.4 获取导航信息描述
+        navigationDescription = self.getNavigationInfo(roadgraph)
+        noticeDescription = self.getNoticeInfo(roadgraph)
+        # step 3.5 获取可用的action
         availableActionsDescription = self.availableActionsDescription(roadgraph)
 
-        scenario_description = laneDescription + egoDecription + SVDescription + lastDecisionDescription + emergencyDescription
+        scenario_description = laneDescription + egoDecription + SVDescription + lastDecisionDescription
 
-        self.logging.info("scenario_description is {}".format(scenario_description))
-        self.logging.info("driving_intensions is {}".format(self.des_json["intension"]["normal"] + "\n"))
-        self.logging.info("available_actions is {}".format(availableActionsDescription))
+        self.logging.info(f"""prompt is \n
+        ## Driving scenario description:
+        {scenario_description}
+        ## Navigation instruction:
+        {navigationDescription}
+        ## Notice instruction:
+        {noticeDescription}
+        ## Available actions:
+        {availableActionsDescription}
+        ## 
+        Remember to follow the format instructions.
+        You can stop reasoning once you have a valid action to take. """.replace("        ", ""))
 
-        self.judge_state(roadgraph)
         self.last_decision_time = T
 
-        return [scenario_description, availableActionsDescription, self.des_json["intension"]["normal"] + "\n", self.env_state]
+        return [scenario_description, availableActionsDescription, navigationDescription, noticeDescription]
+

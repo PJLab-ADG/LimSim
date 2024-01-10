@@ -9,7 +9,7 @@ from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 from langchain.callbacks import get_openai_callback
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from DriverAgent.GT.loadConfig import load_openai_config
-from DriverAgent.GT.vectorStore import DrivingMemory
+from DriverAgent.GT.Memory import DrivingMemory
 
 from DriverAgent.GT.promptDB import DBBridge
 import json

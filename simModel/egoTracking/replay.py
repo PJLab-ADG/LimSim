@@ -10,7 +10,7 @@ from math import sin, cos, pi
 
 from simModel.common.networkBuild import Rebuild
 from simModel.common.carFactory import Vehicle, egoCar
-from simModel.common.gui import GUI
+from simModel.common.GTGUI_R import GUI
 from simModel.egoTracking.movingScene import SceneReplay
 from utils.trajectory import Trajectory, State
 from utils.simBase import MapCoordTF
@@ -84,7 +84,7 @@ class ReplayModel:
         self.gui = GUI('replay-ego')
         self.gui.start()
         self.drawMapBG()
-        self.drawRadarBG()
+        # self.drawRadarBG()
         self.frameIncrement = 0
 
         self.tpEnd = 0
@@ -329,25 +329,72 @@ class ReplayModel:
                       color=(249, 202, 36),
                       size=20,
                       parent=infoNode)
-        dpg.draw_text((5, 65),
-                      'Lane position: %.5f' % self.ego.lanePos,
+        
+
+        conn = sqlite3.connect(self.dataBase)
+        cur = conn.cursor()
+        promptData = None
+        try:
+            cur.execute(
+                """SELECT done, description, thoughtsAndAction FROM promptsINFO
+                WHERE timeStep <= "{}";""".format(
+                    self.timeStep / 10
+                )
+            )
+            promptData = cur.fetchall()
+        except:
+            pass
+        if promptData:
+            done, description, thoughtsAndAction = promptData[-1]
+            if done:
+                result = thoughtsAndAction[-1]
+            else:
+                result = "Wrong Output"
+            
+            dpg.draw_text((5, 65),
+                      'Decision result: {}'.format(result),
                       color=(249, 202, 36),
                       size=20,
                       parent=infoNode)
+            information = description.split("Here is the current scenario:")[1]
+            current_des = information.split("## Navigation instruction:")[0]
+            current_des_list = current_des.split("\n")
+            current_des_list = [des + "\n" for des in current_des_list if des]
+            current_des = ''.join(current_des_list)
+            action = information.split("## Available actions:")[1]
+            action_list = action.split("\n")
+            action_list = [act + "\n" for act in action_list if act]
+            action = ''.join(action_list[:-1])
+            navigation = information.split("## Navigation instruction:")[1].split("\n")[1]
+            dpg.add_text(
+                current_des, parent='InformationWindow',
+                tag='infoText', wrap=1200
+                )
+            
+            dpg.add_text(
+                navigation, parent='ActionWindow',
+                tag='actionText', wrap=410, color=(249, 202, 36)
+                )
+            
 
-        radarNode = dpg.add_draw_node(parent='radarPlot')
+            dpg.add_text(
+                thoughtsAndAction, parent='ResponseWindow', 
+                tag='responseText', wrap=410
+                )
 
-        points = self.evaluation.output_result()
+        # radarNode = dpg.add_draw_node(parent='radarPlot')
 
-        transformed_points = self._evaluation_transform_coordinate(points,
-                                                                   scale=30)
-        transformed_points.append(transformed_points[0])
+        # points = self.evaluation.output_result()
 
-        dpg.draw_polygon(transformed_points,
-                         color=(75, 207, 250, 100),
-                         fill=(75, 207, 250, 100),
-                         thickness=5,
-                         parent=radarNode)
+        # transformed_points = self._evaluation_transform_coordinate(points,
+        #                                                            scale=30)
+        # transformed_points.append(transformed_points[0])
+
+        # dpg.draw_polygon(transformed_points,
+        #                  color=(75, 207, 250, 100),
+        #                  fill=(75, 207, 250, 100),
+        #                  thickness=5,
+        #                  parent=radarNode)
 
     def getNextFrameVehs(self):
         conn = sqlite3.connect(self.dataBase)
@@ -400,10 +447,12 @@ class ReplayModel:
         dpg.delete_item('Canvas', children_only=True)
         dpg.delete_item("movingScene", children_only=True)
         dpg.delete_item("simInfo", children_only=True)
-        dpg.delete_item("radarPlot", children_only=True)
+        dpg.delete_item('infoText')
+        dpg.delete_item('actionText')
+        dpg.delete_item('responseText')
         self.sr.updateScene(self.dataBase, self.timeStep)
         self.drawSce()
-        self.plotVState()
+        # self.plotVState()
         dpg.render_dearpygui_frame()
         if self.gui.replayDelay:
             time.sleep(self.gui.replayDelay)

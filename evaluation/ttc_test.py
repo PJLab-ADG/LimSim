@@ -264,8 +264,12 @@ def plot_ttc_version_4(ttc_statistics):
 
 
 def main():
-    ttc_statistics = compute_time_to_collision("../egoTrackingTest.db")
-    plot_ttc_version_4(ttc_statistics)
+    ttc_statistics = compute_time_to_collision("/home/PJLAB/leiwenjie/lwj/LimSimLLM/egoTrackingTest.db")
+
+    index, y = np.where(ttc_statistics == 941)
+    print(index)
+    print(ttc_statistics[index[0]: index[0]+10, 1])
+    # plot_ttc_version_2(ttc_statistics)
 
 
 if __name__ == '__main__':
