@@ -1,14 +1,8 @@
-from rich import print
+from simModel.Replay import ReplayModel
+from simModel.RGUI import GUI
 
-from simModel.egoTracking.replay import ReplayModel
+database = './results/2024-01-10_14-47-30.db'
+model = ReplayModel(database)
+gui = GUI(model)
 
-
-dataBase = 'egoTrackingTest.db'
-
-rmodel = ReplayModel(dataBase=dataBase,
-                     startFrame=0)
-
-while not rmodel.tpEnd:
-    rmodel.moveStep()
-
-rmodel.gui.destroy()
+gui.run()

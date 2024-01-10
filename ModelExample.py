@@ -1,91 +1,38 @@
-from simModel.egoTracking.model import Model
-from trafficManager.traffic_manager import TrafficManager
+from datetime import datetime
 
-import logger
+from simModel.Model import Model
+from simModel.MPGUI import GUI
 
-log = logger.setup_app_level_logger(file_name="app_debug.log")
+ego_id = '10'
+sumo_gui = False
+sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
+sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
+sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
+carla_host = '127.0.0.1'
+carla_port = 2000
+step_length = 0.1
+tls_manager = 'sumo'
+sync_vehicle_color = True
+sync_vehicle_lights = True
 
+stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
+database = './results/' + stringTimestamp + '.db'
 
-file_paths = {
-    "corridor": (
-        "networkFiles/corridor/corridor.net.xml",
-        "networkFiles/corridor/corridor.rou.xml",
-    ),
-    "CarlaTown05": (
-        "networkFiles/CarlaTown05/Town05.net.xml",
-        "networkFiles/CarlaTown05/carlavtypes.rou.xml,networkFiles/CarlaTown05/Town05.rou.xml",
-    ),
-    "CarlaTown06": (
-        "./networkFiles/CarlaTown06/Town06.net.xml",
-        "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
-    ),
-    "CarlaTown04": (
-        "./networkFiles/CarlaTown04/Town04.net.xml",
-        "./networkFiles/CarlaTown04/carlavtypes.rou.xml,networkFiles/CarlaTown04/Town04.rou.xml"
-    ),
-    "bigInter": (
-        "networkFiles/bigInter/bigInter.net.xml",
-        "networkFiles/bigInter/bigInter.rou.xml",
-    ),
-    "roundabout": (
-        "networkFiles/roundabout/roundabout.net.xml",
-        "networkFiles/roundabout/roundabout.rou.xml",
-    ),
-    "bilbao":   (
-        "networkFiles/bilbao/osm.net.xml",
-        "networkFiles/bilbao/osm.rou.xml",
-    ),
-    #######
-    # Please make sure you have request the access from https://github.com/ozheng1993/UCF-SST-CitySim-Dataset and put the road network files (.net.xml) in the relevent networkFiles/CitySim folder
-    "freewayB": (
-        "networkFiles/CitySim/freewayB/freewayB.net.xml",
-        "networkFiles/CitySim/freewayB/freewayB.rou.xml",
-    ),
-    "Expressway_A": (
-        "networkFiles/CitySim/Expressway_A/Expressway_A.net.xml",
-        "networkFiles/CitySim/Expressway_A/Expressway_A.rou.xml",
-    ),
-    ########
-}
-
-
-def run_model(
-    net_file,
-    rou_file,
-    ego_veh_id="61",
-    data_base="egoTrackingTest.db",
-    SUMOGUI=0,
-    sim_note="example simulation, LimSim-v-0.2.0.",
-    carla_cosim=False,
-):
+if __name__ == '__main__':
     model = Model(
-        ego_veh_id,
-        net_file,
-        rou_file,
-        dataBase=data_base,
-        SUMOGUI=SUMOGUI,
-        simNote=sim_note,
-        carla_cosim=carla_cosim,
+        egoID=ego_id, netFile=sumo_net_file, rouFile=sumo_rou_file,
+        cfgFile=sumo_cfg_file, dataBase=database, SUMOGUI=sumo_gui,
+        CARLACosim=True, carla_host=carla_host, carla_port=carla_port
     )
     model.start()
-    planner = TrafficManager(model)
+
+    gui = GUI(model)
+    gui.start()
 
     while not model.tpEnd:
         model.moveStep()
-        if model.timeStep % 5 == 0:
-            roadgraph, vehicles = model.exportSce()
-            if model.tpStart and roadgraph:
-                trajectories = planner.plan(
-                    model.timeStep * 0.1, roadgraph, vehicles
-                )
-                model.setTrajectories(trajectories)
-            else:
-                model.ego.exitControlMode()
         model.updateVeh()
-
+    
     model.destroy()
-
-
-if __name__ == "__main__":
-    net_file, rou_file = file_paths['CarlaTown06']
-    run_model(net_file, rou_file, ego_veh_id="10", carla_cosim=False)
+    gui.join()
+    gui.terminate()

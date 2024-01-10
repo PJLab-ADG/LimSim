@@ -1,26 +1,24 @@
-import time
 import base64
 import logging
+import time
+
 import cv2
-from matplotlib import pyplot as plt
 import yaml
 from easydict import EasyDict as edict
+from matplotlib import pyplot as plt
 
+from DriverAgent.EnvDescriptor import EnvDescriptor as EnvDescriptor
+# Import agents
+from DriverAgent.Informer import Informer, Informer as Informer
+from DriverAgent.LLMAgent import LLMAgent as LLMAgent
+from DriverAgent.VLMAgent import VLMAgent as VLMAgent
+from DriverAgent.VLMDescriptor import VLMDescriptor as VLMDescriptor
+from simModel.egoTracking.model import Model
 # Import custom modules
 from sumo_integration.carla_simulation import CarlaSimulation
+from sumo_integration.run_synchronization import SimulationSynchronization
 from sumo_integration.sumo_simulation import SumoSimulation
-from run_synchronization import SimulationSynchronization
-
-from simModel.egoTracking.model import Model
 from trafficManager.traffic_manager import TrafficManager
-from DriverAgent.Informer import Informer
-
-# Import agents
-from DriverAgent.Informer import Informer as Informer
-from DriverAgent.VLMAgent import VLMAgent as VLMAgent
-from DriverAgent.LLMAgent import LLMAgent as LLMAgent
-from DriverAgent.VLMDescriptor import VLMDescriptor as VLMDescriptor
-from DriverAgent.EnvDescriptor import EnvDescriptor as EnvDescriptor
 
 # Load configurations
 with open('config.yaml', 'r') as file:
@@ -134,7 +132,7 @@ def handle_ego_car(synchronization, model: Model, agents: edict(), traffic_manag
         plt.pause(0.1)
         _, buffer = cv2.imencode('.png', image_buffer)
         image_base64 = base64.b64encode(buffer).decode('utf-8')
-        model.dbBridge.commitData(
+        model.dbBridge.putData(
             'visualPromptsINFO',
             (model.timeStep, image_base64, '', '')
         )

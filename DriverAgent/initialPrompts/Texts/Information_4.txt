@@ -1,7 +1,0 @@
-## Available Actions
- - AC: increasing your speed.
- - DC: slow down your speed.
- - IDLE: Maintain your current speed.
-
-## Navigation Information
-Please drive carefully along the current road

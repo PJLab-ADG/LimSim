@@ -16,7 +16,7 @@
         <route edges="-46 -10" />
     </vehicle>
     <vehicle id="5" depart="10.00" type="vehicle.citroen.c3">
-        <route edges="-30 4 -48#0 -48#1 -49 -50 -51" />
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="6" depart="12.00" type="vehicle.toyota.prius">
         <route edges="-10 -54 -51 -52#0 -52#1 -59 -13 -14 -15#0 -15#1 -16 -28 -29#0 -29#1" />
@@ -25,7 +25,7 @@
         <route edges="-62 -33 -34 -1 58 57 54 -46 -10 -54 -51 -52#0 -52#1" />
     </vehicle>
     <vehicle id="8" depart="16.00" type="vehicle.seat.leon">
-        <route edges="-30 4 -48#0 -48#1 -49 -50 54 -46 -10 -54" />
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="9" depart="18.00" type="vehicle.mini.cooper_s">
         <route edges="23 22#1 22#0 21 -7 42 -18 -19 33 26 -62 -33 -34 -1" />
