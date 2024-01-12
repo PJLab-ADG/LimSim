@@ -193,3 +193,5 @@ DriverAgent/GT/config.yaml
 db/
 
 results/
+
+networkFiles/OpenDrive/Town05.xodr

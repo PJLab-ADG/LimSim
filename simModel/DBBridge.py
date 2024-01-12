@@ -148,7 +148,6 @@ class DBBridge:
         conn.close()
 
     def putData(self, tableName: str,  data: Tuple):
-        # 
         self.commitQueue.append((tableName, data))
         self.commitCnt += 1
         if self.commitCnt >= 1000:
