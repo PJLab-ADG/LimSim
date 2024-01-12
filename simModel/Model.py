@@ -357,7 +357,8 @@ class Model:
 
     def moveStep(self):
         traci.simulationStep()
-        self.carlaSync.tick()
+        if self.CARLACosim:
+            self.carlaSync.tick()
         self.timeStep += 1
         if self.ego.id in traci.vehicle.getIDList():
             self.getSce()
@@ -369,4 +370,5 @@ class Model:
     def destroy(self):
         traci.close()
         self.dbBridge.close()
-        self.carlaSync.close()
+        if self.CARLACosim:
+            self.carlaSync.close()

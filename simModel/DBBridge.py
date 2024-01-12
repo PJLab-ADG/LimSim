@@ -122,12 +122,12 @@ class DBBridge:
         cur.execute('''CREATE TABLE IF NOT EXISTS QAINFO(
                     frame INT PRIMARY KEY,
                     description TEXT,
-                    navigation TEXT
+                    navigation TEXT,
                     actions TEXT,
                     few_shots TEXT,
                     response TEXT,
                     prompt_tokens INT,
-                    completion_tokens INT
+                    completion_tokens INT,
                     total_tokens INT);''')
 
         conn.commit()
@@ -148,7 +148,6 @@ class DBBridge:
         conn.close()
 
     def putData(self, tableName: str,  data: Tuple):
-        # 
         self.commitQueue.append((tableName, data))
         self.commitCnt += 1
         if self.commitCnt >= 1000:

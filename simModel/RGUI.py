@@ -14,7 +14,8 @@ from simModel.DataQueue import (
 )
 from simModel.Replay import ReplayModel
 from utils.simBase import CoordTF
-
+from DriverAgent.Evaluation import Decision_Evaluation
+            
 
 def generateDefaultImage(
     width, height, bgcolor='white', 
@@ -39,6 +40,8 @@ class GUI:
         self.zoom_speed: float = 1.0
         self.is_dragging: bool = False
         self.old_offset = (0, 0)
+
+        self.evaluator = Decision_Evaluation(model.dataBase, model.timeStep)
 
     def setup(self):
         dpg.create_context()
@@ -90,8 +93,11 @@ class GUI:
                 os.path.dirname(os.path.realpath(__file__)), ".", "fonts", "Meslo.ttf"
             )
             default_font = dpg.add_font(font_path, 18)
+            # add second font
+            dpg.add_font(font_path, 20, id="secondary_font")
         
         dpg.bind_font(default_font)
+        
 
         # 控制面板
         with dpg.window(tag='ControlWindow', label='Menu'):
@@ -419,21 +425,54 @@ class GUI:
         )
 
     def showPrompts(self, prompts: str):
-        dpg.delete_item('prompts')
+        dpg.delete_item('descriptionTitle')
+        dpg.delete_item('navigationTitle')
+        dpg.delete_item('actionsTitle')
+        dpg.delete_item('description')
+        dpg.delete_item('navigation')
+        dpg.delete_item('actions')
+        dpg.add_text("##Description:\n", parent='PromptsWindow',
+            tag='descriptionTitle', wrap=455, color=(0, 191, 255))
+        # set font of specific widget
+        dpg.set_item_font(dpg.last_item(), "secondary_font")
         dpg.add_text(
-            prompts, parent='PromptsWindow',
-            tag='prompts', wrap=360
+            prompts["description"].replace("### ", "\n").strip("\n"), parent='PromptsWindow',
+            tag='description', wrap=455
+            )
+        dpg.add_text("##Navigation:\n", parent='PromptsWindow',
+            tag='navigationTitle', wrap=455, color=(0, 191, 255))
+        dpg.set_item_font(dpg.last_item(), "secondary_font")
+        dpg.add_text(
+            prompts["navigation"], parent='PromptsWindow',
+            tag='navigation', wrap=455
+            )
+        dpg.add_text("##Actions:\n", parent='PromptsWindow',
+            tag='actionsTitle', wrap=455, color=(0, 191, 255))
+        dpg.set_item_font(dpg.last_item(), "secondary_font")
+        dpg.add_text(
+            prompts["actions"], parent='PromptsWindow',
+            tag='actions', wrap=455
             )
     
     def showResponse(self, response: str):
         dpg.delete_item('response')
+        dpg.delete_item('result')
         dpg.add_text(
-            response, parent='ResponseWindow', 
-            tag='response', wrap=360
+            response.replace(response.strip("\n").split("\n")[-1], ""), parent='ResponseWindow', 
+            tag='response', wrap=460, show = True
             )
+        dpg.add_text(
+            response.strip("\n").split("\n")[-1], parent='ResponseWindow', 
+            tag='result', wrap=460, show = True, color=(255, 215, 0)
+            )
+        dpg.set_item_font(dpg.last_item(), "secondary_font")
 
     def showQA(self, QA: QuestionAndAnswer):
-        prompts = QA.description + '\n' + QA.navigation + '\n' + QA.actions
+        prompts = {
+            "description": QA.description,
+            "navigation": QA.navigation,
+            "actions": QA.actions
+        }
         response = QA.response
         self.showPrompts(prompts)
         self.showResponse(response)
@@ -444,6 +483,7 @@ class GUI:
         canvasNode = dpg.add_draw_node(parent="Canvas")
         if self.is_running:
             self.model.runStep()
+            self.evaluator.Evaluate(self.model)
 
         roadgraphRenderData, VRDDict = self.model.exportRenderData()
         if roadgraphRenderData and VRDDict:
