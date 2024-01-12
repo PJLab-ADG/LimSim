@@ -1,15 +1,13 @@
-from rich import print
+from simModel.Replay import ReplayModel
+from simModel.RGUI import GUI
+from DriverAgent.Evaluation import Decision_Evaluation
 
-from simModel.egoTracking.replay import ReplayModel
-from DriverAgent.Evaluation import GT_Evaluation
+database = './results/2024-01-11_21-53-37.db'
+model = ReplayModel(database)
+gui = GUI(model)
+# evaluator = Decision_Evaluation(database, model.timeStep)
+# while not model.tpEnd:
+#     model.runStep()
+#     evaluator.Evaluate(model)
 
-dataBase = '/home/PJLAB/leiwenjie/lwj/LimSimLLM/egoTrackingTest.db'
-
-rmodel = ReplayModel(dataBase=dataBase,
-                     startFrame=0)
-evaluator = GT_Evaluation(dataBase, rmodel.timeStep)
-while not rmodel.tpEnd:
-    rmodel.moveStep()
-    evaluator.Evaluate(rmodel)
-
-rmodel.gui.destroy()
+gui.run()

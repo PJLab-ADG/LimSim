@@ -193,3 +193,6 @@ DriverAgent/GT/config.yaml
 db/
 
 results/
+
+text_example/
+DriverAgent/loadConfig.py

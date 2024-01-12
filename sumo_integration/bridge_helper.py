@@ -35,7 +35,7 @@ class BridgeHelper(object):
     blueprint_library = []
     offset = (0, 0)
 
-    _vtypes_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "data",
+    _vtypes_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), ".", "data",
                                 "vtypes.json")
     with open(_vtypes_path) as f:
         _VTYPES = json.load(f)['carla_blueprints']

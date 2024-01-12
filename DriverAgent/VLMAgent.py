@@ -1,15 +1,14 @@
+import base64
+import json
 import os
 import re
-import json
-import yaml
-import base64
-import requests
 import textwrap
-from rich import print
-from openai import OpenAI
-from typing import Dict, List, Union
+from typing import Dict
 
-from DriverAgent.Informer import Informer
+import requests
+import yaml
+from openai import OpenAI
+from rich import print
 
 from trafficManager.common.vehicle import Behaviour
 

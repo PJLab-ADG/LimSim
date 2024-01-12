@@ -17,7 +17,7 @@ from trafficManager.decision_maker.mcts_decision_maker import (
 from planner.ego_vehicle_planner import LLMEgoPlanner
 from planner.multi_vehicle_planner import MultiVehiclePlanner
 from predictor.simple_predictor import UncontrolledPredictor
-from simModel.egoTracking.model import Model
+from simModel.Model import Model
 from trafficManager.decision_maker.abstract_decision_maker import AbstractEgoDecisionMaker, EgoDecision
 from trafficManager.planner.abstract_planner import AbstractEgoPlanner, AbstractMultiPlanner
 from trafficManager.predictor.abstract_predictor import AbstractPredictor

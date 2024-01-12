@@ -36,8 +36,6 @@ class EnvDescriptor:
 
         self.last_lane = 0
 
-        self.env_state = 0
-
         self.last_decision_time = 0
 
         with open(config["DESCRIBE_JSON"], 'r', encoding="utf-8") as f:
@@ -322,6 +320,12 @@ class EnvDescriptor:
         else:
             return 'behind'
 
+    # TODO: predict trajectory
+    def getSVTrajectory(self):
+
+        pass
+
+
     def getSVInfo(self, prediction: Prediction, roadgraph: RoadGraph) -> str:
         """获取AoI内的车辆信息，需要区分在normal lane和junction lane上的描述
 
@@ -426,15 +430,15 @@ class EnvDescriptor:
         sv_position = '('+ str(round(vehicle.current_state.x, 3)) + "," + str(round(vehicle.current_state.y, 3)) +')'
 
             
-        sv_normal_des = self.des_json["basic_description"]["surrond_vehicle_on_normal_description"].format(\
-                                                                    sv_id = vehicle.id, \
-                                                                    lane_relative_position = lane_relative_position, \
-                                                                    relative_position = relative_position, \
-                                                                    sv_speed = round(vehicle.current_state.vel, 3), \
-                                                                    sv_acceleration = round(vehicle.current_state.acc, 3), \
-                                                                    sv_lane_position = round(vehicle.current_state.s, 3), \
-                                                                    sv_position = sv_position,\
-                                                                    distance = distance)
+        sv_normal_des = self.des_json["basic_description"]["surrond_vehicle_on_normal_description"].format(
+                            sv_id = vehicle.id,
+                            lane_relative_position = lane_relative_position,
+                            relative_position = relative_position,
+                            sv_speed = round(vehicle.current_state.vel, 3),
+                            sv_acceleration = round(vehicle.current_state.acc, 3),
+                            sv_lane_position = round(vehicle.current_state.s, 3),
+                            sv_position = sv_position,
+                            distance = distance)
 
         return sv_normal_des + "\n"
 
@@ -458,13 +462,14 @@ class EnvDescriptor:
         else:
             [ego_time, ego_s, sv_time, sv_s] = self.trajectory_overlap(vehicle, self.ego_prediction, prediction_state)
             if ego_s != None:
-                sv_junction_des = self.des_json["basic_description"]["surrond_vehicle_on_junction_description"].format(sv_id = vehicle.id, \
-                                                                    sv_speed = round(vehicle.current_state.vel, 3), \
-                                                                    sv_acc = round(vehicle.current_state.acc), \
-                                                                    ego_s = round(ego_s, 3), \
-                                                                    ego_time = round(ego_time, 3), \
-                                                                    sv_s = round(sv_s, 3), \
-                                                                    sv_time = round(sv_time, 3))
+                sv_junction_des = self.des_json["basic_description"]["surrond_vehicle_on_junction_description"].format(
+                                    sv_id = vehicle.id,
+                                    sv_speed = round(vehicle.current_state.vel, 3),
+                                    sv_acc = round(vehicle.current_state.acc),
+                                    ego_s = round(ego_s, 3),
+                                    ego_time = round(ego_time, 3),
+                                    sv_s = round(sv_s, 3),
+                                    sv_time = round(sv_time, 3))
             
             else:
                 return ""

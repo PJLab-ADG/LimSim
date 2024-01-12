@@ -1,9 +1,9 @@
 from trafficManager.common.vehicle import Behaviour, Vehicle, VehicleType
 from utils.trajectory import Trajectory, State, Rectangle, RecCollide
 from typing import Dict, List
-from simModel.egoTracking.replay import ReplayModel
+from simModel.Replay import ReplayModel
 import numpy as np
-from evaluation.collision_statistics import compute_time_to_collision
+from DriverAgent.collision_statistics import compute_time_to_collision
 import sqlite3
 import logger, logging
 
@@ -15,6 +15,7 @@ import logger, logging
 # 5. reflection可以把连续的几帧决策过程和结果都输入给它（好像reflection只给失败的决策也可以），同时补偿一些额外知识给它，要确定reflection的输出结果和格式是什么，然后怎么运用
 # 6. 修改换道的规划，保持速度不变
 
+# sum = 1.0
 penalty_weight = {
     "acc": 0.1,
     "efficiency": 0.3,
@@ -32,7 +33,7 @@ class CollisionException(Exception):
     def __str__(self) -> str:
         return self.errorinfo
 
-class GT_Evaluation:
+class Decision_Evaluation:
     def __init__(self, database: str, timeStep) -> None:
         self.complete_percentage: float = 0.0
 
@@ -52,21 +53,18 @@ class GT_Evaluation:
         # create database
         conn = sqlite3.connect(database)
         cur = conn.cursor()
-        cur.execute("DROP TABLE IF EXISTS promptsEvalINFO")
+        cur.execute("DROP TABLE IF EXISTS evaluationINFO")
         conn.commit()
         cur.execute(
-            """CREATE TABLE IF NOT EXISTS promptsEvalINFO(
-                timeStep REAL PRIMARY KEY,
-                description TEXT,
-                fewshots TEXT,
-                thoughtsAndAction TEXT,
+            """CREATE TABLE IF NOT EXISTS evaluationINFO(
+                frame REAL PRIMARY KEY,
+                traffic_light_score REAL,
                 acc_score REAL,
                 efficiency_score REAL,
                 speed_limit_score REAL,
                 ttc_score REAL,
                 decision_score REAL,
-                caution TEXT,
-                done BOOL
+                caution TEXT
             );"""
         )
         conn.commit()
@@ -76,7 +74,6 @@ class GT_Evaluation:
         self.logging = logging.getLogger("Evaluation").getChild(__name__)
 
     def cal_route_length(self, model: ReplayModel) -> float:
-        # {'-0.0.00': {'edgeLanes': {'-0.0.00_1', '-0.0.00_0'}, 'changeLanes': {'-0.0.00_1'}, 'junctionLanes': {':965_3_0'}}, '-18.0.00': {'edgeLanes': {'-18.0.00_0', '-18.0.00_1'}}}
         route_length = 0.0
         _, LLRDict, _ = model.ego.getLaneLevelRoute(model.rb)
         for edgeID, laneDict in LLRDict.items():
@@ -168,13 +165,13 @@ class GT_Evaluation:
                 #     decision_score["efficiency"] += (eval_speed - ego_eval_speed) * efficiency_weight
                 vehicle_num += 1
         # if there is no car in same edge, need to compare with speed limit
-        if vehicle_num > 0:
+        if vehicle_num > 0 and all_vehicle_eval_speed > 0.1:
             decision_score["efficiency"] = ego_eval_speed / all_vehicle_eval_speed / vehicle_num * 100
         else:
             decision_score["efficiency"] = 100
         if decision_score["efficiency"] > 100:
             decision_score["efficiency"] = 100
-        if decision_score["efficiency"] < 100.0:
+        if decision_score["efficiency"] < 60.0:
             self.current_reasoning += "your speed is so low that you have a low efficiency\n"
 
         # 3. exceed speed limit, speed_limit/(speeding frames/ num)*100 as score
@@ -205,34 +202,17 @@ class GT_Evaluation:
     def SaveDatainDB(self, model: ReplayModel, decision_score) -> None:
         conn = sqlite3.connect(model.dataBase)
         cur = conn.cursor()
-        promptData = None
-        try:
-            cur.execute(
-                """SELECT done, description, fewshots, thoughtsAndAction FROM promptsINFO
-                WHERE timeStep == "{}";""".format(
-                    (model.timeStep-10) / 10
-                )
+        # add evaluation data
+        cur.execute(
+            """INSERT INTO evaluationINFO (
+                frame, traffic_light_score, acc_score, efficiency_score, speed_limit_score, ttc_score, decision_score, caution
+                ) VALUES (?,?,?,?,?,?,?,?);""",
+            (
+                model.timeStep, decision_score["red_light"], decision_score["acc"], decision_score["efficiency"], decision_score["speed_limit"], decision_score["ttc"], self.decision_score[-1], self.current_reasoning
             )
-            promptData = cur.fetchall()
-        except:
-            pass
-        if promptData:
-            done, description, fewshots, thoughtsAndAction = promptData[-1]
-            # 数据库插入
-            cur.execute(
-                """INSERT INTO promptsEvalINFO (
-                    timeStep, description, fewshots, 
-                    thoughtsAndAction, acc_score, efficiency_score, speed_limit_score, ttc_score, decision_score, caution, done
-                    ) VALUES (?,?,?,?,?,?,?,?,?,?,?);""",
-                (
-                    model.timeStep, description,
-                    fewshots, thoughtsAndAction, decision_score["acc"], decision_score["efficiency"], decision_score["speed_limit"], decision_score["ttc"], self.decision_score[-1], self.current_reasoning, done
-                )
-            )
-            conn.commit()
-            conn.close()
-
-    # 或许再加一个跟随导航指令？
+        )
+        conn.commit()
+        conn.close()
 
     def Evaluate(self, model: ReplayModel) -> None:
         self.current_reasoning = ""
@@ -252,23 +232,24 @@ class GT_Evaluation:
             raise e
         
         if model.timeStep - self.current_time > 10 and model.timeStep % 10 == 0:
-            current_decision_score = 0
+            current_decision_score = 0 # current decision score, based on all item score
+            current_decision_item_score = dict() # each item score
             # 2. pass red light check
             if self.PassRedLight(model):
                 self.current_score *= 0.7
-                current_decision_score += penalty_weight["red_light"] * 70
+                current_decision_item_score["red_light"] = 70
                 # current_decision_score *= (1 - penalty_weight["red_light"] * 70 / 100)
             else:
-                current_decision_score += penalty_weight["red_light"] * 100
+                current_decision_item_score["red_light"] = 100
             # 3. trajectory score
-            decision_score = self.Trajectoryscore(model)
-            for key, value in decision_score.items():
+            current_decision_item_score.update(self.Trajectoryscore(model))
+            for key, value in current_decision_item_score.items():
                 # if value < 100:
                 current_decision_score += penalty_weight[key] * value
                 # current_decision_score *= (1 - penalty_weight[key] * value / 100)
             # current_decision_score /= 5
             self.decision_score.append(current_decision_score)
-            self.SaveDatainDB(model, decision_score)
+            self.SaveDatainDB(model, current_decision_item_score)
 
         if model.tpEnd:
             self.cal_route_length(model)
