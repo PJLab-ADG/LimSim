@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 from DriverAgent.EnvDescriptor import EnvDescriptor as EnvDescriptor
 # Import agents
 from DriverAgent.Informer import Informer, Informer as Informer
-from DriverAgent.LLMAgent import LLMAgent as LLMAgent
+from LLMAgent_closeloop import LLMAgent as LLMAgent
 from DriverAgent.VLMAgent import VLMAgent as VLMAgent
 from DriverAgent.VLMDescriptor import VLMDescriptor as VLMDescriptor
 from simModel.egoTracking.model import Model
@@ -161,6 +161,8 @@ def handle_ego_car(synchronization, model: Model, agents: edict(), traffic_manag
         #       to accept ego car's behaviour and can choose weather plan for other cars
         paths = traffic_manager.plan(model.timeStep, roadgraph, vehicles, ego_behaviour, other_plan=True)
 
+        # Step 4: evaluate the ego car's decision
+        
     except NameError:
         pass
 
