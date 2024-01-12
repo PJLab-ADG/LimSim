@@ -24,11 +24,6 @@ decision_logger = logger.setup_app_level_logger(logger_name="LLMAgent", file_nam
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
 from DriverAgent.loadConfig import load_openai_config
-# os.environ["OPENAI_API_TYPE"] = "azure"
-# os.environ["OPENAI_API_VERSION"] = "2023-07-01-preview"
-# os.environ["OPENAI_API_BASE"] = "https://lwjwrz.openai.azure.com/"
-# os.environ["OPENAI_API_KEY"] = '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'
-# os.environ["EMBEDDING_MODEL"] = "ada-002"
 
 class LLMAgent:
     # TODO: openai or langchain?
@@ -47,7 +42,7 @@ class LLMAgent:
         elif oai_api_type == "openai":
             self.llm = ChatOpenAI(
                 temperature=0,
-                model_name= 'gpt-3.5-turbo-16k', #'gpt-4',  'gpt-3.5-turbo-16k'# or any other model with 8k+ context
+                model_name= 'gpt-3.5-turbo-16k', 
                 max_tokens=2000,
                 request_timeout=60,
             )
@@ -266,13 +261,3 @@ if __name__ == "__main__":
     gui.join()
     gui.terminate()
     
-
-# from DriverAgent.Evaluation import Decision_Evaluation
-# from simModel.Replay import ReplayModel
-# if __name__ == "__main__":
-#     database = '/home/PJLAB/leiwenjie/lwj/LimSimLLM/egoTrackingTest.db'
-#     model = ReplayModel(database)
-#     evaluator = Decision_Evaluation(database, model.timeStep)
-#     while not model.tpEnd:
-#         model.runStep()
-#         evaluator.Evaluate(model)

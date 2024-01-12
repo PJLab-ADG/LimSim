@@ -7,21 +7,13 @@ from DriverAgent.collision_statistics import compute_time_to_collision
 import sqlite3
 import logger, logging
 
-
-# TODO: 1. 把这个写成离线的，然后不再对应decision的评价，那么如何提取好的决策结果保存到memory呢？也可以手动添加我觉得
-# 2. 修改dirveagent代码结构，把system mesage等信息外挂，为了规范LLM的输出，可以写example，同时写好output，并入到这个仓库里
-# 3. 离线跑一轮，看看效果和评价准确性
-# 4. 增加memory，确定形式和检索方法
-# 5. reflection可以把连续的几帧决策过程和结果都输入给它（好像reflection只给失败的决策也可以），同时补偿一些额外知识给它，要确定reflection的输出结果和格式是什么，然后怎么运用
-# 6. 修改换道的规划，保持速度不变
-
 # sum = 1.0
 penalty_weight = {
     "acc": 0.1,
-    "efficiency": 0.3,
+    "efficiency": 0.2,
     "speed_limit": 0.2,
     "ttc": 0.3,
-    "red_light": 0.3
+    "red_light": 0.2
 }
 
 
@@ -167,6 +159,8 @@ class Decision_Evaluation:
         # if there is no car in same edge, need to compare with speed limit
         if vehicle_num > 0 and all_vehicle_eval_speed > 0.1:
             decision_score["efficiency"] = ego_eval_speed / all_vehicle_eval_speed / vehicle_num * 100
+        elif vehicle_num == 0:
+            decision_score["efficiency"] = ego_eval_speed / speed_limit * 100
         else:
             decision_score["efficiency"] = 100
         if decision_score["efficiency"] > 100:
