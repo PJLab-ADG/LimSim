@@ -213,13 +213,13 @@ class Vehicle:
                 return self.LLRDict[self.edgeID]['edgeLanes']
             laneLength = nb.getLane(self.laneID).sumo_length
             if laneLength < self.lookForward:
-                if self.lanePos < 5:
-                    return self.LLRDict[self.edgeID]['edgeLanes']
-                else:
-                    output = set()
-                    output = output | self.LLRDict[self.edgeID]['changeLanes']
-                    output = output | self.LLRDict[self.edgeID]['junctionLanes']
-                    return output
+                # if self.lanePos < 5:
+                #     return self.LLRDict[self.edgeID]['edgeLanes']
+                # else:
+                output = set()
+                output = output | self.LLRDict[self.edgeID]['changeLanes']
+                output = output | self.LLRDict[self.edgeID]['junctionLanes']
+                return output
             remainDis = laneLength - self.lanePos
             if remainDis > max(laneLength / 3, self.lookForward):
                 return self.LLRDict[self.edgeID]['edgeLanes']
@@ -304,6 +304,7 @@ class Vehicle:
         return 'Success'
 
     def export2Dict(self, nb: NetworkBuild | Rebuild) -> dict:
+        self.LLRSet, self.LLRDict, self.LCRDict = self.getLaneLevelRoute(nb)
         return {
             'id': self.id, 'vTypeID': self.vTypeID,
             'xQ': self.xQ, 'yQ': self.yQ, 'yawQ': self.yawQ,

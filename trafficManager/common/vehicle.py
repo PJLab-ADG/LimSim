@@ -246,8 +246,9 @@ class Vehicle:
                     current_lane.id, self.available_lanes)
                 try:
                     self.lane_id = next_lane.id
-                except AttributeError:
+                except AttributeError as e:
                     print(self.id)
+                    logging.error(f"Vehicle {self.id} cannot switch to the next lane, the reason is {e}")
                 self.current_state = self.get_state_in_lane(next_lane)
                 current_lane = next_lane
             elif isinstance(current_lane, JunctionLane):

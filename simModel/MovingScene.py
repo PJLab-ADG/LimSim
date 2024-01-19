@@ -354,14 +354,16 @@ class SceneReplay:
                 juncLane = self.netInfo.getJunctionLane(jl)
                 roadgraph.junction_lanes[juncLane.id] = juncLane
 
-        # export vehicles' information using dict.
-        vehicles = {
-            'egoCar': self.ego.export2Dict(self.netInfo),
-            'carInAoI': [av.export2Dict(self.netInfo) for av in self.vehINAoI.values()],
-            'outOfAoI': [sv.export2Dict(self.netInfo) for sv in self.outOfAoI.values()]
-        }
-
-        return roadgraph, vehicles
+        try:
+            # export vehicles' information using dict.
+            vehicles = {
+                'egoCar': self.ego.export2Dict(self.netInfo),
+                'carInAoI': [av.export2Dict(self.netInfo) for av in self.vehINAoI.values()],
+                'outOfAoI': [sv.export2Dict(self.netInfo) for sv in self.outOfAoI.values()]
+            }
+            return roadgraph, vehicles
+        except Exception:
+            return roadgraph, None
     
     def exportRenderData(self):
         roadgraphRenderData = RGRD()

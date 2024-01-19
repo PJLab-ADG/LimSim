@@ -128,7 +128,20 @@ class DBBridge:
                     response TEXT,
                     prompt_tokens INT,
                     completion_tokens INT,
-                    total_tokens INT);''')
+                    total_tokens INT,
+                    total_time REAL,
+                    choose_action INT);''')
+        cur.execute(
+            """CREATE TABLE IF NOT EXISTS resultINFO(
+                egoID TEXT PRIMARY KEY,
+                result BOOLEAN,
+                total_score REAL,
+                complete_percentage REAL,
+                drive_score REAL,
+                use_time REAL,
+                fail_reason TEXT
+            );"""
+        )
 
         conn.commit()
         cur.close()
@@ -151,7 +164,7 @@ class DBBridge:
         # 
         self.commitQueue.append((tableName, data))
         self.commitCnt += 1
-        if self.commitCnt >= 1000:
+        if self.commitCnt >= 100:
             self.commitData()
             self.commitQueue = []
             self.commitCnt = 0

@@ -4,10 +4,9 @@ from trafficManager.predictor.abstract_predictor import Prediction
 from trafficManager.traffic_manager import TrafficManager
 import logger, logging
 from utils.roadgraph import JunctionLane, NormalLane, RoadGraph
-from utils.trajectory import State
+from utils.trajectory import State, Trajectory
 from typing import Dict, List
 
-from typing import List
 import numpy as np
 import json
 
@@ -20,7 +19,7 @@ ACTIONS_DESCRIPTION = {
 }
 
 # 明确需要哪些信息
-class EnvDescriptor:
+class EnvDescription:
     def __init__(
             self, config
     ) -> None:
@@ -320,11 +319,26 @@ class EnvDescriptor:
         else:
             return 'behind'
 
-    # TODO: predict trajectory
-    def getSVTrajectory(self):
+    def getSVTrajectory(self, vehicle: Vehicle, roadgraph: RoadGraph) -> List[State]:
+        """获取SV的未来5s轨迹
 
-        pass
-
+        Args:
+            vehicle (Vehicle): 附近车辆
+        """
+        # judge the vehicle lane and position
+        # current_lane = roadgraph.get_lane_by_id(vehicle.lane_id)
+        prediction_trajectory = Trajectory()
+        next_lane = roadgraph.get_available_next_lane(
+            vehicle.lane_id, vehicle.available_lanes)
+        current_lane = roadgraph.get_lane_by_id(vehicle.lane_id)
+        lanes = [current_lane, next_lane] if next_lane != None else [
+            current_lane]
+        for t in range(0, 50, 1):
+            t = t/10
+            prediction_trajectory.states.append(State(t = t, d = vehicle.current_state.d, s = vehicle.current_state.s + vehicle.current_state.vel * t))
+        prediction_trajectory.frenet_to_cartesian(lanes, vehicle.current_state)
+        
+        return prediction_trajectory.states
 
     def getSVInfo(self, prediction: Prediction, roadgraph: RoadGraph) -> str:
         """获取AoI内的车辆信息，需要区分在normal lane和junction lane上的描述
@@ -383,7 +397,11 @@ class EnvDescriptor:
         sv_list = self.SV[:]
         # 描述在AOI区域内可能发生碰撞的车辆
         for sv in sv_list:
-            collision_des = self.describeSVInAOI(sv, prediction.get(sv, None))
+            if sv not in prediction.results.keys():
+                prediction_trajectory = self.getSVTrajectory(sv, roadgraph)
+            else:
+                prediction_trajectory = prediction.results[sv]
+            collision_des = self.describeSVInAOI(sv, prediction_trajectory)
             if collision_des != "":
                 svDescription += collision_des
                 is_sv = True
@@ -561,7 +579,7 @@ class EnvDescriptor:
         self.ego_prediction = prediction.results.get(self.ego_vehicle, None)
 
         egoDecription = self.getEgoInfo()
-        SVDescription = self.getSVInfo(prediction.results, roadgraph)
+        SVDescription = self.getSVInfo(prediction, roadgraph)
 
         # step 3.2 获取lane信息
         laneDescription = self.getLaneInfo(roadgraph)
