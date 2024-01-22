@@ -34,5 +34,5 @@ if __name__ == '__main__':
         model.updateVeh()
     
     model.destroy()
-    gui.join()
     gui.terminate()
+    gui.join()

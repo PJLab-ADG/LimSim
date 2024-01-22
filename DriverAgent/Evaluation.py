@@ -497,8 +497,8 @@ def getSVTrajectory(vehicle: Vehicle, roadgraph: RoadGraph, available_lanes, T: 
         current_lane]
     if next_lane != None:
         next_next_lane = roadgraph.get_next_lane(next_lane.id)
-        lanes.append(next_next_lane)
         if next_next_lane != None:
+            lanes.append(next_next_lane)
             next_3_lane = roadgraph.get_next_lane(next_next_lane.id)
             if next_3_lane != None:
                 lanes.append(next_3_lane)

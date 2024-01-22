@@ -2,8 +2,6 @@ import os
 from langchain.vectorstores.chroma import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.docstore.document import Document
-import json
-# from loadConfig import load_openai_config
 import sqlite3
 import pandas as pd
 from DriverAgent.Reflection import ReflectionAssistant
@@ -44,10 +42,12 @@ class MemoryItem():
         self.response = result
         self.action = action
 
+
 class DrivingMemory:
     def __init__(self, db_path=None) -> None:
-        if "azure" != 'azure':
-            self.embedding = OpenAIEmbeddings()
+        if os.environ["OPENAI_API_TYPE"] == 'azure':
+                self.embedding = OpenAIEmbeddings(
+                    deployment=os.environ['EMBEDDING_MODEL'], chunk_size=1)
         elif os.environ["OPENAI_API_TYPE"] == 'openai':
             self.embedding = OpenAIEmbeddings()
         else:
@@ -93,7 +93,7 @@ class DrivingMemory:
             self.scenario_memory._collection.update(
                 ids=id, metadatas={
                     "human_question": human_question,
-                    'LLM_response': memory.response, 'action': memory.action,
+                    'LLM_response': memory.response, 'action': str(memory.action),
                     'comments': memory.reflection
                 }
             )
@@ -103,9 +103,9 @@ class DrivingMemory:
             doc = Document(
                 page_content=key,
                 metadata={
-                    "human_question": human_question,
-                    'LLM_response': memory.response, 'action': memory.action,
-                    'comments': memory.reflection
+                    "human_question": human_question.replace("'", ""),
+                    'LLM_response': memory.response.replace("'", ""), 'action': str(memory.action),
+                    'comments': memory.reflection.replace("'", "")
                 }
             )
             id = self.scenario_memory.add_documents([doc])
@@ -148,7 +148,10 @@ class DrivingMemory:
 
         evaluation = f"The current score is {memory.score}, the detail score is {detail_score.strip(', ')}. There are the current decision's cautions:\n{memory.cautious}"
         
-        LLM_response = self.reflector.reflection(human_message, memory.response, evaluation)
+        LLM_response, action = self.reflector.reflection(human_message, memory.response, evaluation, memory.action)
+        
+        if LLM_response == None:
+            return None
         
         target_phrase = f"{delimiter} Corrected version of Driver's Decision:"
         correct_answer = LLM_response[LLM_response.find(
@@ -158,12 +161,19 @@ class DrivingMemory:
         substring = LLM_response[LLM_response.find(
             target_phrase)+len(target_phrase):].strip()
         comment = f"{delimiter} I have made a misake before and below is my self-reflection:\n{substring}"
-        action = int(LLM_response.split(delimiter)[-1].strip(" "))
+        # action = int(LLM_response.split(delimiter)[-1].strip(" "))
         memory.set_reflection(correct_answer, comment, action)
         return memory
     
     def divideBasedOnScore(self, database: str) -> Tuple[List[MemoryItem], List[MemoryItem]]:
+        """_summary_
 
+        Args:
+            database (str): _description_
+
+        Returns:
+            Tuple[List[MemoryItem], List[MemoryItem]]: _description_
+        """
         good_memory = []
         bad_memory = []
 
@@ -248,17 +258,15 @@ class DrivingMemory:
         return res
 
 if __name__ == "__main__":
-    from DriverAgent.test.loadConfig_memory import load_openai_config
-    load_openai_config()
     memory = DrivingMemory()
     
     good_mem, bad_mem = memory.divideBasedOnScore("./results/2024-01-18_16-12-17.db")
     memory.addMemory(good_mem[0])
     for mem_item in bad_mem:
         reflection_memory = memory.getReflection(mem_item)
+        if reflection_memory == None:
+            continue
         memory.addMemory(reflection_memory)
     for mem_item in good_mem:
         memory.addMemory(reflection_memory)
-
-    # memory = DrivingMe
     

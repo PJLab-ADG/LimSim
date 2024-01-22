@@ -211,7 +211,7 @@
         <route edges="-14 -15#0 -15#1 -41 -50 54 -46 -10 -54 -55 -58 1 23 22#1 22#0" />
     </vehicle>
     <vehicle id="69" depart="138.00" type="vehicle.bmw.grandtourer">
-        <route edges="22#0 21 20 -13 -14 -15#0 -15#1 -16" />
+        <route edges="22#0 21 20 -13 -14 -15#0 -15#1 -16 -28 -29#0 -29#1" />
     </vehicle>
     <vehicle id="70" depart="140.00" type="vehicle.audi.a2">
         <route edges="-49 -50 -51 -52#0 -52#1" />
@@ -307,7 +307,7 @@
         <route edges="58 57 54" />
     </vehicle>
     <vehicle id="101" depart="202.00" type="vehicle.audi.etron">
-        <route edges="26 -62 -33 -34 -35 -8 -28" />
+        <route edges="26 -62 -33 -34 -35 -8 -28 -29#0 -29#1" />
     </vehicle>
     <vehicle id="102" depart="204.00" type="vehicle.jeep.wrangler_rubicon">
         <route edges="-50 -51 -52#0 -52#1 -59 -13 -14 -15#0 -15#1 -16 -28 -29#0 -29#1 -30" />
@@ -399,9 +399,9 @@
     <vehicle id="131" depart="262.00" type="vehicle.nissan.micra">
         <route edges="-39 -40 5 4 -48#0 -48#1 -49 -50 -51 -52#0 -52#1 -59 -13 -14 -15#0 -15#1 -16 -28" />
     </vehicle>
-    <vehicle id="132" depart="264.00" type="vehicle.volkswagen.t2">
+    <!-- <vehicle id="132" depart="264.00" type="vehicle.volkswagen.t2" departLane="3">
         <route edges="26 -62 -33 -34 -35 -8" />
-    </vehicle>
+    </vehicle> -->
     <vehicle id="133" depart="266.00" type="vehicle.nissan.patrol">
         <route edges="-58 1 0 -39 -32 68" />
     </vehicle>
@@ -420,8 +420,9 @@
     <vehicle id="138" depart="276.00" type="vehicle.mini.cooper_s">
         <route edges="-15#1 -41 -50 -51 -52#0 -52#1" />
     </vehicle>
-    <vehicle id="139" depart="278.00" type="vehicle.dodge.charger_police">
-        <route edges="-34 -1 58 57 54 -46 -10 -54 -55" />
+    <vehicle id="139" depart="278.00" type="vehicle.dodge.charger_police" departLane="3">
+    <route edges="-34 -35 -8 -28 -29#0" />
+        <!-- <route edges="-34 -1 58 57 54 -46 -10 -54 -55" /> -->
     </vehicle>
     <vehicle id="140" depart="280.00" type="vehicle.audi.tt">
         <route edges="0 33 26 -62 -33 -34 -35 -8 -28 -29#0 -29#1" />
@@ -450,8 +451,9 @@
     <vehicle id="148" depart="296.00" type="vehicle.jeep.wrangler_rubicon">
         <route edges="-48#0 -48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 33 26 -62 -33 -34 -1" />
     </vehicle>
-    <vehicle id="149" depart="298.00" type="vehicle.citroen.c3">
-        <route edges="-15#0 -15#1 -41 -50 54 -46 -10 -54 -55 -58 1 0 33" />
+    <vehicle id="149" depart="298.00" type="vehicle.citroen.c3" departLane="3">
+    <route edges="-34 -35 -8 -28 -29#0" />
+        <!-- <route edges="-15#0 -15#1 -41 -50 54 -46 -10 -54 -55 -58 1 0 33" /> -->
     </vehicle>
     <vehicle id="150" depart="300.00" type="vehicle.audi.etron">
         <route edges="4 -48#0 -48#1 -49 -50 -51 -52#0 -52#1" />
@@ -510,7 +512,7 @@
     <vehicle id="168" depart="336.00" type="vehicle.nissan.micra">
         <route edges="-32 68 -37 -70 24" />
     </vehicle>
-    <vehicle id="169" depart="338.00" type="vehicle.dodge.charger_police">
+    <vehicle id="169" depart="338.00" type="vehicle.dodge.charger_police" departLane="3">
         <route edges="-48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 33 26 -62 -33 -34 -35 -36" />
     </vehicle>
     <vehicle id="170" depart="340.00" type="vehicle.tesla.cybertruck">
@@ -834,9 +836,9 @@
     <vehicle id="276" depart="552.00" type="vehicle.tesla.model3">
         <route edges="-15#1 -41 -50 54 -46 -10 -54 -55 -58 1 23 22#1 22#0" />
     </vehicle>
-    <!-- <vehicle id="277" depart="554.00" type="vehicle.micro.microlino">
+    <vehicle id="277" depart="554.00" type="vehicle.micro.microlino">
         <route edges="26 -62 -33 -34 -1 58 57 54 -46 -10 -54 -55" />
-    </vehicle> -->
+    </vehicle>
     <vehicle id="278" depart="556.00" type="vehicle.jeep.wrangler_rubicon">
         <route edges="-16 -28 -29#0 -29#1 27 -48#0 -48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 -39 -32 68" />
     </vehicle>
@@ -880,8 +882,7 @@
         <route edges="24 -30 4 -48#0 -48#1 -49 -50 -51 -52#0 -52#1 -59 -13 -14 -15#0" />
     </vehicle>
     <vehicle id="292" depart="584.00" type="vehicle.tesla.cybertruck" departLane="3">
-    <route edges="-34 -35 -8 -28 -29#0" />
-        <!-- <route edges="33 26 -62 -33" /> -->
+        <route edges="33 26 -62 -33" />
     </vehicle>
     <vehicle id="293" depart="586.00" type="vehicle.citroen.c3">
         <route edges="-49 -50 54 -46 -10 -54 -55" />

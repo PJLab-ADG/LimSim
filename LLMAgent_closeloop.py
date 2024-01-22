@@ -27,7 +27,6 @@ import sqlite3
 decision_logger = logger.setup_app_level_logger(logger_name="LLMAgent", file_name="llm_decision.log")
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
-from DriverAgent.test.loadConfig import load_openai_config
 
 class CollisionException(Exception):
     def __init__(self, ErrorInfo: str) -> None:
@@ -58,16 +57,14 @@ class CollisionChecker:
         return False
 
 class LLMAgent:
-    # TODO: openai or langchain?
     def __init__(
         self, use_memory: bool = True, delimiter: str = "####"
     ) -> None:
-        load_openai_config()
         oai_api_type = os.getenv("OPENAI_API_TYPE")
         if oai_api_type == "azure":
             print("Using Azure Chat API")
             self.llm = AzureChatOpenAI(
-                deployment_name="wrz",
+                deployment_name="gpt-3.5-turbo-16k",
                 temperature=0,
                 max_tokens=2000,
             )
@@ -76,9 +73,8 @@ class LLMAgent:
                 temperature=0,
                 model_name= 'gpt-3.5-turbo-16k', 
                 max_tokens=2000,
-                request_timeout=60,
             )
-        db_path = os.path.dirname(os.path.abspath(__file__)) + "/db/" + "decision_shot/"
+        db_path = os.path.dirname(os.path.abspath(__file__)) + "/db/" + "decision_mem/"
         self.agent_memory = DrivingMemory(db_path=db_path)
         self.few_shot_num = 3
 
@@ -113,8 +109,10 @@ class LLMAgent:
 
         # step2. get the few shot examples
         if self.use_memory:
+            key = "## Driving scenario description:\n" + scenario_description + "\n## Navigation instruction:\n" + driving_intensions
+            key = key.replace("'", "")
             fewshot_results = self.agent_memory.retriveMemory(
-                scenario_description, driving_intensions, self.few_shot_num)
+                key, self.few_shot_num)
             fewshot_messages = []
             fewshot_answers = []
             fewshot_actions = []
@@ -122,6 +120,8 @@ class LLMAgent:
                 fewshot_messages.append(fewshot_result["human_question"])
                 fewshot_answers.append(fewshot_result["LLM_response"])
                 fewshot_actions.append(fewshot_result["action"])
+
+                print(fewshot_actions)
 
             if len(fewshot_actions) == 0:
                 LLM_logger.warning("There is no memory!")
@@ -249,7 +249,7 @@ def record_result(model: Model, start_time: float, result: bool, reason: str = "
     return 
 
 if __name__ == "__main__":
-    ego_id = '292'
+    ego_id = '139'
     sumo_gui = False
     sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
