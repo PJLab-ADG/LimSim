@@ -196,6 +196,9 @@ results/
 
 networkFiles/OpenDrive/Town05.xodr
 text_example/
+DriverAgent/loadConfig.py
+
+OpenDriveParser/
 DriverAgent/test
 
 reflection.json
