@@ -26,15 +26,22 @@ from utils.obstacles import StaticObstacle
 from utils.roadgraph import AbstractLane, JunctionLane, NormalLane, RoadGraph
 from utils import data_copy
 from utils.trajectory import State, Trajectory
-
 import logger
 
 
 logging = logger.get_logger(__name__)
 
-global KEY_INPUT
-KEY_INPUT = ""
+# global KEY_INPUT
+# KEY_INPUT = ""
 
+class LaneChangeException(Exception):
+    def __init__(self) -> None:
+        super().__init__(self)
+        self.errorinfo = "you need to change lane, but your lane change is not successful"
+    
+    def __str__(self) -> str:
+        return self.errorinfo  
+    
 class TrafficManager:
     """
     TrafficManager is a class that manages the traffic simulation, including vehicle behavior updates,
@@ -66,7 +73,7 @@ class TrafficManager:
         self.config = load_config(config_file_path)
         self.last_decision_time = -self.config["DECISION_INTERVAL"]
         self.mul_decisions =None
-        self._set_up_keyboard_listener()
+        # self._set_up_keyboard_listener()
 
         self.predictor = predictor if predictor is not None else UncontrolledPredictor()
         self.ego_decision = ego_decision if ego_decision is not None else EgoDecisionMaker()
@@ -74,24 +81,24 @@ class TrafficManager:
         self.multi_decision = multi_decision if multi_decision is not None else MultiDecisionMaker()
         self.multi_veh_planner = multi_veh_planner if multi_veh_planner is not None else MultiVehiclePlanner()
 
-    def _set_up_keyboard_listener(self):
+    # def _set_up_keyboard_listener(self):
 
-        def on_press(key):
-            """
-            This function is used to detect the key press from the keyboard.
-            When the left arrow key or 'a' is pressed, the global variable KEY_INPUT is set to 'Left'.
-            When the right arrow key or 'd' is pressed, the global variable KEY_INPUT is set to 'Right'.
-            """
-            global KEY_INPUT
-            if key == keyboard.Key.left or key == keyboard.KeyCode.from_char(
-                    'a'):
-                KEY_INPUT = 'Left'
-            elif key == keyboard.Key.right or key == keyboard.KeyCode.from_char(
-                    'd'):
-                KEY_INPUT = 'Right'
+    #     def on_press(key):
+    #         """
+    #         This function is used to detect the key press from the keyboard.
+    #         When the left arrow key or 'a' is pressed, the global variable KEY_INPUT is set to 'Left'.
+    #         When the right arrow key or 'd' is pressed, the global variable KEY_INPUT is set to 'Right'.
+    #         """
+    #         global KEY_INPUT
+    #         if key == keyboard.Key.left or key == keyboard.KeyCode.from_char(
+    #                 'a'):
+    #             KEY_INPUT = 'Left'
+    #         elif key == keyboard.Key.right or key == keyboard.KeyCode.from_char(
+    #                 'd'):
+    #             KEY_INPUT = 'Right'
 
-        listener = keyboard.Listener(on_press=on_press)
-        listener.start()  # start to listen on a separate thread
+    #     listener = keyboard.Listener(on_press=on_press)
+    #     listener.start()  # start to listen on a separate thread
 
     def plan(self, T: float, roadgraph: RoadGraph,
              vehicles_info: dict, ego_behaviour: Behaviour = Behaviour(8), other_plan: bool = True) -> Dict[int, Trajectory]:
@@ -128,20 +135,29 @@ class TrafficManager:
                                             self.lastseen_vehicles,
                                             through_timestep, self.config)
 
-        # Update Behavior
-        for vehicle_id, vehicle in vehicles.items():
-            # only vehicles in AoI will be controlled
-            if vehicle.vtype == VehicleType.OUT_OF_AOI:
-                continue
-            vehicle.update_behaviour(roadgraph, KEY_INPUT)
-            KEY_INPUT = ""
-
         # make sure ego car exists when EGO_PLANNER is used
         if self.config["EGO_PLANNER"]:
             ego_id = vehicles_info.get("egoCar")["id"]
             if ego_id is None:
                 raise ValueError("Ego car is not found when EGO_PLANER is used.")
 
+        # Update Behavior
+        for vehicle_id, vehicle in vehicles.items():
+            # only vehicles in AoI will be controlled
+            if other_plan and vehicle.vtype == VehicleType.IN_AOI:
+                try:
+                    vehicle.update_behaviour(roadgraph)
+                except Exception as e:
+                    logging.error(f"Error when updating behaviour of vehicle {vehicle_id}: {e}")
+            # KEY_INPUT = ""
+            if vehicle.vtype == VehicleType.EGO:
+                try:
+                    vehicle.update_behaviour(roadgraph)
+                except Exception as e:
+                    logging.error(f"Error when updating behaviour of vehicle {vehicle_id}: {e}")
+                    raise LaneChangeException()
+
+        # Decision Module
         ego_decision: EgoDecision = None
         if self.config["USE_DECISION_MAKER"] and T - self.last_decision_time >= self.config["DECISION_INTERVAL"]:
             if self.config["EGO_PLANNER"]:

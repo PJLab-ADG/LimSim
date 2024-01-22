@@ -199,3 +199,4 @@ text_example/
 DriverAgent/loadConfig.py
 
 OpenDriveParser/
+DriverAgent/test

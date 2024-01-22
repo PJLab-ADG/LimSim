@@ -3,16 +3,16 @@ import os
 import textwrap
 import time
 from rich import print
-from typing import List
+from typing import List, Tuple
 from datetime import datetime
 from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 from langchain.callbacks import get_openai_callback
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from DriverAgent.Memory import DrivingMemory
-from DriverAgent.EnvDescriptor import EnvDescriptor as EnvDescriptor
+from DriverAgent.EnvDescriptor import EnvDescription
 from simModel.Model import Model
 from simModel.MPGUI import GUI
-from trafficManager.traffic_manager import TrafficManager
+from trafficManager.traffic_manager import TrafficManager, LaneChangeException
 from langchain.callbacks.openai_info import OpenAICallbackHandler
 
 from simModel.DataQueue import QuestionAndAnswer
@@ -20,10 +20,42 @@ from simModel.DataQueue import QuestionAndAnswer
 import logger, logging
 from trafficManager.common.vehicle import Behaviour
 
+from utils.trajectory import Rectangle, RecCollide
+
+import sqlite3
+
 decision_logger = logger.setup_app_level_logger(logger_name="LLMAgent", file_name="llm_decision.log")
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
-from DriverAgent.loadConfig import load_openai_config
+from DriverAgent.test.loadConfig import load_openai_config
+
+class CollisionException(Exception):
+    def __init__(self, ErrorInfo: str) -> None:
+        super().__init__(self)
+        self.errorinfo = ErrorInfo
+    
+    def __str__(self) -> str:
+        return self.errorinfo
+
+class CollisionChecker:
+    def __init__(self):
+        pass
+    
+    # 应该在model里面，实施检测碰撞，还有没有路径，或者两个地方都搞一个也行
+    def CollisionCheck(self, model: Model) -> bool:
+        # vehicle trajectory collision need to be checked in every frame
+        for key, value in model.ms.vehINAoI.items():
+            if value.id == model.ms.ego.id:
+                continue
+            recA = Rectangle([model.ms.ego.x, model.ms.ego.y],
+                                model.ms.ego.length, model.ms.ego.width, model.ms.ego.yaw)
+            recB = Rectangle([value.x, value.y],
+                                value.length, value.width, value.yaw)
+            rc = RecCollide(recA, recB)
+            # if the car collide, stop the simulation
+            if rc.isCollide():
+                raise CollisionException("you have a collision with vehicle {}".format(key))
+        return False
 
 class LLMAgent:
     # TODO: openai or langchain?
@@ -73,7 +105,7 @@ class LLMAgent:
             self.llm_source["cost"] += cb.total_cost
         return 
 
-    def makeDecision(self, information = None, image_base64 = None, descriptions: list = None):
+    def makeDecision(self, information = None, image_base64 = None, descriptions: list = None) -> Tuple[int, str, str, str, dict]:
         # step1. get the scenario description
         scenario_description = descriptions[0]
         available_actions = descriptions[1]
@@ -96,10 +128,10 @@ class LLMAgent:
         else:
             fewshot_messages = []
         # step3. get system message and make prompt
-        with open(os.path.dirname(os.path.abspath(__file__)) + "/text_example/system_message_v2.txt", "r") as f:
+        with open(os.path.dirname(os.path.abspath(__file__)) + "/text_example/system_message_v-1.txt", "r") as f:
             system_message = f.read()
 
-        with open(os.path.dirname(os.path.abspath(__file__)) + "/text_example/example_QA.txt", "r") as f:
+        with open(os.path.dirname(os.path.abspath(__file__)) + "/text_example/example_QA1.txt", "r") as f:
             example = f.read()
             example_message = example.split("======")[0]
             example_answer = example.split("======")[1]
@@ -198,11 +230,26 @@ class LLMAgent:
             f"\tCompletion Tokens: {self.llm_source['completion_tokens']}\n"
             f"Total Cost (USD): ${self.llm_source['cost']}")
         
-        return Behaviour(result), response.content, human_message, few_shot_store, self.llm_source
+        return result, response.content, human_message, few_shot_store, self.llm_source
 
+def record_result(model: Model, start_time: float, result: bool, reason: str = "", error: Exception = None) -> None:
+    conn = sqlite3.connect(model.dataBase)
+    cur = conn.cursor()
+    # add result data
+    cur.execute(
+        """INSERT INTO resultINFO (
+            egoID, result, total_score, complete_percentage, drive_score, use_time, fail_reason
+            ) VALUES (?,?,?,?,?,?,?);""",
+        (
+            model.ms.ego.id, result, 0, 0, 0, time.time() - start_time, reason
+        )
+    )
+    conn.commit()
+    conn.close()
+    return 
 
 if __name__ == "__main__":
-    ego_id = '11'
+    ego_id = '292'
     sumo_gui = False
     sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
@@ -225,39 +272,51 @@ if __name__ == "__main__":
     )
     planner = TrafficManager(model)
     agent = LLMAgent(use_memory=False)
-    descriptor = EnvDescriptor(planner.config)
+    descriptor = EnvDescription(planner.config)
+    collision_checker = CollisionChecker()
     model.start()
 
     gui = GUI(model)
     gui.start()
 
+    total_start_time = time.time()
     try:
         while not model.tpEnd:
             model.moveStep()
+            # check collision
+            collision_checker.CollisionCheck(model)
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
                     LLM_logger.info(f"--------------- timestep is {model.timeStep} ---------------")
                     descriptions = descriptor.getDescription(
                         roadgraph, vehicles, planner, model.timeStep * 0.1)
+                    start_time = time.time()
                     ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", descriptions)
-                    current_QA = QuestionAndAnswer(descriptions[0], descriptions[2], descriptions[1], fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"])
+                    current_QA = QuestionAndAnswer(descriptions[0], descriptions[2], descriptions[1], fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"], time.time()-start_time, ego_behaviour)
+                    # print(current_QA)
                     model.putQA(current_QA)
-                    # ego_behaviour = Behaviour(8)
+                    # ego_behaviour = Behaviour(2)
                     # if "Change to" in descriptions[2]:
                     #     ego_behaviour = Behaviour(3)
                     trajectories = planner.plan(
-                        model.timeStep * 0.1, roadgraph, vehicles, ego_behaviour, other_plan=False
+                        model.timeStep * 0.1, roadgraph, vehicles, Behaviour(ego_behaviour), other_plan=False
                     )
                     model.setTrajectories(trajectories)
                 else:
                     model.ego.exitControlMode()
             model.updateVeh()
-    except Exception as e:
-        print(e)
+    except (CollisionException, LaneChangeException) as e:
+        record_result(model, total_start_time, False, str(e))
         model.dbBridge.commitData()
-    
-    model.destroy()
-    gui.join()
-    gui.terminate()
+    except Exception as e:
+        model.dbBridge.commitData()
+        raise e
+    else:
+        record_result(model, total_start_time, True, None)
+    finally:
+        model.destroy()
+        gui.terminate()
+        gui.join()
+
     

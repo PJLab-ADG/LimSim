@@ -146,17 +146,19 @@ class LLMEgoPlanner(AbstractEgoPlanner):
 
         target_v = current_state.vel + target_acc*course_t
         target_s = current_state.s + (current_state.vel + target_v)* course_t * 0.5
-        target_state = State(s=target_s, s_d=target_v, d=0)
-        # print("target_v is {}, course_t is {}, current_v is {}".format(target_v, course_t, current_state.vel))
+        if target_s - current_state.s < vehicle.length:
+            target_state = State(s=target_s, s_d=target_v, d=current_state.d)
+        else:
+            target_state = State(s=target_s, s_d=target_v, d=0)
 
         # judge stopping the car
         if (round(current_state.vel, 1) <= 0.1 and
             (target_s - current_state.s) <= vehicle.length):  # already stopped, keep it
             logging.debug(f"Vehicle {vehicle.id} Already stopped")
             path = Trajectory()
-            for t in np.arange(0, course_t, dt):
+            for t in np.arange(0, config["MIN_T"], dt):
                 path.states.append(
-                    State(t=t, s=current_state.s, d=current_state.d))
+                    State(t=t, s=current_state.s, d=current_state.d, yaw=None))
             path.frenet_to_cartesian(lanes, vehicle.current_state)
             path.cost = (
                 cost.smoothness(path, lanes[0].course_spline, config["weights"]) *
@@ -167,10 +169,12 @@ class LLMEgoPlanner(AbstractEgoPlanner):
             path = frenet_optimal_planner.calc_spec_path(current_state,
                                                         target_state, course_t, dt
                                                         )
+            
             if course_t != config["MIN_T"]:
-                for t in np.arange(course_t, config["MIN_T"], dt):
+                logging.debug(f"course_t is {course_t}, dt is {dt}, path length is {len(path.states)}, yaw is {path.states[-1].yaw}, current yaw is {current_state.yaw}")
+                for t in np.arange(path.states[-1].t + dt, config["MIN_T"], dt):
                     path.states.append(
-                        State(t=t, s=target_state.s, d=target_state.d))
+                        State(t=t, s=target_state.s, d=target_state.d, yaw=None))
             path.frenet_to_cartesian(lanes, current_state)
             path.cost = (
                 cost.smoothness(path, lanes[0].course_spline, config["weights"]) *
@@ -193,7 +197,7 @@ class LLMEgoPlanner(AbstractEgoPlanner):
         s_sample = config["S_SAMPLE"]
         n_s_sample = config["N_S_SAMPLE"]
 
-        sample_t = [config["MIN_T"] / 1.5]  # Sample course time
+        sample_t = [config["MIN_T"] / 2.0]  # Sample course time
         vel = min(state_in_target_lane.vel, target_vel)
         sample_s = np.empty(0)
         for t in sample_t:
@@ -239,26 +243,41 @@ class LLMEgoPlanner(AbstractEgoPlanner):
         else:
             raise("can't generate the trajectory!")
     
-    def update_state(self, vehicle: Vehicle, roadgraph: RoadGraph) -> None:
-        """Update the behaviour of a vehicle.
+    # def update_state(self, vehicle: Vehicle, roadgraph: RoadGraph) -> None:
+    #     """Update the behaviour of a vehicle.
 
-        Args:
-            roadgraph (RoadGraph): The roadgraph containing the lanes the vehicle is traveling on.
-        """
-        current_lane = roadgraph.get_lane_by_id(vehicle.lane_id)
+    #     Args:
+    #         roadgraph (RoadGraph): The roadgraph containing the lanes the vehicle is traveling on.
+    #     """
+    #     current_lane = roadgraph.get_lane_by_id(vehicle.lane_id)
+    #     # Lane change behavior
+    #     if isinstance(current_lane, NormalLane):
+    #         if vehicle.behaviour == Behaviour.LCL:
+    #             left_lane_id = current_lane.left_lane()
+    #             left_lane = roadgraph.get_lane_by_id(left_lane_id)
+    #             state = vehicle.get_state_in_lane(left_lane)
+    #             if state.d > -left_lane.width / 2:
+    #                 vehicle.change_to_lane(left_lane)
 
-        if vehicle.current_state.s > current_lane.course_spline.s[-1] - 0.2:
-            if isinstance(current_lane, NormalLane):
-                next_lane = roadgraph.get_available_next_lane(
-                    current_lane.id, vehicle.available_lanes)
-                vehicle.lane_id = next_lane.id
-                vehicle.current_state = vehicle.get_state_in_lane(next_lane)
-                current_lane = next_lane
-            elif isinstance(current_lane, JunctionLane):
-                next_lane_id = current_lane.next_lane_id
-                next_lane = roadgraph.get_lane_by_id(next_lane_id)
-                vehicle.lane_id = next_lane.id
-                vehicle.current_state = vehicle.get_state_in_lane(next_lane)
-                current_lane = next_lane
+    #         elif vehicle.behaviour == Behaviour.LCR:
+    #             right_lane_id = current_lane.right_lane()
+    #             right_lane = roadgraph.get_lane_by_id(right_lane_id)
+    #             state = vehicle.get_state_in_lane(right_lane)
+    #             if state.d < right_lane.width / 2:
+    #                 vehicle.change_to_lane(right_lane)
+    #     # Next lane
+    #     if vehicle.current_state.s > current_lane.course_spline.s[-1] - 0.2:
+    #         if isinstance(current_lane, NormalLane):
+    #             next_lane = roadgraph.get_available_next_lane(
+    #                 current_lane.id, vehicle.available_lanes)
+    #             vehicle.lane_id = next_lane.id
+    #             vehicle.current_state = vehicle.get_state_in_lane(next_lane)
+    #             current_lane = next_lane
+    #         elif isinstance(current_lane, JunctionLane):
+    #             next_lane_id = current_lane.next_lane_id
+    #             next_lane = roadgraph.get_lane_by_id(next_lane_id)
+    #             vehicle.lane_id = next_lane.id
+    #             vehicle.current_state = vehicle.get_state_in_lane(next_lane)
+    #             current_lane = next_lane
 
-        return
+    #     return

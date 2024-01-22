@@ -1,7 +1,7 @@
 # GUI for vision close-loop replay
 # This is no need to be a multi-process GUI
 
-import os
+import os, time
 from math import cos, pi, sin
 from typing import Dict, List, Tuple
 
@@ -94,10 +94,9 @@ class GUI:
             )
             default_font = dpg.add_font(font_path, 18)
             # add second font
-            dpg.add_font(font_path, 20, id="secondary_font")
+            self.font2 = dpg.add_font(font_path, 20, id="secondary_font")
         
         dpg.bind_font(default_font)
-        
 
         # 控制面板
         with dpg.window(tag='ControlWindow', label='Menu'):
@@ -431,28 +430,28 @@ class GUI:
         dpg.delete_item('description')
         dpg.delete_item('navigation')
         dpg.delete_item('actions')
-        dpg.add_text("##Description:\n", parent='PromptsWindow',
+        a1 = dpg.add_text("Timestep: {}\n## Description:\n".format(self.model.timeStep), parent='PromptsWindow',
             tag='descriptionTitle', wrap=455, color=(0, 191, 255))
-        # set font of specific widget
-        dpg.set_item_font(dpg.last_item(), "secondary_font")
+
         dpg.add_text(
             prompts["description"].replace("### ", "\n").strip("\n"), parent='PromptsWindow',
-            tag='description', wrap=455
-            )
-        dpg.add_text("##Navigation:\n", parent='PromptsWindow',
+            tag='description', wrap=455)
+        
+        a2 = dpg.add_text("## Navigation:\n", parent='PromptsWindow',
             tag='navigationTitle', wrap=455, color=(0, 191, 255))
-        dpg.set_item_font(dpg.last_item(), "secondary_font")
         dpg.add_text(
             prompts["navigation"], parent='PromptsWindow',
-            tag='navigation', wrap=455
-            )
-        dpg.add_text("##Actions:\n", parent='PromptsWindow',
+            tag='navigation', wrap=455)
+        
+        a3 = dpg.add_text("## Actions:\n", parent='PromptsWindow',
             tag='actionsTitle', wrap=455, color=(0, 191, 255))
-        dpg.set_item_font(dpg.last_item(), "secondary_font")
         dpg.add_text(
             prompts["actions"], parent='PromptsWindow',
-            tag='actions', wrap=455
-            )
+            tag='actions', wrap=455)
+        
+        dpg.bind_item_font(a1, self.font2)
+        dpg.bind_item_font(a2, self.font2)
+        dpg.bind_item_font(a3, self.font2)
     
     def showResponse(self, response: str):
         dpg.delete_item('response')
@@ -461,11 +460,11 @@ class GUI:
             response.replace(response.strip("\n").split("\n")[-1], ""), parent='ResponseWindow', 
             tag='response', wrap=460, show = True
             )
-        dpg.add_text(
+        result = dpg.add_text(
             response.strip("\n").split("\n")[-1], parent='ResponseWindow', 
             tag='result', wrap=460, show = True, color=(255, 215, 0)
             )
-        dpg.set_item_font(dpg.last_item(), "secondary_font")
+        dpg.bind_item_font(result, self.font2)
 
     def showQA(self, QA: QuestionAndAnswer):
         prompts = {
@@ -512,3 +511,4 @@ class GUI:
         while dpg.is_dearpygui_running():
             self.render_loop()
             dpg.render_dearpygui_frame()
+            time.sleep(self.replayDelay)

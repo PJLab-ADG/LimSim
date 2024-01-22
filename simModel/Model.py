@@ -17,7 +17,6 @@ from simModel.DataQueue import (
 from simModel.DBBridge import DBBridge
 from simModel.MovingScene import MovingScene
 from simModel.NetworkBuild import NetworkBuild
-from sumo_integration.run_synchronization import getSynchronization
 from utils.simBase import vehType
 from utils.trajectory import Trajectory
 
@@ -135,7 +134,7 @@ class Model:
             '--step-length', '0.1',
             '--lateral-resolution', '10',
             '--start', '--quit-on-end',
-            '-W', '--collision.action', 'remove'
+            '-W'
         ])
 
         ((x1, y1), (x2, y2)) = traci.simulation.getNetBoundary()
@@ -173,6 +172,7 @@ class Model:
         self.allvTypes = allvTypes
 
         if self.CARLACosim:
+            from sumo_integration.run_synchronization import getSynchronization
             self.carlaSync = getSynchronization(
                 sumo_cfg_file=self.cfgFile,
                 carla_host=self.carla_host,
@@ -351,7 +351,7 @@ class Model:
             (
                 self.timeStep, QA.description, QA.navigation,
                 QA.actions, QA.few_shots, QA.response,
-                QA.prompt_tokens, QA.completion_tokens, QA.total_tokens
+                QA.prompt_tokens, QA.completion_tokens, QA.total_tokens, QA.total_time,  QA.choose_action
             )
         )
 

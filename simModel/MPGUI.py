@@ -90,6 +90,7 @@ class GUI(Process):
                 os.path.dirname(os.path.realpath(__file__)), ".", "fonts", "Meslo.ttf"
             )
             default_font = dpg.add_font(font_path, 18)
+            self.font2 = dpg.add_font(font_path, 20)
 
         dpg.bind_font(default_font)
 
@@ -364,21 +365,54 @@ class GUI(Process):
         )
 
     def showPrompts(self, prompts: str):
-        dpg.delete_item('prompts')
+        dpg.delete_item('descriptionTitle')
+        dpg.delete_item('navigationTitle')
+        dpg.delete_item('actionsTitle')
+        dpg.delete_item('description')
+        dpg.delete_item('navigation')
+        dpg.delete_item('actions')
+        a1 = dpg.add_text("## Description:\n", parent='PromptsWindow',
+            tag='descriptionTitle', wrap=455, color=(0, 191, 255))
+
         dpg.add_text(
-            prompts, parent='PromptsWindow',
-            tag='prompts', wrap=360
-            )
+            prompts["description"].replace("### ", "\n").strip("\n"), parent='PromptsWindow',
+            tag='description', wrap=455)
+        
+        a2 = dpg.add_text("## Navigation:\n", parent='PromptsWindow',
+            tag='navigationTitle', wrap=455, color=(0, 191, 255))
+        dpg.add_text(
+            prompts["navigation"], parent='PromptsWindow',
+            tag='navigation', wrap=455)
+        
+        a3 = dpg.add_text("## Actions:\n", parent='PromptsWindow',
+            tag='actionsTitle', wrap=455, color=(0, 191, 255))
+        dpg.add_text(
+            prompts["actions"], parent='PromptsWindow',
+            tag='actions', wrap=455)
+        
+        dpg.bind_item_font(a1, self.font2)
+        dpg.bind_item_font(a2, self.font2)
+        dpg.bind_item_font(a3, self.font2)
     
     def showResponse(self, response: str):
         dpg.delete_item('response')
+        dpg.delete_item('result')
         dpg.add_text(
-            response, parent='ResponseWindow', 
-            tag='response', wrap=360
+            response.replace(response.strip("\n").split("\n")[-1], ""), parent='ResponseWindow', 
+            tag='response', wrap=460, show = True
             )
+        result = dpg.add_text(
+            response.strip("\n").split("\n")[-1], parent='ResponseWindow', 
+            tag='result', wrap=460, show = True, color=(255, 215, 0)
+            )
+        dpg.bind_item_font(result, self.font2)
 
     def showQA(self, QA: QuestionAndAnswer):
-        prompts = QA.description + '\n' + QA.navigation + '\n' + QA.actions
+        prompts = {
+            "description": QA.description,
+            "navigation": QA.navigation,
+            "actions": QA.actions
+        }
         response = QA.response
         self.showPrompts(prompts)
         self.showResponse(response)
@@ -402,8 +436,6 @@ class GUI(Process):
             cameraImagesList = self.imageQueue.get(1)
             if cameraImagesList:
                 self.showImage(cameraImagesList[0])
-            else:
-                return
         except TypeError:
             return
         

@@ -33,7 +33,7 @@
     <vehicle id="10" depart="20.00" type="vehicle.lincoln.mkz_2017" departLane="random">
         <route edges="-29#1 27 -48#0" />
     </vehicle>
-    <vehicle id="11" depart="21.00" type="vehicle.lincoln.mkz_2017" departLane="random">
+    <vehicle id="11" depart="21.00" type="vehicle.lincoln.mkz_2017" departLane="3">
         <route edges="-29#1 27 -48#0" />
     </vehicle>
     <!-- <vehicle id="11" depart="22.00" type="vehicle.carlamotors.carlacola" departLane="random">
@@ -183,7 +183,7 @@
     <vehicle id="59" depart="118.00" type="vehicle.seat.leon">
         <route edges="-55 -58 1 0 33 26 -62 -33 -34 -35 -8 -28" />
     </vehicle>
-    <vehicle id="60" depart="120.00" type="vehicle.seat.leon">
+    <vehicle id="60" depart="120.00" type="vehicle.seat.leon" departLane="3">
         <route edges="22#0 21 20 -13 -14 -15#0 -15#1 -41 -50 -51 -52#0 -52#1" />
     </vehicle>
     <vehicle id="61" depart="122.00" type="vehicle.lincoln.mkz_2017">
@@ -789,9 +789,9 @@
     <vehicle id="261" depart="522.00" type="vehicle.tesla.cybertruck">
         <route edges="-62 -33 -34 -1 58 57 54 -46 -10 -54 -55 -58 1 23 22#1" />
     </vehicle>
-    <vehicle id="262" depart="524.00" type="vehicle.chevrolet.impala">
+    <!-- <vehicle id="262" depart="524.00" type="vehicle.chevrolet.impala">
         <route edges="-62 -33 -34 -1 58 57 54 -46 -10 -54 -55 -58 1 23 22#1 22#0 21 20" />
-    </vehicle>
+    </vehicle> -->
     <vehicle id="263" depart="526.00" type="vehicle.seat.leon">
         <route edges="57 54 -46 -10 -54 -51 -52#0 -52#1 -59 -13 -14 -15#0 -15#1 -16 -28 -29#0 -29#1" />
     </vehicle>
@@ -834,9 +834,9 @@
     <vehicle id="276" depart="552.00" type="vehicle.tesla.model3">
         <route edges="-15#1 -41 -50 54 -46 -10 -54 -55 -58 1 23 22#1 22#0" />
     </vehicle>
-    <vehicle id="277" depart="554.00" type="vehicle.micro.microlino">
+    <!-- <vehicle id="277" depart="554.00" type="vehicle.micro.microlino">
         <route edges="26 -62 -33 -34 -1 58 57 54 -46 -10 -54 -55" />
-    </vehicle>
+    </vehicle> -->
     <vehicle id="278" depart="556.00" type="vehicle.jeep.wrangler_rubicon">
         <route edges="-16 -28 -29#0 -29#1 27 -48#0 -48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 -39 -32 68" />
     </vehicle>
@@ -879,8 +879,9 @@
     <vehicle id="291" depart="582.00" type="vehicle.ford.mustang">
         <route edges="24 -30 4 -48#0 -48#1 -49 -50 -51 -52#0 -52#1 -59 -13 -14 -15#0" />
     </vehicle>
-    <vehicle id="292" depart="584.00" type="vehicle.tesla.cybertruck">
-        <route edges="33 26 -62 -33" />
+    <vehicle id="292" depart="584.00" type="vehicle.tesla.cybertruck" departLane="3">
+    <route edges="-34 -35 -8 -28 -29#0" />
+        <!-- <route edges="33 26 -62 -33" /> -->
     </vehicle>
     <vehicle id="293" depart="586.00" type="vehicle.citroen.c3">
         <route edges="-49 -50 54 -46 -10 -54 -55" />
@@ -1149,7 +1150,7 @@
     <vehicle id="381" depart="762.00" type="vehicle.tesla.cybertruck">
         <route edges="22#0 21 20 -13 -14 -15#0 -15#1 -16 -28 -29#0 -29#1" />
     </vehicle>
-    <vehicle id="382" depart="764.00" type="vehicle.micro.microlino">
+    <vehicle id="382" depart="764.00" type="vehicle.micro.microlino" departLane="3">
         <route edges="-52#1 -59 -13 -14 -15#0 -15#1 -41 -50 54" />
     </vehicle>
     <vehicle id="383" depart="766.00" type="vehicle.jeep.wrangler_rubicon">
@@ -1248,7 +1249,7 @@
     <vehicle id="414" depart="828.00" type="vehicle.tesla.cybertruck">
         <route edges="-54 -51 -52#0 -52#1 -59 -13 -14 -15#0 -15#1 -16 -28 -29#0 -29#1 27" />
     </vehicle>
-    <vehicle id="415" depart="830.00" type="vehicle.audi.a2">
+    <vehicle id="415" depart="830.00" type="vehicle.audi.a2" departLane="3">
         <route edges="33 26 -62 -33 -34 -35 -8 -28 -29#0 -29#1 27 -48#0" />
     </vehicle>
     <vehicle id="416" depart="832.00" type="vehicle.ford.mustang">
