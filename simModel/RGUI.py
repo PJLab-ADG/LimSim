@@ -14,7 +14,7 @@ from simModel.DataQueue import (
 )
 from simModel.Replay import ReplayModel
 from utils.simBase import CoordTF
-from DriverAgent.Evaluation import Decision_Evaluation
+from simInfo.Evaluation import Decision_Evaluation
             
 
 def generateDefaultImage(

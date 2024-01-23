@@ -9,7 +9,7 @@ import traci
 from simModel.Model import Model
 from simModel.MPGUI import GUI
 from trafficManager.traffic_manager import TrafficManager
-from DriverAgent.Informer import Informer
+from simInfo.Informer import Informer
 from trafficManager.common.vehicle import Behaviour
 from simModel.DataQueue import QuestionAndAnswer
 
