@@ -9,6 +9,7 @@ import cv2
 import base64
 import numpy as np
 from rich import print
+from rich.markdown import Markdown
 from typing import Dict, List
 
 
@@ -103,7 +104,8 @@ class VLMAgent:
             ans = self.vlm.invoke([message])
         end = time.time()
         timeCost = end - start
-        print('[green]GPT-4V: {}[/green]'.format(ans))
+        print('GPT-4V: ')
+        print(Markdown(ans))
         match = re.search(r'## Decison\n(.*)\n', ans)
         behavior = None
         if match:
