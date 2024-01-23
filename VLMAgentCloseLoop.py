@@ -148,7 +148,7 @@ if __name__ == '__main__':
     model = Model(
         egoID=ego_id, netFile=sumo_net_file, rouFile=sumo_rou_file,
         cfgFile=sumo_cfg_file, dataBase=database, SUMOGUI=sumo_gui,
-        CARLACosim=False, carla_host=carla_host, carla_port=carla_port
+        CARLACosim=True, carla_host=carla_host, carla_port=carla_port
     )
     planner = TrafficManager(model)
     descriptor = EnvDescription(planner.config)
@@ -174,12 +174,14 @@ if __name__ == '__main__':
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
-                    actionInfo = descriptor.availableActionsDescription(roadgraph)
-                    naviInfo = descriptor.getNavigationInfo(roadgraph)
-                    egoInfo = descriptor.getEgoInfo()
-                    TotalInfo = '## Available actions\n\n' + actionInfo + '\n\n' + '## Navigation information\n\n' + naviInfo + egoInfo
+                    actionInfo, naviInfo = descriptor.getDescription(
+                        roadgraph, vehicles, planner, model.timeStep * 0.1, only_info=True)
+                    # actionInfo = descriptor.availableActionsDescription(roadgraph)
+                    # naviInfo = descriptor.getNavigationInfo(roadgraph)
+                    # egoInfo = descriptor.getEgoInfo()
+                    TotalInfo = '## Available actions\n\n' + actionInfo + '\n\n' + '## Navigation information\n\n' + naviInfo
                     images = model.getCARLAImage(1, 1)
-                    front_img = images[-1].CAM_FRONT
+                    # if images:
                     front_img = images[-1].CAM_FRONT
                     front_left_img = images[-1].CAM_FRONT_LEFT
                     front_right_img = images[-1].CAM_FRONT_RIGHT
@@ -195,12 +197,18 @@ if __name__ == '__main__':
                         print('[blue]behavior: {}[/blue]'.format(behaviour))
                         model.putQA(
                             QuestionAndAnswer(
-                                '', naviInfo+egoInfo, actionInfo, '', 
+                                '', naviInfo, actionInfo, '', 
                                 ans, cb.prompt_tokens,
                                 cb.completion_tokens, cb.total_tokens, 
                                 timecost, int(behaviour)
                             )
                         )
+                        trajectories = planner.plan(
+                            model.timeStep * 0.1, roadgraph, vehicles, Behaviour(behaviour), other_plan=False
+                        )
+                        model.setTrajectories(trajectories)
+                else:
+                    model.ego.exitControlMode()
 
             model.updateVeh()
     except (CollisionException, LaneChangeException) as e:

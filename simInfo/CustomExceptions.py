@@ -16,7 +16,6 @@ class CollisionChecker:
     def __init__(self):
         pass
     
-    # 应该在model里面，实施检测碰撞，还有没有路径，或者两个地方都搞一个也行
     def CollisionCheck(self, model: Model) -> bool:
         # vehicle trajectory collision need to be checked in every frame
         for key, value in model.ms.vehINAoI.items():
@@ -55,3 +54,20 @@ def record_result(model: Model, start_time: float, result: bool, reason: str = "
     conn.commit()
     conn.close()
     return 
+
+    
+class BrainDeadlockException(Exception):
+    def __init__(self) -> None:
+        super().__init__(self)
+        self.errorinfo = "Your reasoning and decision-making result is in deadlock."
+
+    def __str__(self) -> str:
+        return self.errorinfo
+    
+class TimeOutException(Exception):
+    def __init__(self) -> None:
+        super().__init__(self)
+        self.errorinfo = "You failed to complete the route within 100 seconds, exceeding the allotted time."
+
+    def __str__(self) -> str:
+        return self.errorinfo

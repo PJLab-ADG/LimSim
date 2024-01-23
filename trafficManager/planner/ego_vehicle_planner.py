@@ -198,7 +198,7 @@ class LLMEgoPlanner(AbstractEgoPlanner):
         n_s_sample = config["N_S_SAMPLE"]
 
         sample_t = [config["MIN_T"] / 2.0]  # Sample course time
-        vel = min(state_in_target_lane.vel, target_vel)
+        vel = min(state_in_target_lane.vel, 5.0)
         sample_s = np.empty(0)
         for t in sample_t:
             sample_s = np.append(

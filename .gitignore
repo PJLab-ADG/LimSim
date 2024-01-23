@@ -199,8 +199,9 @@ text_example/
 DriverAgent/loadConfig.py
 
 OpenDriveParser/
-DriverAgent/test
+simInfo/test
 
 reflection.json
 
 experiments/
+*.sh

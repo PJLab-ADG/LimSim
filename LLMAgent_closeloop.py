@@ -12,7 +12,7 @@ from simInfo.Memory import DrivingMemory
 from simInfo.EnvDescriptor import EnvDescription
 from simInfo.CustomExceptions import (
     CollisionChecker, CollisionException, 
-    record_result, LaneChangeException
+    record_result, LaneChangeException, BrainDeadlockException, TimeOutException
 )
 from simModel.Model import Model
 from simModel.MPGUI import GUI
@@ -38,15 +38,17 @@ class LLMAgent:
         if oai_api_type == "azure":
             print("Using Azure Chat API")
             self.llm = AzureChatOpenAI(
-                deployment_name="gpt-3.5-turbo-16k",
+                deployment_name="wrz", #"GPT-16"
                 temperature=0,
                 max_tokens=2000,
+                request_timeout=60,
             )
         elif oai_api_type == "openai":
             self.llm = ChatOpenAI(
                 temperature=0,
-                model_name= 'gpt-3.5-turbo-16k', 
+                model_name= 'gpt-4',
                 max_tokens=2000,
+                request_timeout=60,
             )
         db_path = os.path.dirname(os.path.abspath(__file__)) + "/db/" + "decision_mem/"
         self.agent_memory = DrivingMemory(db_path=db_path)
@@ -237,34 +239,46 @@ if __name__ == "__main__":
     gui = GUI(model)
     gui.start()
 
+    action_list = []
     total_start_time = time.time()
     try:
         while not model.tpEnd:
             model.moveStep()
-            # check collision
+            
+            # TODO: current lane更新慢10s,是因为状态更新不及时，应该拉到0.5s更新一次
             collision_checker.CollisionCheck(model)
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
                     LLM_logger.info(f"--------------- timestep is {model.timeStep} ---------------")
-                    descriptions = descriptor.getDescription(
-                        roadgraph, vehicles, planner, model.timeStep * 0.1)
+                    envInfo, actionInfo, navInfo = descriptor.getDescription(
+                        roadgraph, vehicles, planner, model.timeStep * 0.1, only_info=False)
                     start_time = time.time()
-                    ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", descriptions)
-                    current_QA = QuestionAndAnswer(descriptions[0], descriptions[2], descriptions[1], fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"], time.time()-start_time, ego_behaviour)
-                    # print(current_QA)
+                    ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", [envInfo, actionInfo, navInfo])
+
+                    descriptor.decision = ego_behaviour
+                    current_QA = QuestionAndAnswer(envInfo, navInfo, actionInfo, fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"], time.time()-start_time, ego_behaviour)
+
                     model.putQA(current_QA)
-                    # ego_behaviour = Behaviour(2)
-                    # if "Change to" in descriptions[2]:
-                    #     ego_behaviour = Behaviour(3)
                     trajectories = planner.plan(
                         model.timeStep * 0.1, roadgraph, vehicles, Behaviour(ego_behaviour), other_plan=False
                     )
+                    action_list.append(ego_behaviour)
+                    if len(action_list) > 10:
+                        last_10_actions = action_list[-10::]
+                        last_10_actions.sort()
+                        if last_10_actions[0] == last_10_actions[-1]:
+                            raise BrainDeadlockException()
+                    if len(action_list) > 100:
+                        raise TimeOutException()
                     model.setTrajectories(trajectories)
                 else:
                     model.ego.exitControlMode()
+
+            
             model.updateVeh()
-    except (CollisionException, LaneChangeException) as e:
+
+    except (CollisionException, LaneChangeException, BrainDeadlockException, TimeOutException) as e:
         record_result(model, total_start_time, False, str(e))
         model.dbBridge.commitData()
     except Exception as e:

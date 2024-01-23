@@ -172,7 +172,7 @@ class Vehicle:
             logging.warning(
                 f"Key command Vehicle {self.id} to change Right lane")
 
-    def update_behaviour(self, roadgraph: RoadGraph, manual_input: str = None) -> None:
+    def update_behaviour(self, roadgraph: RoadGraph) -> None:
         """Update the behaviour of a vehicle.
 
         Args:
@@ -182,8 +182,6 @@ class Vehicle:
         logging.debug(
             f"Vehicle {self.id} is in lane {self.lane_id}, "
             f"In available_lanes? {current_lane.id in self.available_lanes}")
-
-        self.update_behavior_with_manual_input(manual_input, current_lane)
 
         # Lane change behavior
         if isinstance(current_lane, NormalLane):

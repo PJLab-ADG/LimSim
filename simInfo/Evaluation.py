@@ -302,11 +302,11 @@ class Decision_Evaluation:
             veh_availablelanes = value.availableLanes(model.rb)
             vehicle_trajectory = getSVTrajectory(value, roadgraph, veh_availablelanes, self.hyper_parameter.TTC_THRESHOLD)
 
-            if model.timeStep == 310:
-                import matplotlib.pyplot as plt
-                plt.plot([state.x for state in ego_trajectory], [state.y for state in ego_trajectory], 'r')
-                plt.plot([state.x for state in vehicle_trajectory], [state.y for state in vehicle_trajectory], 'b')
-                plt.show()
+            # if model.timeStep == 310:
+            #     import matplotlib.pyplot as plt
+            #     plt.plot([state.x for state in ego_trajectory], [state.y for state in ego_trajectory], 'r')
+            #     plt.plot([state.x for state in vehicle_trajectory], [state.y for state in vehicle_trajectory], 'b')
+            #     plt.show()
             # calculate ttc, if the (x, y) will collide, the time is ttc
             for index in range(0, min(len(ego_trajectory), len(vehicle_trajectory))):
                 recA = Rectangle([ego_trajectory[index].x, ego_trajectory[index].y],

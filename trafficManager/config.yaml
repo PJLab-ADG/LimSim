@@ -69,7 +69,6 @@ LARGE_ACC_DEFAULT: 1.0
 
 NORMAL_DCC_DEFAULT: 1.0 # deceleration [m/s^2]
 LARGE_DCC_DEFAULT: 2.0
-DESCRIBE_JSON: "simInfo/prompt_template.json" # describe json file
 DECISION_TIME: 1.0 # decision time [s]
 ACC_MAX: 2.6 # max acceleration [m/s^2]
 ACC_MIN: -4.5 # min acceleration [m/s^2]
