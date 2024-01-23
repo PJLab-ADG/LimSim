@@ -634,7 +634,7 @@ class EnvDescription:
         self.last_decision_time = T
 
         if only_info:
-            return availableActionsDescription, navigationDescription + egoDecription + laneDescription
+            return availableActionsDescription, navigationDescription + egoDecription
         else:
             return scenario_description, availableActionsDescription, navigationDescription
 

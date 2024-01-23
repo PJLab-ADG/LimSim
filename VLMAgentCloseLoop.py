@@ -8,8 +8,6 @@ import base64
 import numpy as np
 import requests
 from rich import print
-from rich.markdown import Markdown
-from typing import Dict, List
 
 import logger, logging
 from simInfo.EnvDescriptor import EnvDescription
@@ -111,9 +109,7 @@ class VLMAgent:
         total_tokens = response['usage']['total_tokens']
         end = time.time()
         timeCost = end - start
-        print('GPT-4V: ')
-        print(Markdown(ans))
-        match = re.search(r'## Decison\n(.*)\n', ans)
+        match = re.search(r'## Decision\n(.*)', ans)
         behavior = None
         if match:
             decision = match.group(1)
@@ -134,11 +130,11 @@ Your answer should follow this format:
 Your description of the front-view image.
 ## Reasoning
 reasoning based on the navigation information and the front-view image.
-## Decison
+## Decision
 one of the actions in the action set.(SHOULD BE exactly same and no other words!)
 """
 if __name__ == '__main__':
-    ego_id = '139'
+    ego_id = '50'
     sumo_gui = False
     sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
@@ -179,12 +175,8 @@ if __name__ == '__main__':
                 if model.tpStart and roadgraph:
                     actionInfo, naviInfo = descriptor.getDescription(
                         roadgraph, vehicles, planner, model.timeStep * 0.1, only_info=True)
-                    # actionInfo = descriptor.availableActionsDescription(roadgraph)
-                    # naviInfo = descriptor.getNavigationInfo(roadgraph)
-                    # egoInfo = descriptor.getEgoInfo()
                     TotalInfo = '## Available actions\n\n' + actionInfo + '\n\n' + '## Navigation information\n\n' + naviInfo
                     images = model.getCARLAImage(1, 1)
-                    # if images:
                     front_img = images[-1].CAM_FRONT
                     front_left_img = images[-1].CAM_FRONT_LEFT
                     front_right_img = images[-1].CAM_FRONT_RIGHT
@@ -197,7 +189,6 @@ if __name__ == '__main__':
                         gpt4v.addTextPrompt(f'\nThe current frame information is:\n{TotalInfo}')
                         gpt4v.addTextPrompt('Now, please tell me your answer. Please think step by step and make sure it is right.')
                         behaviour, ans, prompt_tokens, completion_tokens, total_tokens,timecost = gpt4v.makeDecision()
-                        print('[blue]behavior: {}[/blue]'.format(behaviour))
                         model.putQA(
                             QuestionAndAnswer(
                                 '', naviInfo, actionInfo, '', 
