@@ -12,7 +12,7 @@
 # ==================================================================================================
 
 import json
-import logging
+import logging, logger
 import math
 import os
 import random
@@ -26,6 +26,9 @@ from .sumo_simulation import SumoSignalState, SumoVehSignal
 # -- Bridge helper (SUMO <=> CARLA) ----------------------------------------------------------------
 # ==================================================================================================
 
+
+logger = logger.setup_app_level_logger(logger_name = "prompt", file_name="prompt_debug.log")
+logging = logging.getLogger("prompt").getChild(__name__)
 
 class BridgeHelper(object):
     """

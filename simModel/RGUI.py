@@ -7,7 +7,7 @@ from typing import Dict, List, Tuple
 
 import dearpygui.dearpygui as dpg
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from matplotlib import pyplot as plt
 
 from simModel.DataQueue import (
     ERD, JLRD, LRD, RGRD, VRD, CameraImages, QuestionAndAnswer,
@@ -21,13 +21,29 @@ def generateDefaultImage(
     width, height, bgcolor='white', 
     text='No Signal', fontcolor='black'
 ) -> List:
-    img = Image.new('RGBA', (width, height), color = bgcolor)
-    d = ImageDraw.Draw(img)
-    fnt = ImageFont.load_default()
-    d.text((10, 10), text, font=fnt, fill=fontcolor)
-    np_img = np.array(img)
-    np_img = np_img/255
+    # 创建一个新的图像
+    fig, ax = plt.subplots(figsize=(width/80, height/80), dpi=80)
+    
+    # 设置背景颜色
+    fig.patch.set_facecolor(bgcolor)
+    
+    # 移除坐标轴
+    ax.axis('off')
+    
+    # 在图像中心添加文本
+    ax.text(0.5, 0.5, text, fontsize=30, ha='center', va='center', color=fontcolor)
+    
+    # 将图像转换为 NumPy 数组
+    fig.canvas.draw()
+    np_img = np.array(fig.canvas.renderer.buffer_rgba())
+    
+    # 关闭图像，释放资源
+    plt.close(fig)
+    
+    # 归一化并展平图像
+    np_img = np_img / 255
     return np_img.flatten().tolist()
+
 
 class GUI:
     def __init__(self, model: ReplayModel) -> None:

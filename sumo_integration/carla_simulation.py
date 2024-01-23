@@ -11,7 +11,7 @@
 # -- imports ---------------------------------------------------------------------------------------
 # ==================================================================================================
 
-import logging
+import logging, logger
 
 import carla  # pylint: disable=import-error
 
@@ -20,6 +20,10 @@ from .constants import INVALID_ACTOR_ID, SPAWN_OFFSET_Z
 # ==================================================================================================
 # -- carla simulation ------------------------------------------------------------------------------
 # ==================================================================================================
+
+
+logger = logger.setup_app_level_logger(logger_name = "prompt", file_name="prompt_debug.log")
+logging = logging.getLogger("prompt").getChild(__name__)
 
 
 class CarlaSimulation(object):

@@ -13,7 +13,7 @@
 
 import collections
 import enum
-import logging
+import logging, logger
 import os
 
 import carla  # pylint: disable=import-error
@@ -27,6 +27,9 @@ import lxml.etree as ET  # pylint: disable=import-error
 # ==================================================================================================
 # -- sumo definitions ------------------------------------------------------------------------------
 # ==================================================================================================
+
+logger = logger.setup_app_level_logger(logger_name = "prompt", file_name="prompt_debug.log")
+logging = logging.getLogger("prompt").getChild(__name__)
 
 
 # https://sumo.dlr.de/docs/Simulation/Traffic_Lights.html#signal_state_definitions
