@@ -7,12 +7,12 @@ import yaml
 from easydict import EasyDict as edict
 from matplotlib import pyplot as plt
 
-from DriverAgent.EnvDescriptor import EnvDescriptor as EnvDescriptor
+from simInfo.EnvDescriptor import EnvDescriptor as EnvDescriptor
 # Import agents
-from DriverAgent.Informer import Informer, Informer as Informer
+from simInfo.Informer import Informer, Informer as Informer
 from LLMAgent_closeloop import LLMAgent as LLMAgent
-from DriverAgent.VLMAgent import VLMAgent as VLMAgent
-from DriverAgent.VLMDescriptor import VLMDescriptor as VLMDescriptor
+from simInfo.VLMAgent import VLMAgent as VLMAgent
+from simInfo.VLMDescriptor import VLMDescriptor as VLMDescriptor
 from simModel.egoTracking.model import Model
 # Import custom modules
 from sumo_integration.carla_simulation import CarlaSimulation

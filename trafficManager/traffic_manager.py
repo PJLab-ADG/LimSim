@@ -27,20 +27,10 @@ from utils.roadgraph import AbstractLane, JunctionLane, NormalLane, RoadGraph
 from utils import data_copy
 from utils.trajectory import State, Trajectory
 import logger
+from simInfo.CustomExceptions import LaneChangeException
 
 
 logging = logger.get_logger(__name__)
-
-# global KEY_INPUT
-# KEY_INPUT = ""
-
-class LaneChangeException(Exception):
-    def __init__(self) -> None:
-        super().__init__(self)
-        self.errorinfo = "you need to change lane, but your lane change is not successful"
-    
-    def __str__(self) -> str:
-        return self.errorinfo  
     
 class TrafficManager:
     """
@@ -81,25 +71,6 @@ class TrafficManager:
         self.multi_decision = multi_decision if multi_decision is not None else MultiDecisionMaker()
         self.multi_veh_planner = multi_veh_planner if multi_veh_planner is not None else MultiVehiclePlanner()
 
-    # def _set_up_keyboard_listener(self):
-
-    #     def on_press(key):
-    #         """
-    #         This function is used to detect the key press from the keyboard.
-    #         When the left arrow key or 'a' is pressed, the global variable KEY_INPUT is set to 'Left'.
-    #         When the right arrow key or 'd' is pressed, the global variable KEY_INPUT is set to 'Right'.
-    #         """
-    #         global KEY_INPUT
-    #         if key == keyboard.Key.left or key == keyboard.KeyCode.from_char(
-    #                 'a'):
-    #             KEY_INPUT = 'Left'
-    #         elif key == keyboard.Key.right or key == keyboard.KeyCode.from_char(
-    #                 'd'):
-    #             KEY_INPUT = 'Right'
-
-    #     listener = keyboard.Listener(on_press=on_press)
-    #     listener.start()  # start to listen on a separate thread
-
     def plan(self, T: float, roadgraph: RoadGraph,
              vehicles_info: dict, ego_behaviour: Behaviour = Behaviour(8), other_plan: bool = True) -> Dict[int, Trajectory]:
         """
@@ -113,7 +84,6 @@ class TrafficManager:
         It then plans the trajectories of the vehicles and updates the last seen vehicles. 
         Finally, it returns the output trajectories.
         """
-        global KEY_INPUT
 
         start = time.time()
 

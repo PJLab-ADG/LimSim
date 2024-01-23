@@ -1,4 +1,4 @@
-from DriverAgent.Evaluation import Decision_Evaluation
+from simInfo.Evaluation import Decision_Evaluation
 from simModel.Replay import ReplayModel
 if __name__ == "__main__":
     database = './results/2024-01-22_19-48-00.db'

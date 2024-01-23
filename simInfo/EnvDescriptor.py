@@ -5,7 +5,7 @@ from trafficManager.traffic_manager import TrafficManager
 import logger, logging
 from utils.roadgraph import JunctionLane, NormalLane, RoadGraph
 from utils.trajectory import State, Trajectory
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 import json
@@ -21,7 +21,7 @@ ACTIONS_DESCRIPTION = {
 # 明确需要哪些信息
 class EnvDescription:
     def __init__(
-            self, config
+            self, config, template_path = "simInfo/prompt_template.json"
     ) -> None:
         
         self.SV: List[Vehicle] = []
@@ -37,7 +37,7 @@ class EnvDescription:
 
         self.last_decision_time = 0
 
-        with open(config["DESCRIBE_JSON"], 'r', encoding="utf-8") as f:
+        with open(template_path, 'r', encoding="utf-8") as f:
             self.des_json = json.load(f)
 
         self.logger = logger.setup_app_level_logger(logger_name = "prompt", file_name="prompt_debug.log")
@@ -561,7 +561,7 @@ class EnvDescription:
                  roadgraph: RoadGraph, 
                  vehicles_info: Dict, 
                  traffic_manager: TrafficManager, 
-                 T) -> List[str]:
+                 T, only_info: bool) -> Tuple:
         # step 1. init describe
         self.__InitSubscribe__()
         # step 2. get vehicles and prediction
@@ -616,8 +616,6 @@ class EnvDescription:
         {scenario_description}
         ## Navigation instruction:
         {navigationDescription}
-        ## Notice instruction:
-        {noticeDescription}
         ## Available actions:
         {availableActionsDescription}
         ## 
@@ -626,5 +624,8 @@ class EnvDescription:
 
         self.last_decision_time = T
 
-        return [scenario_description, availableActionsDescription, navigationDescription, noticeDescription]
+        if only_info:
+            return availableActionsDescription, navigationDescription + egoDecription + laneDescription
+        else:
+            return scenario_description, availableActionsDescription, navigationDescription
 

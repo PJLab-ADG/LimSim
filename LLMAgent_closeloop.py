@@ -8,11 +8,15 @@ from datetime import datetime
 from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
 from langchain.callbacks import get_openai_callback
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
-from DriverAgent.Memory import DrivingMemory
-from DriverAgent.EnvDescriptor import EnvDescription
+from simInfo.Memory import DrivingMemory
+from simInfo.EnvDescriptor import EnvDescription
+from simInfo.CustomExceptions import (
+    CollisionChecker, CollisionException, 
+    record_result, LaneChangeException, BrainDeadlockException, TimeOutException
+)
 from simModel.Model import Model
 from simModel.MPGUI import GUI
-from trafficManager.traffic_manager import TrafficManager, LaneChangeException
+from trafficManager.traffic_manager import TrafficManager
 from langchain.callbacks.openai_info import OpenAICallbackHandler
 
 from simModel.DataQueue import QuestionAndAnswer
@@ -20,57 +24,11 @@ from simModel.DataQueue import QuestionAndAnswer
 import logger, logging
 from trafficManager.common.vehicle import Behaviour
 
-from utils.trajectory import Rectangle, RecCollide
-
 import sqlite3
 
 decision_logger = logger.setup_app_level_logger(logger_name="LLMAgent", file_name="llm_decision.log")
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
-
-class CollisionException(Exception):
-    def __init__(self, ErrorInfo: str) -> None:
-        super().__init__(self)
-        self.errorinfo = ErrorInfo
-    
-    def __str__(self) -> str:
-        return self.errorinfo
-    
-class BrainDeadlockException(Exception):
-    def __init__(self) -> None:
-        super().__init__(self)
-        self.errorinfo = "Your reasoning and decision-making result is in deadlock."
-
-    def __str__(self) -> str:
-        return self.errorinfo
-    
-class TimeOutException(Exception):
-    def __init__(self) -> None:
-        super().__init__(self)
-        self.errorinfo = "You failed to complete the route within 100 seconds, exceeding the allotted time."
-
-    def __str__(self) -> str:
-        return self.errorinfo
-
-class CollisionChecker:
-    def __init__(self):
-        pass
-    
-    # 应该在model里面，实施检测碰撞，还有没有路径，或者两个地方都搞一个也行
-    def CollisionCheck(self, model: Model) -> bool:
-        # vehicle trajectory collision need to be checked in every frame
-        for key, value in model.ms.vehINAoI.items():
-            if value.id == model.ms.ego.id:
-                continue
-            recA = Rectangle([model.ms.ego.x, model.ms.ego.y],
-                                model.ms.ego.length, model.ms.ego.width, model.ms.ego.yaw)
-            recB = Rectangle([value.x, value.y],
-                                value.length, value.width, value.yaw)
-            rc = RecCollide(recA, recB)
-            # if the car collide, stop the simulation
-            if rc.isCollide():
-                raise CollisionException("you have a collision with vehicle {}".format(key))
-        return False
 
 class LLMAgent:
     def __init__(
@@ -250,22 +208,6 @@ class LLMAgent:
         
         return result, response.content, human_message, few_shot_store, self.llm_source
 
-def record_result(model: Model, start_time: float, result: bool, reason: str = "", error: Exception = None) -> None:
-    conn = sqlite3.connect(model.dataBase)
-    cur = conn.cursor()
-    # add result data
-    cur.execute(
-        """INSERT INTO resultINFO (
-            egoID, result, total_score, complete_percentage, drive_score, use_time, fail_reason
-            ) VALUES (?,?,?,?,?,?,?);""",
-        (
-            model.ms.ego.id, result, 0, 0, 0, time.time() - start_time, reason
-        )
-    )
-    conn.commit()
-    conn.close()
-    return 
-
 if __name__ == "__main__":
     ego_id = '139'
     sumo_gui = False
@@ -303,23 +245,19 @@ if __name__ == "__main__":
         while not model.tpEnd:
             model.moveStep()
             
-            # check collision
             # TODO: current lane更新慢10s,是因为状态更新不及时，应该拉到0.5s更新一次
             collision_checker.CollisionCheck(model)
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
                     LLM_logger.info(f"--------------- timestep is {model.timeStep} ---------------")
-                    descriptions = descriptor.getDescription(
-                        roadgraph, vehicles, planner, model.timeStep * 0.1)
+                    envInfo, actionInfo, navInfo = descriptor.getDescription(
+                        roadgraph, vehicles, planner, model.timeStep * 0.1, only_info=False)
                     start_time = time.time()
-                    ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", descriptions)
-                    # if "Change" in descriptions[2]:
-                    #     ego_behaviour = 3
-                    # else:
-                    #     ego_behaviour = 8
+                    ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", [envInfo, actionInfo, navInfo])
+
                     descriptor.decision = ego_behaviour
-                    current_QA = QuestionAndAnswer(descriptions[0], descriptions[2], descriptions[1], fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"], time.time()-start_time, ego_behaviour)
+                    current_QA = QuestionAndAnswer(envInfo, navInfo, actionInfo, fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"], time.time()-start_time, ego_behaviour)
 
                     model.putQA(current_QA)
                     trajectories = planner.plan(
@@ -332,7 +270,7 @@ if __name__ == "__main__":
                         if last_10_actions[0] == last_10_actions[-1]:
                             raise BrainDeadlockException()
                     if len(action_list) > 100:
-                        raise TimeoutError()
+                        raise TimeOutException()
                     model.setTrajectories(trajectories)
                 else:
                     model.ego.exitControlMode()
@@ -340,7 +278,7 @@ if __name__ == "__main__":
             
             model.updateVeh()
 
-    except (CollisionException, LaneChangeException, BrainDeadlockException, TimeoutError) as e:
+    except (CollisionException, LaneChangeException, BrainDeadlockException, TimeOutException) as e:
         record_result(model, total_start_time, False, str(e))
         model.dbBridge.commitData()
     except Exception as e:
