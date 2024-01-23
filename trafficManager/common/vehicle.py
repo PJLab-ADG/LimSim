@@ -183,7 +183,7 @@ class Vehicle:
             f"Vehicle {self.id} is in lane {self.lane_id}, "
             f"In available_lanes? {current_lane.id in self.available_lanes}")
 
-        self.update_behavior_with_manual_input(manual_input, current_lane)
+        # self.update_behavior_with_manual_input(manual_input, current_lane)
 
         # Lane change behavior
         if isinstance(current_lane, NormalLane):

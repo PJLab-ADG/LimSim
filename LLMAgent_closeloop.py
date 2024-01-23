@@ -35,6 +35,22 @@ class CollisionException(Exception):
     
     def __str__(self) -> str:
         return self.errorinfo
+    
+class BrainDeadlockException(Exception):
+    def __init__(self) -> None:
+        super().__init__(self)
+        self.errorinfo = "Your reasoning and decision-making result is in deadlock."
+
+    def __str__(self) -> str:
+        return self.errorinfo
+    
+class TimeOutException(Exception):
+    def __init__(self) -> None:
+        super().__init__(self)
+        self.errorinfo = "You failed to complete the route within 100 seconds, exceeding the allotted time."
+
+    def __str__(self) -> str:
+        return self.errorinfo
 
 class CollisionChecker:
     def __init__(self):
@@ -64,15 +80,17 @@ class LLMAgent:
         if oai_api_type == "azure":
             print("Using Azure Chat API")
             self.llm = AzureChatOpenAI(
-                deployment_name="gpt-3.5-turbo-16k",
+                deployment_name="wrz", #"GPT-16"
                 temperature=0,
                 max_tokens=2000,
+                request_timeout=60,
             )
         elif oai_api_type == "openai":
             self.llm = ChatOpenAI(
                 temperature=0,
-                model_name= 'gpt-3.5-turbo-16k', 
+                model_name= 'gpt-4',
                 max_tokens=2000,
+                request_timeout=60,
             )
         db_path = os.path.dirname(os.path.abspath(__file__)) + "/db/" + "decision_mem/"
         self.agent_memory = DrivingMemory(db_path=db_path)
@@ -279,11 +297,14 @@ if __name__ == "__main__":
     gui = GUI(model)
     gui.start()
 
+    action_list = []
     total_start_time = time.time()
     try:
         while not model.tpEnd:
             model.moveStep()
+            
             # check collision
+            # TODO: current lane更新慢10s,是因为状态更新不及时，应该拉到0.5s更新一次
             collision_checker.CollisionCheck(model)
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
@@ -293,20 +314,33 @@ if __name__ == "__main__":
                         roadgraph, vehicles, planner, model.timeStep * 0.1)
                     start_time = time.time()
                     ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", descriptions)
+                    # if "Change" in descriptions[2]:
+                    #     ego_behaviour = 3
+                    # else:
+                    #     ego_behaviour = 8
+                    descriptor.decision = ego_behaviour
                     current_QA = QuestionAndAnswer(descriptions[0], descriptions[2], descriptions[1], fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"], time.time()-start_time, ego_behaviour)
-                    # print(current_QA)
+
                     model.putQA(current_QA)
-                    # ego_behaviour = Behaviour(2)
-                    # if "Change to" in descriptions[2]:
-                    #     ego_behaviour = Behaviour(3)
                     trajectories = planner.plan(
                         model.timeStep * 0.1, roadgraph, vehicles, Behaviour(ego_behaviour), other_plan=False
                     )
+                    action_list.append(ego_behaviour)
+                    if len(action_list) > 10:
+                        last_10_actions = action_list[-10::]
+                        last_10_actions.sort()
+                        if last_10_actions[0] == last_10_actions[-1]:
+                            raise BrainDeadlockException()
+                    if len(action_list) > 100:
+                        raise TimeoutError()
                     model.setTrajectories(trajectories)
                 else:
                     model.ego.exitControlMode()
+
+            
             model.updateVeh()
-    except (CollisionException, LaneChangeException) as e:
+
+    except (CollisionException, LaneChangeException, BrainDeadlockException, TimeoutError) as e:
         record_result(model, total_start_time, False, str(e))
         model.dbBridge.commitData()
     except Exception as e:

@@ -109,7 +109,15 @@ class EnvDescription:
             self.current_lane_describe += self.des_json["basic_description"]["traffic_info_description"].format(speed_limit = self.current_lane.speed_limit)
 
         # ================= next lane ================= #
-        next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
+        if isinstance(self.current_lane, NormalLane):
+            next_junction_id = self.current_lane.affiliated_edge.to_junction
+            for lane_id in self.ego_vehicle.available_lanes:
+                if next_junction_id in lane_id:
+                    next_lane = roadgraph.get_lane_by_id(lane_id)
+                else:
+                    next_lane = None
+        else:
+            next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
         if next_lane != None:
             if isinstance(next_lane, NormalLane):
                 edge = next_lane.affiliated_edge
@@ -166,7 +174,15 @@ class EnvDescription:
         Returns:
             str: 对于导航信息的描述
         """
-        next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
+        if isinstance(self.current_lane, NormalLane):
+            next_junction_id = self.current_lane.affiliated_edge.to_junction
+            for lane_id in self.ego_vehicle.available_lanes:
+                if next_junction_id in lane_id:
+                    next_lane = roadgraph.get_lane_by_id(lane_id)
+                else:
+                    next_lane = None
+        else:
+            next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
 
         # ============== change lane ================= #
         if isinstance(self.current_lane, NormalLane) and self.current_lane.id not in self.ego_vehicle.available_lanes:
@@ -255,7 +271,7 @@ class EnvDescription:
         Returns:
             str: 上一次决策的描述
         """
-        if self.decision != None and current_decision_time - last_decision_time < 5:
+        if self.decision != None and current_decision_time - last_decision_time < 1.1:
             self.last_decision_describe += self.des_json["basic_description"]["last_decision_description"]["basic"].format(delta_time = current_decision_time - last_decision_time, decision = self.decision)
             if self.decision == Behaviour.LCL or self.decision == Behaviour.LCR:
                 if self.last_lane.id != self.current_lane.id:
@@ -294,12 +310,12 @@ class EnvDescription:
             if self.current_lane.right_lane() == None:
                 available_actions.remove(Behaviour.LCR) if Behaviour.LCR in available_actions else None
 
-        if isinstance(self.current_lane, JunctionLane) or (isinstance(self.current_lane, NormalLane) and self.ego_vehicle.current_state.s > self.current_lane.course_spline.s[-1] - 10):
+        if isinstance(self.current_lane, JunctionLane):
             available_actions.remove(Behaviour.LCL) if Behaviour.LCL in available_actions else None
             available_actions.remove(Behaviour.LCR) if Behaviour.LCR in available_actions else None
         if self.ego_vehicle.current_state.vel > self.current_lane.speed_limit:
             available_actions.remove(Behaviour.AC) if Behaviour.AC in available_actions else None
-        if self.ego_vehicle.current_state.vel < 0.01:
+        if self.ego_vehicle.current_state.vel <= 0.1:
             available_actions.remove(Behaviour.DC) if Behaviour.DC in available_actions else None
 
         return available_actions
