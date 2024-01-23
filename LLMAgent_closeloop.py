@@ -12,7 +12,8 @@ from simInfo.Memory import DrivingMemory
 from simInfo.EnvDescriptor import EnvDescription
 from simInfo.CustomExceptions import (
     CollisionChecker, CollisionException, 
-    record_result, LaneChangeException, BrainDeadlockException, TimeOutException
+    record_result, LaneChangeException, 
+    BrainDeadlockException, TimeOutException
 )
 from simModel.Model import Model
 from simModel.MPGUI import GUI
@@ -26,7 +27,8 @@ from trafficManager.common.vehicle import Behaviour
 
 import sqlite3
 
-decision_logger = logger.setup_app_level_logger(logger_name="LLMAgent", file_name="llm_decision.log")
+decision_logger = logger.setup_app_level_logger(
+    logger_name="LLMAgent", file_name="llm_decision.log")
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
 
@@ -278,7 +280,10 @@ if __name__ == "__main__":
             
             model.updateVeh()
 
-    except (CollisionException, LaneChangeException, BrainDeadlockException, TimeOutException) as e:
+    except (
+        CollisionException, LaneChangeException, 
+        BrainDeadlockException, TimeOutException
+        ) as e:
         record_result(model, total_start_time, False, str(e))
         model.dbBridge.commitData()
     except Exception as e:

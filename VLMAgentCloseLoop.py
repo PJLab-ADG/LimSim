@@ -1,18 +1,17 @@
 from datetime import datetime
 import re
 import time
-from langchain_community.chat_models import ChatOpenAI
-from langchain_core.messages import HumanMessage
-from langchain.callbacks import get_openai_callback
 
 import cv2
+import os
 import base64
 import numpy as np
+import requests
 from rich import print
 from rich.markdown import Markdown
 from typing import Dict, List
 
-
+import logger, logging
 from simInfo.EnvDescriptor import EnvDescription
 from trafficManager.traffic_manager import TrafficManager, LaneChangeException
 from simModel.Model import Model
@@ -20,88 +19,96 @@ from simModel.MPGUI import GUI
 
 from simModel.DataQueue import QuestionAndAnswer
 
-import logger, logging
 from trafficManager.common.vehicle import Behaviour
 from simInfo.CustomExceptions import (
     CollisionException, LaneChangeException, 
-    CollisionChecker, record_result
+    CollisionChecker, record_result,
+    BrainDeadlockException, TimeOutException
 )
 
-decision_logger = logger.setup_app_level_logger(logger_name="LLMAgent", file_name="llm_decision.log")
+decision_logger = logger.setup_app_level_logger(
+    logger_name="LLMAgent", file_name="llm_decision.log")
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
 
-def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
     
 def NPImageEncode(npimage: np.ndarray) -> str:
     _, buffer = cv2.imencode('.png', npimage)
     npimage_base64 = base64.b64encode(buffer).decode('utf-8')
     return npimage_base64
-    
-
-def getText(filePath: str) -> str:
-    with open(filePath, 'r') as f:
-        res = f.read()
-        return res
-    
-
-def addTextPrompt(content: List, textPrompt: str) -> Dict[str, str]:
-    textPrompt = {
-        "type": "text",
-        "text": textPrompt
-    }
-    content.append(textPrompt)
-
-def addImagePrompt(content: List, imagePath: str):
-    base64_image = encode_image(imagePath)
-    imagePrompt = {
-        "type": "image_url",
-        "image_url": {
-            "url": f"data:image/jpeg;base64,{base64_image}",
-            "detail": "low"
-        }
-    }
-    content.append(imagePrompt)
-
-def addImageBase64(content: List, image_base64: str):
-    imagePrompt = {
-        "type": "image_url",
-        "image_url": {
-            "url": f"data:image/jpeg;base64,{image_base64}",
-            "detail": "low"
-        }
-    }
-    content.append(imagePrompt)
-
-
 
 class VLMAgent:
-    def __init__(self, vlm: ChatOpenAI) -> None:
-        self.vlm = vlm
+    def __init__(self, max_tokens: int = 4000) -> None:
+        self.api_key = os.environ.get('OPENAI_API_KEY')
+        self.max_tokens = max_tokens
+        self.content = []
+
+    def addImageBase64(self, image_base64: str):
+        imagePrompt = {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{image_base64}",
+                "detail": "low"
+            }
+        }
+        self.content.append(imagePrompt)
+
+    def addTextPrompt(self, textPrompt: str):
+        textPrompt = {
+            "type": "text",
+            "text": textPrompt
+        }
+        self.content.append(textPrompt)
+
+    def request(self):
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+
+        payload = {
+            "model": "gpt-4-vision-preview",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": self.content
+                }
+            ],
+            "max_tokens": self.max_tokens
+        }
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers=headers,
+            json=payload
+        )
+        self.content = []
+
+        return response.json()
 
     def str2behavior(self, decision: str) -> Behaviour:
             if decision == 'IDLE':
                 return Behaviour.IDLE
-            elif decision == 'AC':
+            elif decision == 'Acceleration':
                 return Behaviour.AC
-            elif decision == 'DC':
+            elif decision == 'Deceleration':
                 return Behaviour.DC
-            elif decision == 'LCR':
+            elif decision == 'Turn-right':
                 return Behaviour.LCR
-            elif decision == 'LCL':
+            elif decision == 'Turn-left':
                 return Behaviour.LCL
             else:
                 errorStr = f'The decision `{decision}` is not implemented yet!'
             raise NotImplementedError(errorStr)
 
 
-    def makeDecision(self, content: List[Dict[str, str]]):
-        message = HumanMessage(content=content)
+    def makeDecision(self):
         start = time.time()
-        with get_openai_callback() as cb:
-            ans = self.vlm.invoke([message])
+        response = self.request()
+        print(response)
+        ans = response['choices'][0]['message']['content']
+        prompt_tokens = response['usage']['prompt_tokens']
+        completion_tokens = response['usage']['completion_tokens']
+        total_tokens = response['usage']['total_tokens']
         end = time.time()
         timeCost = end - start
         print('GPT-4V: ')
@@ -113,7 +120,9 @@ class VLMAgent:
             behavior = self.str2behavior(decision)
         else:
             raise ValueError('GPT-4V did not return a valid decision')
-        return behavior, ans, cb, timeCost
+        return (
+            behavior, ans, prompt_tokens, 
+            completion_tokens, total_tokens, timeCost)
     
 
 SYSTEM_PROMPT = """
@@ -158,13 +167,7 @@ if __name__ == '__main__':
     gui = GUI(model)
     gui.start()
 
-    gpt4v = VLMAgent(
-        ChatOpenAI(
-            temperature=0, 
-            model="gpt-4-vision-preview", 
-            max_tokens=1024
-            )
-    )
+    gpt4v = VLMAgent()
 
     total_start_time = time.time()
     try:
@@ -186,20 +189,19 @@ if __name__ == '__main__':
                     front_left_img = images[-1].CAM_FRONT_LEFT
                     front_right_img = images[-1].CAM_FRONT_RIGHT
                     if isinstance(front_img, np.ndarray):
-                        content = []
-                        addTextPrompt(content, SYSTEM_PROMPT)
-                        addTextPrompt(content, '## Camera Images\n\nThe next three images are images captured by the left front, front, and right front cameras.\n')
-                        addImageBase64(content, NPImageEncode(front_left_img))
-                        addImageBase64(content, NPImageEncode(front_img))
-                        addImageBase64(content, NPImageEncode(front_right_img))
-                        addTextPrompt(content, f'\nThe current frame information is:\n{TotalInfo}')
-                        behaviour, ans, cb, timecost = gpt4v.makeDecision(content)
+                        gpt4v.addTextPrompt(SYSTEM_PROMPT)
+                        gpt4v.addTextPrompt('The next three images are images captured by the left front, front, and right front cameras.\n')
+                        gpt4v.addImageBase64(NPImageEncode(front_left_img))
+                        gpt4v.addImageBase64(NPImageEncode(front_img))
+                        gpt4v.addImageBase64(NPImageEncode(front_right_img))
+                        gpt4v.addTextPrompt(f'\nThe current frame information is:\n{TotalInfo}')
+                        gpt4v.addTextPrompt('Now, please tell me your answer. Please think step by step and make sure it is right.')
+                        behaviour, ans, prompt_tokens, completion_tokens, total_tokens,timecost = gpt4v.makeDecision()
                         print('[blue]behavior: {}[/blue]'.format(behaviour))
                         model.putQA(
                             QuestionAndAnswer(
                                 '', naviInfo, actionInfo, '', 
-                                ans, cb.prompt_tokens,
-                                cb.completion_tokens, cb.total_tokens, 
+                                ans, prompt_tokens, completion_tokens, total_tokens, 
                                 timecost, int(behaviour)
                             )
                         )
@@ -211,7 +213,10 @@ if __name__ == '__main__':
                     model.ego.exitControlMode()
 
             model.updateVeh()
-    except (CollisionException, LaneChangeException) as e:
+    except (
+        CollisionException, LaneChangeException, 
+        BrainDeadlockException, TimeOutException
+        ) as e:
         record_result(model, total_start_time, False, str(e))
         model.dbBridge.commitData()
     except Exception as e:

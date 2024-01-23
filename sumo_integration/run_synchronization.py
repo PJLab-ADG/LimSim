@@ -13,7 +13,7 @@ Script to integrate CARLA and SUMO simulations
 # -- imports ---------------------------------------------------------------------------------------
 # ==================================================================================================
 
-import logging
+import logging, logger
 import time
 from typing import Dict, Optional
 
@@ -62,6 +62,9 @@ from simModel.DataQueue import CameraImages
 # ==================================================================================================
 # -- synchronization_loop --------------------------------------------------------------------------
 # ==================================================================================================
+
+logger = logger.setup_app_level_logger(logger_name = "prompt", file_name="prompt_debug.log")
+logging = logging.getLogger("prompt").getChild(__name__)
 
 class SimulationSynchronization(object):
     """
