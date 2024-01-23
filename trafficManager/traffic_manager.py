@@ -119,7 +119,6 @@ class TrafficManager:
                     vehicle.update_behaviour(roadgraph)
                 except Exception as e:
                     logging.error(f"Error when updating behaviour of vehicle {vehicle_id}: {e}")
-            # KEY_INPUT = ""
             if vehicle.vtype == VehicleType.EGO:
                 try:
                     vehicle.update_behaviour(roadgraph)

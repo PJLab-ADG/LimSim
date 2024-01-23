@@ -6,7 +6,7 @@ import logger, logging
 from utils.roadgraph import JunctionLane, NormalLane, RoadGraph
 from utils.trajectory import State, Trajectory
 from typing import Dict, List, Tuple
-
+from simInfo.CustomExceptions import LaneChangeException
 import numpy as np
 import json
 
@@ -109,13 +109,13 @@ class EnvDescription:
             self.current_lane_describe += self.des_json["basic_description"]["traffic_info_description"].format(speed_limit = self.current_lane.speed_limit)
 
         # ================= next lane ================= #
+        next_lane = None
         if isinstance(self.current_lane, NormalLane):
             next_junction_id = self.current_lane.affiliated_edge.to_junction
             for lane_id in self.ego_vehicle.available_lanes:
                 if next_junction_id in lane_id:
                     next_lane = roadgraph.get_lane_by_id(lane_id)
-                else:
-                    next_lane = None
+                    
         else:
             next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
         if next_lane != None:
@@ -174,13 +174,13 @@ class EnvDescription:
         Returns:
             str: 对于导航信息的描述
         """
+        next_lane = None
         if isinstance(self.current_lane, NormalLane):
             next_junction_id = self.current_lane.affiliated_edge.to_junction
             for lane_id in self.ego_vehicle.available_lanes:
                 if next_junction_id in lane_id:
                     next_lane = roadgraph.get_lane_by_id(lane_id)
-                else:
-                    next_lane = None
+
         else:
             next_lane = roadgraph.get_available_next_lane(self.current_lane.id, self.ego_vehicle.available_lanes)
 
@@ -557,6 +557,7 @@ class EnvDescription:
         
         return [ego_time, ego_s, sv_time, sv_s]
 
+    # TODO: 修改，全部使用roadgraph获取信息
     def getDescription(self, 
                  roadgraph: RoadGraph, 
                  vehicles_info: Dict, 
@@ -579,6 +580,14 @@ class EnvDescription:
                                             traffic_manager.lastseen_vehicles,
                                             through_timestep, self.config)
 
+        for vehicle_id, vehicle in vehicles.items():
+            if vehicle.vtype == VehicleType.EGO:
+                try:
+                    vehicle.update_current_state(roadgraph)
+                except Exception as e:
+                    logging.error(f"Error when updating behaviour of vehicle {vehicle_id}: {e}")
+                    raise LaneChangeException()
+                
         # step 3. get description
         # step 3.1 获取ego和AoI内的车辆信息
         self.SV = []

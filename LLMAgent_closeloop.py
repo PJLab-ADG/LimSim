@@ -39,7 +39,7 @@ class LLMAgent:
             print("Using Azure Chat API")
             self.llm = AzureChatOpenAI(
                 deployment_name="wrz", #"GPT-16"
-                temperature=0,
+                temperature=0.5,
                 max_tokens=2000,
                 request_timeout=60,
             )
@@ -222,7 +222,10 @@ if __name__ == "__main__":
     sync_vehicle_lights = True
 
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
-    database = './results/' + stringTimestamp + '.db'
+    if os.getenv("OPENAI_API_TYPE") == "azure":
+        database = './experiments/zeroshot/gpt3.5/' + stringTimestamp + '.db'
+    else:
+        database = './experiments/zeroshot/gpt4/' + stringTimestamp + '.db'
 
     # init LLMDriver
     model = Model(
@@ -244,8 +247,6 @@ if __name__ == "__main__":
     try:
         while not model.tpEnd:
             model.moveStep()
-            
-            # TODO: current lane更新慢10s,是因为状态更新不及时，应该拉到0.5s更新一次
             collision_checker.CollisionCheck(model)
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
@@ -275,7 +276,6 @@ if __name__ == "__main__":
                 else:
                     model.ego.exitControlMode()
 
-            
             model.updateVeh()
 
     except (CollisionException, LaneChangeException, BrainDeadlockException, TimeOutException) as e:

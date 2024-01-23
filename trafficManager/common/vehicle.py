@@ -266,6 +266,55 @@ class Vehicle:
             else:  # out junction
                 self.behaviour = Behaviour.KL
 
+    def update_current_state(self, roadgraph: RoadGraph) -> None:
+        """Update the state of a vehicle.
+
+        Args:
+            roadgraph (RoadGraph): The roadgraph containing the lanes the vehicle is traveling on.
+        """
+        current_lane = roadgraph.get_lane_by_id(self.lane_id)
+        logging.debug(
+            f"Vehicle {self.id} is in lane {self.lane_id}, "
+            f"In available_lanes? {current_lane.id in self.available_lanes}")
+
+        # Lane change update
+        if isinstance(current_lane, NormalLane):
+            if self.behaviour == Behaviour.LCL:
+                left_lane_id = current_lane.left_lane()
+                left_lane = roadgraph.get_lane_by_id(left_lane_id)
+                state = self.get_state_in_lane(left_lane)
+                if state.d > -left_lane.width / 2:
+                    self.change_to_lane(left_lane)
+
+            elif self.behaviour == Behaviour.LCR:
+                right_lane_id = current_lane.right_lane()
+                right_lane = roadgraph.get_lane_by_id(right_lane_id)
+                state = self.get_state_in_lane(right_lane)
+                if state.d < right_lane.width / 2:
+                    self.change_to_lane(right_lane)
+
+        # lane state update
+        if self.current_state.s > current_lane.course_spline.s[-1] - 0.2:
+            if isinstance(current_lane, NormalLane):
+                next_lane = roadgraph.get_available_next_lane(
+                    current_lane.id, self.available_lanes)
+                try:
+                    self.lane_id = next_lane.id
+                except AttributeError as e:
+                    print(self.id)
+                    logging.error(f"Vehicle {self.id} cannot switch to the next lane, the reason is {e}")
+                self.current_state = self.get_state_in_lane(next_lane)
+                current_lane = next_lane
+            elif isinstance(current_lane, JunctionLane):
+                next_lane_id = current_lane.next_lane_id
+                next_lane = roadgraph.get_lane_by_id(next_lane_id)
+                self.lane_id = next_lane.id
+                self.current_state = self.get_state_in_lane(next_lane)
+                current_lane = next_lane
+            else:
+                logging.error(
+                    f"Vehicle {self.id} Lane {self.lane_id}  is unknown lane type {type(current_lane)}"
+                )
 
 def create_vehicle(vehicle_info: Dict, roadgraph: RoadGraph, vtype_info: Any,
                    T,
