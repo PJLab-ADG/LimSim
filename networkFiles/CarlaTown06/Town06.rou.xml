@@ -109,7 +109,7 @@
         <route edges="-37 -70 24 -30 4 -48#0 -48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 33 26 -62 -33 -34" />
     </vehicle>
     <vehicle id="35" depart="70.00" type="vehicle.mercedes.coupe">
-        <route edges="-30 4 -48#0 -48#1 -49 -50 54" />
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="36" depart="72.00" type="vehicle.chevrolet.impala">
         <route edges="33 26 -62 -33 -34 -35 -36" />
@@ -121,7 +121,7 @@
         <route edges="5 4 -48#0 -48#1" />
     </vehicle>
     <vehicle id="39" depart="78.00" type="vehicle.audi.tt">
-        <route edges="-34 -1 58 57 54 -46 -10 -54 -55 -58 1 0 33 26 -62 -33" />
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="40" depart="80.00" type="vehicle.audi.a2">
         <route edges="-53 -18 -19 33 26 -62 -33 -34" />
@@ -136,13 +136,13 @@
         <route edges="68 -37 -70 24 -30 4 -48#0 -48#1 -49 -50 -51" />
     </vehicle>
     <vehicle id="44" depart="88.00" type="vehicle.audi.tt">
-        <route edges="-15#0 -15#1 -41 -50 -51 -52#0 -52#1 -59 -13" />
+        <route edges="-16 -28 -29#0 -29#1 27 -48#0" />
     </vehicle>
     <vehicle id="45" depart="90.00" type="vehicle.nissan.micra">
-        <route edges="-15#1 -41 -50 54 -46 -10 -54 -55 -58" />
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="46" depart="92.00" type="vehicle.audi.tt">
-        <route edges="22#1 22#0 21 20 -13 -14 -15#0 -15#1 -41 -50 54 -46" />
+        <route edges="-16 -28 -29#0 -29#1 27 -48#0" />
     </vehicle>
     <vehicle id="47" depart="94.00" type="vehicle.nissan.patrol">
         <route edges="-14 -15#0 -15#1 -41 -50 54 -46 -10 -54 -55 -58 1 0 -39 -40" />
@@ -153,17 +153,17 @@
     <vehicle id="49" depart="98.00" type="vehicle.audi.etron">
         <route edges="58 -14 -15#0 -15#1 -16 -28 -29#0 -29#1 27" />
     </vehicle>
-    <vehicle id="50" depart="100.00" type="vehicle.audi.tt">
-        <route edges="-1 58 57 54 -46 -10 -54 -55 -58 1 0" />
+    <vehicle id="50" depart="100.00" type="vehicle.audi.tt" departLane="3">
+        <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="51" depart="102.00" type="vehicle.audi.tt">
-        <route edges="-70 24 -30 4 -48#0 -48#1 -49 -50 -51 -52#0" />
+        <route edges="-28 -29#0 -29#1 27 -48#0" />
     </vehicle>
     <vehicle id="52" depart="104.00" type="vehicle.nissan.micra">
         <route edges="-34 -1 58 57 54 -46 -10 -54 -51 -52#0 -52#1 -59" />
     </vehicle>
     <vehicle id="53" depart="106.00" type="vehicle.citroen.c3">
-        <route edges="-16 -28 -29#0 -29#1 27 -48#0" />
+        <route edges="-28 -29#0 -29#1 27 -48#0" />
     </vehicle>
     <vehicle id="54" depart="108.00" type="vehicle.lincoln.mkz_2017">
         <route edges="-48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 33 26 -62 -33 -34 -1 58 57" />

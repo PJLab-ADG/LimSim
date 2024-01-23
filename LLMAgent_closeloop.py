@@ -211,7 +211,8 @@ class LLMAgent:
         return result, response.content, human_message, few_shot_store, self.llm_source
 
 if __name__ == "__main__":
-    ego_id = '139'
+    # ego_id = '139' # 
+    ego_id = "50"
     sumo_gui = False
     sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
@@ -270,9 +271,9 @@ if __name__ == "__main__":
                     if len(action_list) > 10:
                         last_10_actions = action_list[-10::]
                         last_10_actions.sort()
-                        if last_10_actions[0] == last_10_actions[-1]:
+                        if last_10_actions[0] == last_10_actions[-1] and model.ms.ego.speed <= 0.1:
                             raise BrainDeadlockException()
-                    if len(action_list) > 100:
+                    if len(action_list) > 80:
                         raise TimeOutException()
                     model.setTrajectories(trajectories)
                 else:

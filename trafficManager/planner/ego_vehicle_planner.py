@@ -197,16 +197,16 @@ class LLMEgoPlanner(AbstractEgoPlanner):
         s_sample = config["S_SAMPLE"]
         n_s_sample = config["N_S_SAMPLE"]
 
-        sample_t = [config["MIN_T"] / 2.0]  # Sample course time
-        vel = min(state_in_target_lane.vel, 5.0)
+        sample_t = [config["MIN_T"] / 1.5]  # Sample course time
+        vel_min = max(state_in_target_lane.vel - 2.0, 0)
+        vel_max = min(target_vel + s_sample * n_s_sample * 1.01, target_lane.speed_limit)
         sample_s = np.empty(0)
         for t in sample_t:
             sample_s = np.append(
                 sample_s,
                 np.arange(
-                    state_in_target_lane.s + t * vel,
-                    state_in_target_lane.s + t *
-                    (target_vel + s_sample * n_s_sample * 1.01),
+                    state_in_target_lane.s + t * vel_min,
+                    state_in_target_lane.s + t * vel_max,
                     s_sample,
                 ),
             )
@@ -242,42 +242,3 @@ class LLMEgoPlanner(AbstractEgoPlanner):
             return best_path
         else:
             raise("can't generate the trajectory!")
-    
-    # def update_state(self, vehicle: Vehicle, roadgraph: RoadGraph) -> None:
-    #     """Update the behaviour of a vehicle.
-
-    #     Args:
-    #         roadgraph (RoadGraph): The roadgraph containing the lanes the vehicle is traveling on.
-    #     """
-    #     current_lane = roadgraph.get_lane_by_id(vehicle.lane_id)
-    #     # Lane change behavior
-    #     if isinstance(current_lane, NormalLane):
-    #         if vehicle.behaviour == Behaviour.LCL:
-    #             left_lane_id = current_lane.left_lane()
-    #             left_lane = roadgraph.get_lane_by_id(left_lane_id)
-    #             state = vehicle.get_state_in_lane(left_lane)
-    #             if state.d > -left_lane.width / 2:
-    #                 vehicle.change_to_lane(left_lane)
-
-    #         elif vehicle.behaviour == Behaviour.LCR:
-    #             right_lane_id = current_lane.right_lane()
-    #             right_lane = roadgraph.get_lane_by_id(right_lane_id)
-    #             state = vehicle.get_state_in_lane(right_lane)
-    #             if state.d < right_lane.width / 2:
-    #                 vehicle.change_to_lane(right_lane)
-    #     # Next lane
-    #     if vehicle.current_state.s > current_lane.course_spline.s[-1] - 0.2:
-    #         if isinstance(current_lane, NormalLane):
-    #             next_lane = roadgraph.get_available_next_lane(
-    #                 current_lane.id, vehicle.available_lanes)
-    #             vehicle.lane_id = next_lane.id
-    #             vehicle.current_state = vehicle.get_state_in_lane(next_lane)
-    #             current_lane = next_lane
-    #         elif isinstance(current_lane, JunctionLane):
-    #             next_lane_id = current_lane.next_lane_id
-    #             next_lane = roadgraph.get_lane_by_id(next_lane_id)
-    #             vehicle.lane_id = next_lane.id
-    #             vehicle.current_state = vehicle.get_state_in_lane(next_lane)
-    #             current_lane = next_lane
-
-    #     return
