@@ -71,3 +71,12 @@ class TimeOutException(Exception):
 
     def __str__(self) -> str:
         return self.errorinfo
+    
+
+class NoPathFoundError(Exception):
+    def __init__(self, errorInfo: str) -> None:
+        super().__init__(self)
+        self.errorinfo = errorInfo
+
+    def __str__(self) -> str:
+        return self.errorinfo

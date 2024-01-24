@@ -204,7 +204,10 @@ class SimulationSynchronization(object):
         for sumo_actor_id in self.sumo2carla_ids:
             carla_actor_id = self.sumo2carla_ids[sumo_actor_id]
 
-            sumo_actor = self.sumo.get_actor(sumo_actor_id)
+            try:
+                sumo_actor = self.sumo.get_actor(sumo_actor_id)
+            except KeyError:
+                continue
             carla_actor = self.carla.get_actor(carla_actor_id)
 
             carla_transform = BridgeHelper.get_carla_transform(

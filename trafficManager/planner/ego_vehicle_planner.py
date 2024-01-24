@@ -9,6 +9,7 @@ import logger, logging
 from utils.obstacles import DynamicObstacle, ObsType, Rectangle
 from utils.roadgraph import JunctionLane, NormalLane, RoadGraph, AbstractLane
 from utils.trajectory import State, Trajectory
+from simInfo.CustomExceptions import NoPathFoundError
 
 import numpy as np
 import math
@@ -241,4 +242,4 @@ class LLMEgoPlanner(AbstractEgoPlanner):
             logging.debug(f"Vehicle {vehicle.id} found a lane change path with cost: {best_cost}")
             return best_path
         else:
-            raise("can't generate the trajectory!")
+            raise NoPathFoundError("Can't generate the trajectory!")
