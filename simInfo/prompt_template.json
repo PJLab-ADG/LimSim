@@ -10,12 +10,15 @@
             "none": "The next lane is too far to consider. "
         },
         "traffic_info_description": "The limit speed of the current lane is {speed_limit} m/s. ",
-        "traffic_light_description": "The traffic light is currently {curr_tl_state}, it will keep {time} seconds. ",
+        "traffic_light_description": "The traffic light is currently {curr_tl_state}. ",
 
         "ego_state_description": "Your current position is {ego_position}, speed is {ego_speed} m/s, acceleration is {ego_acceleration} m/s^2, and lane position is {ego_lane_position} m. ",
 
-        "surrond_vehicle_on_normal_description": "- Vehicle '{sv_id}' is driving on {lane_relative_position} and is {relative_position} of you. The position of it is {sv_position}, speed is {sv_speed} m/s, acceleration is {sv_acceleration} m/s^2, and lane position is {sv_lane_position} m. The distance between you and vehicle '{sv_id}' is {distance} m. ",
-        "surrond_vehicle_on_junction_description": "- Vehicle '{sv_id}' is driving on the same junction as you and will have collision with you. The speed of it is {sv_speed} m/s, acceleration is {sv_acc} m/s^2. The collision will occur at {ego_s} m in front of you, {sv_s} m in front of the vehicle '{sv_id}'. The time required for you to reach the collide point is {ego_time} s, and the time required for vehicle '{sv_id}' to reach the collide point is {sv_time} s. ",
+        "other_vehicle_description":{
+            "surrond_vehicle_on_normal_description": "- Vehicle '{sv_id}' is driving on {lane_relative_position} and is {relative_position} of you. The position of it is {sv_position}, speed is {sv_speed} m/s, acceleration is {sv_acceleration} m/s^2, and lane position is {sv_lane_position} m. The distance between you and vehicle '{sv_id}' is {distance} m. ",
+            "surrond_vehicle_on_junction_description": "- Vehicle '{sv_id}' is driving on the same junction as you and will have collision with you. The speed of it is {sv_speed} m/s, acceleration is {sv_acc} m/s^2. The collision will occur at {ego_s} m in front of you, {sv_s} m in front of the vehicle '{sv_id}'. The time required for you to reach the collide point is {ego_time} s, and the time required for vehicle '{sv_id}' to reach the collide point is {sv_time} s. ",
+            "no_other_vehicle": "There are no other vehicles driving near you, so you can drive completely according to your own ideas."
+        },
 
         "last_decision_description":{
             "basic": "The last action you made {delta_time} s ago was {decision}. ",

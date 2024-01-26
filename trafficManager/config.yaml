@@ -67,7 +67,7 @@ USE_LLM: True # whether use LLM
 NORMAL_ACC_DEFAULT: 1.0 # acceleration [m/s^2]
 LARGE_ACC_DEFAULT: 1.0
 
-NORMAL_DCC_DEFAULT: 1.0 # deceleration [m/s^2]
+NORMAL_DCC_DEFAULT: 1.5 # deceleration [m/s^2]
 LARGE_DCC_DEFAULT: 2.0
 DECISION_TIME: 1.0 # decision time [s]
 ACC_MAX: 2.6 # max acceleration [m/s^2]

@@ -1,4 +1,3 @@
-
 import os
 import textwrap
 import time
@@ -10,6 +9,7 @@ from langchain.callbacks import get_openai_callback
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from simInfo.Memory import DrivingMemory
 from simInfo.EnvDescriptor import EnvDescription
+
 from simInfo.CustomExceptions import (
     CollisionChecker, CollisionException, 
     record_result, LaneChangeException, 
@@ -47,7 +47,7 @@ class LLMAgent:
             )
         elif oai_api_type == "openai":
             self.llm = ChatOpenAI(
-                temperature=0,
+                temperature=1.0,
                 model_name= 'gpt-4',
                 max_tokens=2000,
                 request_timeout=60,
@@ -212,11 +212,21 @@ class LLMAgent:
 
 if __name__ == "__main__":
     # ego_id = '139' # 
-    ego_id = "50"
+    ego_id = "50" #96
     sumo_gui = False
     sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
     sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
+    # ego_id = '97'
+    # sumo_gui = False
+    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
+    # sumo_net_file = "./networkFiles/roundabout/roundabout.net.xml"
+    # sumo_rou_file = "./networkFiles/roundabout/roundabout.rou.xml"
+    # ego_id = '127'
+    # sumo_gui = False
+    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
+    # sumo_net_file = "./networkFiles/bigInter/bigInter.net.xml"
+    # sumo_rou_file = "./networkFiles/bigInter/bigInter.rou.xml"
     carla_host = '127.0.0.1'
     carla_port = 2000
     step_length = 0.1
@@ -226,9 +236,9 @@ if __name__ == "__main__":
 
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
     if os.getenv("OPENAI_API_TYPE") == "azure":
-        database = './experiments/zeroshot/gpt3.5/' + stringTimestamp + '.db'
+        database = 'results/' + stringTimestamp + '.db'
     else:
-        database = './experiments/zeroshot/gpt4/' + stringTimestamp + '.db'
+        database = 'experiments/Scenarios/junction/' + stringTimestamp + '.db'
 
     # init LLMDriver
     model = Model(
@@ -238,7 +248,7 @@ if __name__ == "__main__":
     )
     planner = TrafficManager(model)
     agent = LLMAgent(use_memory=False)
-    descriptor = EnvDescription(planner.config)
+    descriptor = EnvDescription()
     collision_checker = CollisionChecker()
     model.start()
 
@@ -255,8 +265,10 @@ if __name__ == "__main__":
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
                     LLM_logger.info(f"--------------- timestep is {model.timeStep} ---------------")
-                    envInfo, actionInfo, navInfo = descriptor.getDescription(
-                        roadgraph, vehicles, planner, model.timeStep * 0.1, only_info=False)
+                    navInfo = descriptor.getNavigationInfo(roadgraph, vehicles)
+                    actionInfo = descriptor.getAvailableActionsInfo(roadgraph, vehicles)
+                    envInfo = descriptor.getEnvPrompt(roadgraph, vehicles)
+
                     start_time = time.time()
                     ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", [envInfo, actionInfo, navInfo])
 

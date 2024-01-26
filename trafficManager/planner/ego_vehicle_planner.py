@@ -200,6 +200,7 @@ class LLMEgoPlanner(AbstractEgoPlanner):
         sample_t = [config["MIN_T"] / 1.5]  # Sample course time
         vel_min = max(state_in_target_lane.vel - 2.0, 0)
         vel_max = min(target_vel + s_sample * n_s_sample * 1.01, target_lane.speed_limit)
+        vel_max = max(vel_max, 5.0)
         sample_s = np.empty(0)
         for t in sample_t:
             sample_s = np.append(

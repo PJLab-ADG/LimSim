@@ -243,6 +243,9 @@ class DrivingMemory:
                 memory.set_description(QA_df[QA_df["frame"] == frame])
                 memory.cautious = "you will have a collision with other vehicle"
                 bad_memory.append(memory)
+            else:
+                # 找最后五帧的结果都进行reflection
+                pass
 
         return good_memory, bad_memory
 
@@ -260,7 +263,7 @@ class DrivingMemory:
 if __name__ == "__main__":
     memory = DrivingMemory()
     
-    good_mem, bad_mem = memory.divideBasedOnScore("./results/2024-01-18_16-12-17.db")
+    good_mem, bad_mem = memory.divideBasedOnScore("./experiments/zeroshot/gpt4/2024-01-23_21-04-29.db")
     memory.addMemory(good_mem[0])
     for mem_item in bad_mem:
         reflection_memory = memory.getReflection(mem_item)

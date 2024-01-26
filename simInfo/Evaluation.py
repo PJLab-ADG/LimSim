@@ -32,7 +32,7 @@ class Hyper_Parameter():
         # confort refers to the jerk
         self.positive_jerk = AccJerk_Ref(cc = 0.6, nc = 0.9, ac = 2.0)
         self.negative_jerk = AccJerk_Ref(cc = -0.6, nc = -0.9, ac = -2.0)
-        self.TTC_THRESHOLD = 10
+        self.TTC_THRESHOLD = 5
 
         self.stop_distance = 15.0
         self.judge_speed = 0.5
@@ -119,7 +119,7 @@ class Decision_Evaluation:
 
         # 里程计
         self.driving_mile = 0.0
-        self.last_pos = 0.0
+        # self.last_pos = 0.0
 
         # create database
         conn = sqlite3.connect(database)
@@ -172,12 +172,12 @@ class Decision_Evaluation:
         return route_length
     
     def CalculateDrivingMile(self, model: ReplayModel) -> None:
-        # if the car just go to new edge
-        if self.last_pos - model.sr.ego.lanePos > 1:
-            self.driving_mile += model.sr.ego.lanePos
-        else:
-            self.driving_mile += model.sr.ego.lanePos - self.last_pos
-        self.last_pos = model.sr.ego.lanePos
+        # if the car just go to new edge, add the length of the last edge
+        if model.sr.ego.laneIDQ[-11].split("_")[0] != model.sr.ego.laneIDQ[-1].split("_")[0]:
+            if model.sr.ego.laneIDQ[-11][0] == ":":
+                self.driving_mile += model.rb.getJunctionLane(model.sr.ego.laneIDQ[-11]).sumo_length
+            else:
+                self.driving_mile += model.rb.getLane(model.sr.ego.laneIDQ[-11]).sumo_length
         return
 
     def PassRedLight(self, model: ReplayModel) -> bool:
@@ -424,8 +424,7 @@ class Decision_Evaluation:
     
     def Evaluate(self, model: ReplayModel) -> None:
         self.current_reasoning = ""
-        # 1. update car mile
-        self.CalculateDrivingMile(model)
+        
         # 2. calculate ttc: calculate the ego states and other car states in future 5s, take it as ttc(s)
         self.ttc_score.append(self.calculate_ttc(model) / self.hyper_parameter.TTC_THRESHOLD)
         
@@ -435,23 +434,21 @@ class Decision_Evaluation:
             self.Current_Decision_Score(model, current_decision_score)
             self.decision_score.append(current_decision_score)
             self.SaveDatainDB(model, current_decision_score)
+            # 1. update car mile
+            self.CalculateDrivingMile(model)
         
         if model.tpEnd:
-            # TODO:检查结果是否成功
             if not self.getResult(model):
                 self.decision_score.fail_result()
                 self.logger.error("the result is failed")
                 self.cal_route_length(model)
+                self.CalculateDrivingMile(model)
+                self.driving_mile += model.sr.ego.lanePos
+                print(self.driving_mile, " ", self.route_length)
             else:
                 self.route_length = self.driving_mile
                 self.logging.info("the result is success!")
-            # if self.arriveDestination(model):
-            #     self.route_length = self.driving_mile
-            #     self.logging.info("the result is success!")
-            #     self.SaveResultinDB(model, True, "")
-            # else:
-            #     self.cal_route_length(model)
-            #     self.logger.error("the result is failed")
+
             self.SaveResultinDB(model, False, "you don't arrive the destination")
             
             self.logger.info("your final score is {}".format(round(self.final_s, 3)))

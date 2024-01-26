@@ -43,7 +43,7 @@ class Vehicle:
         self.vTypeID: str = None
         self._iscontroled: bool = 0
         # the follow three parameters are used to obtain available lanes
-        self.lookForward: float = 100
+        self.lookForward: float = 120
         self.noChange: float = 5.0
         self.plannedTrajectory: Trajectory = None
         self.dbTrajectory: Trajectory = None
@@ -311,7 +311,7 @@ class Vehicle:
             'speedQ': self.speedQ, 'accelQ': self.accelQ,
             'laneIDQ': self.laneIDQ, 'lanePosQ': self.lanePosQ,
             'availableLanes': self.availableLanes(nb),
-            'routeIdxQ': self.routeIdxQ
+            'routeIdxQ': self.routeIdxQ, 'width': self.width
         }
     
     def exportVRD(self) -> VRD:
