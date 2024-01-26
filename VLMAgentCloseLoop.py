@@ -84,15 +84,15 @@ class VLMAgent:
         return response.json()
 
     def str2behavior(self, decision: str) -> Behaviour:
-            if decision == 'IDLE':
+            if decision.upper() == 'IDLE':
                 return Behaviour.IDLE
-            elif decision == 'Acceleration':
+            elif decision.capitalize() == 'Acceleration':
                 return Behaviour.AC
-            elif decision == 'Deceleration':
+            elif decision.capitalize() == 'Deceleration':
                 return Behaviour.DC
-            elif decision == 'Turn-right':
+            elif decision.capitalize() == 'Turn-right':
                 return Behaviour.LCR
-            elif decision == 'Turn-left':
+            elif decision.capitalize() == 'Turn-left':
                 return Behaviour.LCL
             else:
                 errorStr = f'The decision `{decision}` is not implemented yet!'
