@@ -153,7 +153,7 @@
     <vehicle id="49" depart="98.00" type="vehicle.audi.etron">
         <route edges="58 -14 -15#0 -15#1 -16 -28 -29#0 -29#1 27" />
     </vehicle>
-    <vehicle id="50" depart="100.00" type="vehicle.audi.tt" departLane="random">
+    <vehicle id="50" depart="100.00" type="vehicle.audi.tt" departLane="3">
         <route edges="-29#1 27 -48#0" />
     </vehicle>
     <vehicle id="51" depart="102.00" type="vehicle.audi.tt">

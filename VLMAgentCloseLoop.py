@@ -66,6 +66,7 @@ class VLMAgent:
 
         payload = {
             "model": "gpt-4-vision-preview",
+            "temperature": 0.5,
             "messages": [
                 {
                     "role": "user",
@@ -156,7 +157,7 @@ if __name__ == '__main__':
         CARLACosim=True, carla_host=carla_host, carla_port=carla_port
     )
     planner = TrafficManager(model)
-    descriptor = EnvDescription(planner.config)
+    descriptor = EnvDescription()
     collision_checker = CollisionChecker()
     model.start()
 
@@ -173,9 +174,11 @@ if __name__ == '__main__':
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
-                    actionInfo, naviInfo = descriptor.getDescription(
-                        roadgraph, vehicles, planner, model.timeStep * 0.1, only_info=True)
-                    TotalInfo = '## Available actions\n\n' + actionInfo + '\n\n' + '## Navigation information\n\n' + naviInfo
+                    actionInfo = descriptor.getAvailableActionsInfo(roadgraph, vehicles)
+                    naviInfo = descriptor.getNavigationInfo(roadgraph, vehicles)
+                    egoInfo = descriptor.getEgoInfo(vehicles)
+                    currentLaneInfo = descriptor.getCurrentLaneInfo(roadgraph, vehicles)
+                    TotalInfo = '## Available actions\n\n' + actionInfo + '\n\n' + '## Navigation information\n\n' + currentLaneInfo + egoInfo + naviInfo
                     images = model.getCARLAImage(1, 1)
                     front_img = images[-1].CAM_FRONT
                     front_left_img = images[-1].CAM_FRONT_LEFT
@@ -191,7 +194,7 @@ if __name__ == '__main__':
                         behaviour, ans, prompt_tokens, completion_tokens, total_tokens,timecost = gpt4v.makeDecision()
                         model.putQA(
                             QuestionAndAnswer(
-                                '', naviInfo, actionInfo, '', 
+                                currentLaneInfo+egoInfo, naviInfo, actionInfo, '', 
                                 ans, prompt_tokens, completion_tokens, total_tokens, 
                                 timecost, int(behaviour)
                             )
