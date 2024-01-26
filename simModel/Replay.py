@@ -196,7 +196,7 @@ class ReplayModel:
 
     def getSce(self):
         nextFrameVehs = self.getNextFrameVehs()
-        if nextFrameVehs:
+        if self.ego.id in nextFrameVehs:
             self.updateVeh(self.ego)
             for veh in self.sr.currVehicles.values():
                 self.updateVeh(veh)

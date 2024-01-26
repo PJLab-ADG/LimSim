@@ -355,7 +355,7 @@ class SimulationSynchronization(object):
 
         # Closing sumo and carla client.
         self.carla.close()
-        self.sumo.close()
+        # self.sumo.close()
 
 # reference: https://github.com/cf206cd/carla_nuscenes/blob/main/carla_nuscenes/sensor.py
 class CAMActor:

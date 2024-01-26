@@ -43,7 +43,7 @@ class Vehicle:
         self.vTypeID: str = None
         self._iscontroled: bool = 0
         # the follow three parameters are used to obtain available lanes
-        self.lookForward: float = 120
+        self.lookForward: float = 150
         self.noChange: float = 5.0
         self.plannedTrajectory: Trajectory = None
         self.dbTrajectory: Trajectory = None

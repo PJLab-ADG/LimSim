@@ -57,8 +57,6 @@ class GUI:
         self.is_dragging: bool = False
         self.old_offset = (0, 0)
 
-        self.evaluator = Decision_Evaluation(model.dataBase, model.timeStep)
-
     def setup(self):
         dpg.create_context()
         dpg.create_viewport(
@@ -498,7 +496,6 @@ class GUI:
         canvasNode = dpg.add_draw_node(parent="Canvas")
         if self.is_running:
             self.model.runStep()
-            self.evaluator.Evaluate(self.model)
 
         roadgraphRenderData, VRDDict = self.model.exportRenderData()
         if roadgraphRenderData and VRDDict:

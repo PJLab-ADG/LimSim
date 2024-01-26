@@ -17,7 +17,7 @@ ACTIONS_DESCRIPTION = {
 
 class EnvDescription:
     def __init__(
-            self, template_path = "simInfo/prompt_template.json"
+            self, template_path = "./simInfo/prompt_template.json"
     ) -> None:
 
         self.decision = None
