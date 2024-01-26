@@ -177,8 +177,8 @@ class EnvDescription:
                         nav_describe += self.des_json["navigation_instruction"]["right"]
                     break
         
-        # ------------ junction when distance below 25 m ------------ #
-        elif curr_lane_id[0] != ':' and curr_lane.spline_length - ego["lanePosQ"][-1] < 25:
+        # ------------ in junction ------------ #
+        elif curr_lane_id[0] == ':':
             nav_describe = self.des_json["navigation_instruction"]["junction"]
             
         # ------------ normal straight ------------ #
@@ -477,7 +477,7 @@ class EnvDescription:
         arr2_power_sum = np.tile(arr2_power_sum, (m, 1))
         dis = arr1_power_sum + arr2_power_sum - (2 * np.dot(ego_xy, sv_xy.T))
         dis = np.sqrt(dis) # 输出数组的维度为 m x n
-        dis_statis = np.argwhere(dis < 0.5)
+        dis_statis = np.argwhere(dis < sv["width"])
 
         if dis_statis.size != 0:
             ego_min_index, sv_min_index = dis_statis[0]

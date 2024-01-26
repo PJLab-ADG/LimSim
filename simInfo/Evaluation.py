@@ -20,8 +20,7 @@ class Hyper_Parameter():
         self.score_weight = {
                             "comfort": 0.2,
                             "efficiency": 0.2,
-                            "speed_limit": 0.2,
-                            "collision": 0.4
+                            "safety": 0.4
                             }
         # confort refers to the acc
         self.longitudinal_acc = AccJerk_Ref(cc = 0.9, nc = 1.47, ac = 3.07)
@@ -36,7 +35,7 @@ class Hyper_Parameter():
 
         self.stop_distance = 15.0
         self.judge_speed = 0.5
-        self.speed_limit_k = 0.5 # 越小惩罚越大
+        self.speed_limit_k = 0.8 # 越小惩罚越大
 
     def calculate_acc_score(self, acc: float, acc_ref: AccJerk_Ref) -> float:
         # 分段线性函数，在normal时为0.6，到agressive时为0.0
@@ -86,21 +85,21 @@ class Score_List(list):
     def eval_score(self, hyper_parameter: Hyper_Parameter):
         comfort = 0.0
         efficiency = 0.0
-        speed_limit = 0.0
+        speed_limit = 1.0
         collision = 0.0
         red_light = 1.0
         for score_item in self:
             score_item.comfort = score_item.comfort_score()
             comfort += score_item.comfort
             efficiency += score_item.efficiency
-            speed_limit += score_item.speed_limit
+            speed_limit *= score_item.speed_limit
             collision += score_item.collision
             red_light *= score_item.red_light
         comfort /= len(self)
         efficiency /= len(self)
         speed_limit /= len(self)
         collision /= len(self)
-        return (hyper_parameter.score_weight["comfort"] * comfort + hyper_parameter.score_weight["efficiency"] * efficiency + hyper_parameter.score_weight["speed_limit"] * speed_limit + hyper_parameter.score_weight["collision"] * collision) * red_light * self.penalty * 100
+        return (hyper_parameter.score_weight["comfort"] * comfort + hyper_parameter.score_weight["speed_limit"] * speed_limit + hyper_parameter.score_weight["collision"] * collision) * red_light * efficiency * self.penalty * 100
     
     def fail_result(self):
         self.penalty = 0.6

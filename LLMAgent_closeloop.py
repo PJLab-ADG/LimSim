@@ -212,21 +212,21 @@ class LLMAgent:
 
 if __name__ == "__main__":
     # ego_id = '139' # 
-    ego_id = "50" #96
-    sumo_gui = False
-    sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
-    sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
-    sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
+    # ego_id = "50" #96
+    # sumo_gui = False
+    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
+    # sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
+    # sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
     # ego_id = '97'
     # sumo_gui = False
     # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     # sumo_net_file = "./networkFiles/roundabout/roundabout.net.xml"
     # sumo_rou_file = "./networkFiles/roundabout/roundabout.rou.xml"
-    # ego_id = '127'
-    # sumo_gui = False
-    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
-    # sumo_net_file = "./networkFiles/bigInter/bigInter.net.xml"
-    # sumo_rou_file = "./networkFiles/bigInter/bigInter.rou.xml"
+    ego_id = '942'
+    sumo_gui = False
+    sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
+    sumo_net_file = "./networkFiles/bigInter/bigInter.net.xml"
+    sumo_rou_file = "./networkFiles/bigInter/bigInter.rou.xml"
     carla_host = '127.0.0.1'
     carla_port = 2000
     step_length = 0.1
