@@ -427,7 +427,7 @@ class EnvDescription:
 
         # 计算轨迹交点
         if prediction_state == None or ego_prediction == None or len(prediction_state) == 0 or len(ego_prediction) == 0:
-            self.logging.info("the prediction state of vehicle {} is None".format(vehicle.id))
+            self.logging.info("the prediction state of vehicle {} is None".format(vehicle["id"]))
             return ""
         else:
             [ego_time, ego_s, sv_time, sv_s] = self.trajectory_overlap(vehicle, ego_prediction, prediction_state)

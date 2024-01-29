@@ -18,9 +18,9 @@ class Hyper_Parameter():
     def __init__(self) -> None:
         # sum = 1.0
         self.score_weight = {
-                            "comfort": 0.2,
-                            "efficiency": 0.2,
-                            "safety": 0.4
+                            "comfort": 0.25,
+                            "efficiency": 0.25,
+                            "safety": 0.5
                             }
         # confort refers to the acc
         self.longitudinal_acc = AccJerk_Ref(cc = 0.9, nc = 1.47, ac = 3.07)
@@ -35,7 +35,7 @@ class Hyper_Parameter():
 
         self.stop_distance = 15.0
         self.judge_speed = 0.5
-        self.speed_limit_k = 0.8 # 越小惩罚越大
+        self.speed_limit_k = 1.0 # 越小惩罚越大
 
     def calculate_acc_score(self, acc: float, acc_ref: AccJerk_Ref) -> float:
         # 分段线性函数，在normal时为0.6，到agressive时为0.0
@@ -58,7 +58,7 @@ class Decision_Score():
     def __init__(self) -> None:
         self.comfort = 0.0
         self.efficiency = 0.0
-        self.speed_limit = 0.0
+        self.speed_limit = 0
         self.collision = 0.0
         self.red_light = 0.0
 
@@ -75,7 +75,7 @@ class Decision_Score():
         return self.comfort
     
     def score(self, hyper_parameter: Hyper_Parameter):
-        return (hyper_parameter.score_weight["comfort"] * self.comfort + hyper_parameter.score_weight["efficiency"] * self.efficiency + hyper_parameter.score_weight["speed_limit"] * self.speed_limit + hyper_parameter.score_weight["collision"] * self.collision) * self.red_light
+        return (hyper_parameter.score_weight["comfort"] * self.comfort + hyper_parameter.score_weight["efficiency"] * self.efficiency + hyper_parameter.score_weight["safety"] * self.collision) * self.red_light * self.speed_limit
 
 class Score_List(list):
     def __init__(self):
@@ -85,21 +85,21 @@ class Score_List(list):
     def eval_score(self, hyper_parameter: Hyper_Parameter):
         comfort = 0.0
         efficiency = 0.0
-        speed_limit = 1.0
+        speed_limit = 0
         collision = 0.0
         red_light = 1.0
         for score_item in self:
             score_item.comfort = score_item.comfort_score()
             comfort += score_item.comfort
             efficiency += score_item.efficiency
-            speed_limit *= score_item.speed_limit
+            speed_limit += 1 if score_item.speed_limit == 0.9 else 0
             collision += score_item.collision
             red_light *= score_item.red_light
         comfort /= len(self)
         efficiency /= len(self)
-        speed_limit /= len(self)
         collision /= len(self)
-        return (hyper_parameter.score_weight["comfort"] * comfort + hyper_parameter.score_weight["speed_limit"] * speed_limit + hyper_parameter.score_weight["collision"] * collision) * red_light * efficiency * self.penalty * 100
+        speed_limit_penalty = 0.9 ** (speed_limit / len(self) * 10)
+        return (hyper_parameter.score_weight["comfort"] * comfort + hyper_parameter.score_weight["efficiency"] * efficiency + hyper_parameter.score_weight["safety"] * collision) * red_light * speed_limit_penalty * self.penalty * 100
     
     def fail_result(self):
         self.penalty = 0.6
@@ -382,10 +382,17 @@ class Decision_Evaluation:
             decision_score.efficiency = 0.0
             vehicle_num = 0
             all_vehicle_eval_speed = 0.0
+            # get next lane id
+            try:
+                roadgraph, _ = model.sr.exportScene()
+                ego_availablelanes = model.sr.ego.availableLanes(model.rb)
+                next_lane = roadgraph.get_available_next_lane(model.sr.ego.laneID, ego_availablelanes)
+            except Exception as e:
+                next_lane = None
             for _, value in model.sr.vehINAoI.items():
                 if value.id == model.sr.ego.id:
                     continue
-                if value.laneID.split("_")[0] == model.sr.ego.laneID.split("_")[0]:
+                if value.laneID.split("_")[0] == model.sr.ego.laneID.split("_")[0] or (next_lane != None and value.laneID == next_lane.id):
                     vehicle_history_speed = list(value.speedQ)[-10::]
                     eval_speed = sum(vehicle_history_speed)/len(vehicle_history_speed)
                     all_vehicle_eval_speed += eval_speed
@@ -407,12 +414,16 @@ class Decision_Evaluation:
         ego_speed = np.array(ego_history_speed)
         ego_speed = np.where(ego_speed > speed_limit, ego_speed - speed_limit, 0)  
         if np.count_nonzero(ego_speed) > 0:
-            decision_score.speed_limit = 1 - (np.sum(ego_speed) / np.count_nonzero(ego_speed)) / (self.hyper_parameter.speed_limit_k * speed_limit)
+            decision_score.speed_limit = 0.9
             self.current_reasoning += "you exceed the speed limit\n"
         else:
             decision_score.speed_limit = 1.0
-        decision_score.speed_limit = max(0, decision_score.speed_limit)
-        decision_score.speed_limit = min(decision_score.speed_limit, 1.0)
+        #     decision_score.speed_limit = 1 - (np.sum(ego_speed) / np.count_nonzero(ego_speed)) / (self.hyper_parameter.speed_limit_k * speed_limit)
+        #     self.current_reasoning += "you exceed the speed limit\n"
+        # else:
+        #     decision_score.speed_limit = 1.0
+        # decision_score.speed_limit = max(0, decision_score.speed_limit)
+        # decision_score.speed_limit = min(decision_score.speed_limit, 1.0)
 
         # 5. ttc: calculate the ego states and other car states in future 5s, take it as ttc(s)
         decision_score.collision = min(self.ttc_score)

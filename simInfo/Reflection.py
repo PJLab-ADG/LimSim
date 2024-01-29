@@ -14,7 +14,7 @@ import re
 class ReflectionAssistant:
     def __init__(
         self,
-        temperature = 0
+        temperature = 1
     ) -> None:
         oai_api_type = os.getenv("OPENAI_API_TYPE")
         if oai_api_type == "azure":
@@ -28,8 +28,8 @@ class ReflectionAssistant:
         elif oai_api_type == "openai":
             self.llm = ChatOpenAI(
                 temperature=temperature,
-                model_name='gpt-4',
-                max_tokens=1000
+                model_name='gpt-4-1106-preview',
+                max_tokens=2000
             )
 
         self.logger = logger.setup_app_level_logger(logger_name="Reflection", file_name="add_memory.log")
@@ -50,7 +50,7 @@ class ReflectionAssistant:
         return None
 
 
-    def reflection(self, origin_message: str, llm_response: str, evaluation: str, action: int) -> str:
+    def reflection(self, origin_message: str, llm_response: str, evaluation: str, action: int, caution: str) -> str:
         self.record_json = {
             "human_question":"",
             "reflection":"",
@@ -92,9 +92,14 @@ class ReflectionAssistant:
         - Traffic Light Score: If you go through a red light, the score is 0.7. Otherwise it is 1.0. 
         - Comfort Score: The greater the absolute value of car's acceleration and jerk, the smaller the comfort score.
         - Efficiency Score: The lower the car's speed, the smaller the score.
-        - Speed Limit Score: If the car's speed exceeds the speed limit, the score will be less than 1.0. As the portion of the car that exceeds the speed limit gets larger, the score will be lower.
+        - Speed Limit Score: If the car's speed exceeds the speed limit, the score will be less than 1.0.
         - Collision Score: When the likelihood of the car colliding with another car is higher, the score is lower. When the score is 1.0, the time in which the car is likely to collide with another car (ttc) is greater than 10 s. When the score is 0.0, the collision has happened.
         - Decision Score: Traffic Light Score * (0.2 * Comfort Score + 0.2 * Efficiency Score + 0.2 * Speed Limit Score + 0.4 * Collision Score)
+        ``` Caution ```
+        {caution}
+        The evaluation score is only for reference, you should carefully think about the information in caution, which could be the real reason for the decision failure.
+        - When the caution is lane change failure, it means that you failed to complete the lane change before the junction, so you need to change lanes as soon as possible, even if the risk is high. 
+        - When the caution is collision, it means that you are likely to collide with other vehicles, so you need to slow down as soon as possible.
 
         ``` Requestion ```
         Now, you know that the driver receives a low score for making this decision, which means there are some mistake in driver's resoning and cause the wrong action.

@@ -47,8 +47,8 @@ class LLMAgent:
             )
         elif oai_api_type == "openai":
             self.llm = ChatOpenAI(
-                temperature=1.0,
-                model_name= 'gpt-4',
+                temperature=0,
+                model_name= 'gpt-4-1106-preview',
                 max_tokens=2000,
                 request_timeout=60,
             )
@@ -94,12 +94,14 @@ class LLMAgent:
             fewshot_messages = []
             fewshot_answers = []
             fewshot_actions = []
+            fewshot_comment = []
             for fewshot_result in fewshot_results:
                 fewshot_messages.append(fewshot_result["human_question"])
                 fewshot_answers.append(fewshot_result["LLM_response"])
+                fewshot_comment.append(fewshot_result["comments"])
                 fewshot_actions.append(fewshot_result["action"])
 
-                print(fewshot_actions)
+            print("the action in few_shot is: ", fewshot_actions)
 
             if len(fewshot_actions) == 0:
                 LLM_logger.warning("There is no memory!")
@@ -115,7 +117,7 @@ class LLMAgent:
             example_answer = example.split("======")[1]
 
         human_message = textwrap.dedent(f"""\
-        Here is the current scenario:
+        # Here is the current scenario:
         ## Driving scenario description:
         {scenario_description}
 
@@ -126,7 +128,7 @@ class LLMAgent:
         {available_actions}
 
         ## 
-        Remember to follow the format instructions.
+        Remember to follow the format instructions and think more steps.
         You can stop reasoning once you have a valid action to take. 
         """)
 
@@ -137,14 +139,19 @@ class LLMAgent:
         ]
 
         if len(fewshot_messages) > 0:
+            messages.append(HumanMessage(content="----------\nHere are the results of good decisions you have made in the sane situation in the past, please observe them carefully and take them into full consideration when making your current decision!\n"))
             for i in range(len(fewshot_messages)):
                 messages.append(
-                    HumanMessage(content=fewshot_messages[i])
+                    HumanMessage(content=fewshot_messages[len(fewshot_messages) - 1 - i])
                 )
                 messages.append(
-                    AIMessage(content=fewshot_answers[i])
+                    AIMessage(content=fewshot_answers[len(fewshot_messages)- 1 - i])
                 )
-                messages.append(HumanMessage(content="Above messages are some examples of how you make a decision successfully in the past. Those scenarios are similar to the current scenario. You should refer to those examples to make a decision for the current scenario."))
+                if fewshot_comment[i] != "":
+                    messages.append(
+                        AIMessage(content=f"Here are some suggestions when driving in this scenario:\n"+fewshot_comment[len(fewshot_messages)-1-i])
+                    )
+                messages.append(HumanMessage(content="----------\nAbove messages are some examples of how you make a decision successfully in the past and some advise. Those scenarios are similar to the current scenario. You should make your decisions with full reference to past cases of correct decision making! You should discuss prior experience in your current reasoning."))
         messages.append(
             HumanMessage(content=human_message)
         )
@@ -193,7 +200,7 @@ class LLMAgent:
 
         few_shot_store = ""
         for i in range(len(fewshot_messages)):
-            few_shot_store += "human question: \n" + fewshot_messages[i] + "\nResponse:\n" + fewshot_answers[i] + \
+            few_shot_store += "Human question: \n" + fewshot_messages[i] + "\nResponse:\n" + fewshot_answers[i] + "\nSuggestions:\n" + fewshot_comment[i] + \
                 "\n---------------\n"
         print("Result:", result)
         
@@ -212,21 +219,21 @@ class LLMAgent:
 
 if __name__ == "__main__":
     # ego_id = '139' # 
-    # ego_id = "50" #96
-    # sumo_gui = False
-    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
-    # sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
-    # sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
+    ego_id = "50" #96
+    sumo_gui = False
+    sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
+    sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
+    sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
     # ego_id = '97'
     # sumo_gui = False
     # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     # sumo_net_file = "./networkFiles/roundabout/roundabout.net.xml"
     # sumo_rou_file = "./networkFiles/roundabout/roundabout.rou.xml"
-    ego_id = '942'
-    sumo_gui = False
-    sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
-    sumo_net_file = "./networkFiles/bigInter/bigInter.net.xml"
-    sumo_rou_file = "./networkFiles/bigInter/bigInter.rou.xml"
+    # ego_id = '942'
+    # sumo_gui = False
+    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
+    # sumo_net_file = "./networkFiles/bigInter/bigInter.net.xml"
+    # sumo_rou_file = "./networkFiles/bigInter/bigInter.rou.xml"
     carla_host = '127.0.0.1'
     carla_port = 2000
     step_length = 0.1
@@ -236,9 +243,9 @@ if __name__ == "__main__":
 
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
     if os.getenv("OPENAI_API_TYPE") == "azure":
-        database = 'results/' + stringTimestamp + '.db'
+        database = 'experiments/ablation/3-shot-11-mem/' + stringTimestamp + '.db'
     else:
-        database = 'experiments/Scenarios/junction/' + stringTimestamp + '.db'
+        database = 'experiments/ablation/3-shot-11-mem/' + stringTimestamp + '.db'
 
     # init LLMDriver
     model = Model(
