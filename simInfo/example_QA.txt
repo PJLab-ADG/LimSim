@@ -1,0 +1,27 @@
+#### Driving scenario description:
+You are driving on a road with 4 lanes in your direction, and you are currently driving in the number 3 lane from the left. The length of the current lane is 483.2 $m$. The limit speed of the current lane is 13.89 $m/s$. Your current position is '(-7.978,177.842)', speed is 12.243 $m/s$, acceleration is -0.131 $m/s^2$, and lane position is 322.15 $m$. 
+There are other vehicles driving around you, and below is their basic information:
+- Vehicle '8' is driving on the lane to your left and is ahead of you. The position of it is (-4.819,164.374), speed is 13.682 $m/s$, acceleration is 0.111 $m/s^2$, and lane position is 315.15 $m$. The distance between you and vehicle '8' is 20.5 $m$. 
+The last decision you made 1.0 $s$ ago was 8. You should turn left in the next junction. Please change lanes to the number 1 lane on your left. The stop line at the junction is 161.05 meters ahead of you, you'd better complete lane change 10 $m$ behind the stop line. 
+
+#### Driving Intensions:
+your driving intension is to drive safety and avoid collisions while reaching the destination as quickly as possible.
+
+#### Available actions:
+Your available actions are:
+IDLE - remain in the current lane with current speed Action_id: 8
+Turn-left - change lane to the left of the current lane Action_id: 3
+Turn-right - change lane to the right of the current lane Action_id: 4
+Acceleration - accelerate the vehicle Action_id: 1
+Deceleration - decelerate the vehicle Action_id: 2
+
+Remember to follow the format instructions.
+You can stop reasoning once you have a valid action to take. 
+======
+I have five actions to choose from. Next, I need to consider what action I should choose in terms of whether or not I will be in a collision, whether or not I need to change lanes, whether or not I am approaching an junction, and whether or not I am approaching the speed limit on the road.
+
+- First, I need to avoid a collision. I need to consider the vehicles in front of me and the potential for collision. In the current scenario, there are no vehicles in front of me, and no car could collide with me. Therefore there will be no collision.
+- Since there will be no collision, I need to consider whether I need to change lanes. Because I am currently driving in a lane that is not available to drive, so I need to change lanes to the number 1 lane on my left. Therefore, I need to consider the vehicles in my left lane and keep a safe distance of 30 m from them when changing lanes. Vehicle 8 is traveling in my left lane and the distance between me and vehicle 8 is 20.5 m, which is farther than 30 m, so I can make the left lane change immediately. 
+Great, I can make my decision now. Decision: Turn-left
+
+Response to user:#### 3

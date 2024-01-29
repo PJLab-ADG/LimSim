@@ -108,10 +108,10 @@ class LLMAgent:
         else:
             fewshot_messages = []
         # step3. get system message and make prompt
-        with open(os.path.dirname(os.path.abspath(__file__)) + "/text_example/system_message_v-1.txt", "r") as f:
+        with open(os.path.dirname(os.path.abspath(__file__)) + "/simInfo/system_message.txt", "r") as f:
             system_message = f.read()
 
-        with open(os.path.dirname(os.path.abspath(__file__)) + "/text_example/example_QA1.txt", "r") as f:
+        with open(os.path.dirname(os.path.abspath(__file__)) + "/simInfo/example_QA.txt", "r") as f:
             example = f.read()
             example_message = example.split("======")[0]
             example_answer = example.split("======")[1]
@@ -243,9 +243,9 @@ if __name__ == "__main__":
 
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
     if os.getenv("OPENAI_API_TYPE") == "azure":
-        database = 'experiments/ablation/3-shot-11-mem/' + stringTimestamp + '.db'
+        database = 'experiments/zeroshot/GPT3.5-150/' + stringTimestamp + '.db'
     else:
-        database = 'experiments/ablation/3-shot-11-mem/' + stringTimestamp + '.db'
+        database = 'experiments/zeroshot/GPT4-150/' + stringTimestamp + '.db'
 
     # init LLMDriver
     model = Model(
