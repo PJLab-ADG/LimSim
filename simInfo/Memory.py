@@ -268,7 +268,7 @@ class DrivingMemory:
         return res
 
 if __name__ == "__main__":
-    memory = DrivingMemory(db_path = "db/decision_mm/")
+    memory = DrivingMemory(db_path = "db/decision_mem/")
     
     good_mem, bad_mem = memory.divideBasedOnScore("experiments/zeroshot/GPT-4/2024-01-23_21-04-29.db")
     for mem_item in bad_mem:
@@ -278,82 +278,4 @@ if __name__ == "__main__":
         memory.addMemory(reflection_memory)
     for mem_item in good_mem:
         memory.addMemory(mem_item)
-    # memory.deleteMemory(["168fa4b4-bc54-11ee-9e1f-87c41a6883a3"])
-
-    # import json
-    # with open("/home/PJLAB/leiwenjie/LimSimLLM/reflection.json", "r", encoding="utf-8") as f:
-    #     reflection = json.load(f)
-    #     reflection = reflection["reflection_data"]
-
-    # for item in reflection:
-    #     if item["add_memory"]:
-    #         f = "\n## Available actions:\n"
-    #         b = "## Driving scenario description:\n"
-    #         key = "## Driving scenario description:\n" + item["human_question"].partition(b)[2].partition(f)[0]
-    #         key = key.replace("'", "")
-
-    #         target_phrase = f"#### Corrected version of Driver's Decision:"
-
-    #         comment_phrase = f"#### What should driver do to avoid such errors in the future:"
-    #         '''提取字符串s中，字符串f和b的中间部分'''
-    #         comment = item["reflection"].partition(comment_phrase)[2].partition(target_phrase)[0]
-    #         print("comment: ", comment)
-    #         LLM_response = item["reflection"].partition(target_phrase)[2].strip()
-    #         print("LLM_response: ", LLM_response)
-    #         action = item["reflection_action"]
-    #         target_phrase = "``` Human Message ```"
-    #         huaman_phrase = "\n``` Driver's Decision ```"
-    #         human_question = item["human_question"].partition(target_phrase)[2].partition(huaman_phrase)[0]
-    #         print("human_question: ", human_question)
-        
-    #         get_results = memory.scenario_memory._collection.get(
-    #             where_document={
-    #                 "$contains": key
-    #             }
-    #         )
-
-    #         if len(get_results['ids']) > 0:
-    #             # already have one
-    #             id = get_results['ids'][0]
-    #             memory.scenario_memory._collection.update(
-    #                 ids=id, metadatas={
-    #                     "human_question": human_question,
-    #                     'LLM_response': LLM_response,
-    #                     'action': str(action),
-    #                     'comments': comment
-    #                 }
-    #             )
-    #             print("Modify a memory item. Now the database has ", len(
-    #                 memory.scenario_memory._collection.get(include=['embeddings'])['embeddings']), " items.")
-#     memory_item = MemoryItem()
-#     memory_item.description = """### Current lane description:
-# You are driving on a road with 5 lanes in your direction, and you are currently driving in the number 4 lane from the left. The length of the current lane is 171.476 m. The limit speed of the current lane is 13.89 m/s. 
-# ### Next lane description:
-# The next lane is too far to consider. 
-# ### Your current state:
-# Your current position is '(733.813,354.536)', speed is 14.186 m/s, acceleration is -1.401 m/s^2, and lane position is 67.6 m. 
-# ### Nearby vehicles description:
-# There are no other vehicles driving near you, so you can drive completely according to your own ideas.
-# ### Last decision:
-# The last action you made 1.0 s ago was 2. 
-# """
-#     memory_item.navigation = """Stay in the current lane and continue straight ahead."""
-#     memory_item.available_action = """Your available actions are: 
-# Acceleration - accelerate the vehicle Action_id: 1
-# IDLE - remain in the current lane with current speed Action_id: 8
-# Deceleration - decelerate the vehicle Action_id: 2
-# Turn-left - change lane to the left of the current lane Action_id: 3
-# Turn-right - change lane to the right of the current lane Action_id: 4
-# """
-#     memory_item.response = """The current scenario is relatively simple, with no other vehicles nearby and no need to change lanes. The main considerations are maintaining a safe speed and following the navigation instructions.
-
-# - First, I need to consider the speed limit. The current speed limit is 13.89 m/s, and my current speed is 14.186 m/s, which is slightly over the limit. Therefore, I need to decelerate to comply with the speed limit.
-# - Second, I need to follow the navigation instructions. The instructions are to stay in the current lane and continue straight ahead, which aligns with my current trajectory. Therefore, there is no need to change lanes.
-
-# Given these considerations, the best course of action is to decelerate to comply with the speed limit.
-
-# Response to user:#### 2"""
-#     memory_item.action = 2
-#     memory.addMemory(memory_item)
-
     

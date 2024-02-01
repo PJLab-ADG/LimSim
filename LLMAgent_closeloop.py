@@ -40,7 +40,7 @@ class LLMAgent:
         if oai_api_type == "azure":
             print("Using Azure Chat API")
             self.llm = AzureChatOpenAI(
-                deployment_name="wrz", #"GPT-16"
+                deployment_name="GPT-16",
                 temperature=0.5,
                 max_tokens=2000,
                 request_timeout=60,
@@ -218,22 +218,11 @@ class LLMAgent:
         return result, response.content, human_message, few_shot_store, self.llm_source
 
 if __name__ == "__main__":
-    # ego_id = '139' # 
-    ego_id = "50" #96
+    ego_id = "50"
     sumo_gui = False
     sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
     sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
     sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
-    # ego_id = '97'
-    # sumo_gui = False
-    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
-    # sumo_net_file = "./networkFiles/roundabout/roundabout.net.xml"
-    # sumo_rou_file = "./networkFiles/roundabout/roundabout.rou.xml"
-    # ego_id = '942'
-    # sumo_gui = False
-    # sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
-    # sumo_net_file = "./networkFiles/bigInter/bigInter.net.xml"
-    # sumo_rou_file = "./networkFiles/bigInter/bigInter.rou.xml"
     carla_host = '127.0.0.1'
     carla_port = 2000
     step_length = 0.1
@@ -242,10 +231,7 @@ if __name__ == "__main__":
     sync_vehicle_lights = True
 
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
-    if os.getenv("OPENAI_API_TYPE") == "azure":
-        database = 'experiments/zeroshot/GPT3.5-150/' + stringTimestamp + '.db'
-    else:
-        database = 'experiments/zeroshot/GPT4-150/' + stringTimestamp + '.db'
+    database = 'results/' + stringTimestamp + '.db'
 
     # init LLMDriver
     model = Model(

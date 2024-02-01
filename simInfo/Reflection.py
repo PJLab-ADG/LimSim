@@ -113,7 +113,7 @@ class ReflectionAssistant:
         <Your answer>
         {delimiter} Corrected version of Driver's Decision:
         <Your corrected version of Driver's reasoning process and decision outcomes, the format should be same with the Driver's Decision>
-        Response to user:{delimiter} <only output one `Action_id` as a int number of you decision, without any action name or explanation. The output decision must be unique and not ambiguous, for example if you decide to decelearate, then output `4`>
+        Response to user:{delimiter} <only output one `Action_id` as a int number of you decision, without any action name or explanation. The output decision must be unique and not ambiguous, for example if you decide to decelearate, then output `2`>
         """.replace("        ", "")
         print(human_message)
         self.record_json["human_question"] = human_message

@@ -57,10 +57,19 @@ class Vehicle:
             LLRDict[eid] = {}
             edgeIns = nb.getEdge(eid)
             LLRSet = LLRSet | edgeIns.lanes
-            LLRDict[eid]['edgeLanes'] = edgeIns.lanes
+            # LLRDict[eid]['edgeLanes'] = edgeIns.lanes
+            LLRDict[eid]['edgeLanes'] = set()
+            for el in edgeIns.lanes:
+                elIns = nb.getLane(el)
+                if elIns.width >= self.width:
+                    LLRDict[eid]['edgeLanes'].add(el)
             nextEid = self.routes[i+1]
             changeLanes = edgeIns.next_edge_info[nextEid]
-            LLRDict[eid]['changeLanes'] = changeLanes
+            LLRDict[eid]['changeLanes'] = set()
+            for cl in changeLanes:
+                clIns = nb.getLane(cl)
+                if clIns.width >= self.width:
+                    LLRDict[eid]['changeLanes'].add(cl)
             nextEdge = nb.getEdge(nextEid)
             changeJuncLanes = set()
             for targetLane in nextEdge.lanes:

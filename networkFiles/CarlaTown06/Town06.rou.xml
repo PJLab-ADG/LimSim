@@ -102,9 +102,9 @@
     <vehicle id="32" depart="64.00" type="vehicle.volkswagen.t2">
         <route edges="26 -62 -33 -34 -1 58 57 54 -46 -10 -54 -55 -58 1 23 22#1 22#0" />
     </vehicle>
-    <vehicle id="33" depart="66.00" type="vehicle.audi.tt">
+    <!-- <vehicle id="33" depart="66.00" type="vehicle.audi.tt">
         <route edges="-32 68 -37 -70 24 -30 4 -48#0 -48#1 -49 -50 54 -46 -10" />
-    </vehicle>
+    </vehicle> -->
     <vehicle id="34" depart="68.00" type="vehicle.tesla.model3">
         <route edges="-37 -70 24 -30 4 -48#0 -48#1 -49 -50 54 -46 -10 -54 -55 -58 1 0 33 26 -62 -33 -34" />
     </vehicle>
@@ -249,9 +249,9 @@
     <!-- <vehicle id="81" depart="162.00" type="vehicle.bmw.grandtourer">
         <route edges="-32 68 -37 -70 24 -30 4" />
     </vehicle> -->
-    <vehicle id="82" depart="164.00" type="vehicle.mini.cooper_s">
+    <!-- <vehicle id="82" depart="164.00" type="vehicle.mini.cooper_s">
         <route edges="27 -48#0 -48#1 -49 -50 -51 -52#0 -52#1 -59 -13 -14" />
-    </vehicle>
+    </vehicle> -->
     <vehicle id="83" depart="166.00" type="vehicle.volkswagen.t2">
         <route edges="-32 68 -37 -70" />
     </vehicle>

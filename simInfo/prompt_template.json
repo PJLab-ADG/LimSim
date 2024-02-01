@@ -22,7 +22,7 @@
 
         "last_decision_description":{
             "basic": "The last action you made {delta_time} s ago was {decision}. ",
-            "changing_lane": "The lane change is not completed yet. You are changing lane to the {direction} of the current lane. Please keep the lane change decision as long as possible until the lane change is completed. ",
+            "changing_lane": "The lane change is not completed yet. You are changing lane to the {direction} of the current lane. ",
             "changed_lane": "The lane change has been completed. "
         } 
     },
