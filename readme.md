@@ -8,7 +8,7 @@ LimSim++: an extended version of LimSim designed for the application of Multimod
 
 The following video shows the process of autonomous driving with VLM.  The top of the GUI is the image information in carla, the left is the information description of the current scene, and the right is the reasoning process of LLM. 
 
-<video src="https://pjlab-adg.github.io/limsim_plus/static/videos/zeroshot_gpt4v.mp4" controls="controls" width="500" height="300">WARNING! Unable to play video! </video>
+<video src="https://pjlab-adg.github.io/limsim_plus/static/videos/zeroshot_gpt4v.mp4?raw=true" controls="controls" width="500" height="300">WARNING! Unable to play video! </video>
 
 
 To run this project in minutes, check [Getting Started](#Getting-Started).
@@ -83,6 +83,9 @@ cd path-to-LimSimLLM/
 python VLMAgentCloseLoop.py
 ```
 
+**Use reflection module:**
+
+To activate the memory module, set ``use_memory`` to True in ``LLMAgent_closeloop.py``. The default setting uses 3-shots memory. You can modify this in the code.
 
 ### 2. Simulation replay 🎥
 In the root directory, running the following command will demonstrate the (M)LLMs decision-making process :
@@ -115,10 +118,6 @@ The memory database will be created in ``db/decision_mem``
 
 TODO
 
-
-**Use reflection module:**
-
-To activate the memory module, set ``use_memory`` to True in ``LLMAgent_closeloop.py``. The default setting uses 3-shots . You can modify this in the code.
 
 ## License and Citation
 All assets and code in this repository are under the Apache 2.0 license. If you use LimSim++ in your research , please use the following BibTeX entry.
