@@ -136,8 +136,6 @@ class DrivingMemory:
             self.scenario_memory._collection.get(
                 include=['embeddings'])['embeddings']), " items.")
 
-    # def checkResponse(self, memory: MemoryItem) -> tuple[bool, str]:
-    #     pass
     
     def getReflection(self, memory: MemoryItem) -> MemoryItem:
         delimiter = "####"
@@ -263,7 +261,7 @@ class DrivingMemory:
 if __name__ == "__main__":
     memory = DrivingMemory(db_path = "db/decision_mem/")
     
-    good_mem, bad_mem = memory.divideBasedOnScore("experiments/zeroshot/GPT-4/2024-01-23_21-04-29.db")
+    good_mem, bad_mem = memory.divideBasedOnScore("results/2024-02-21_18-46-19.db")
     for mem_item in bad_mem:
         reflection_memory = memory.getReflection(mem_item)
         if reflection_memory == None:

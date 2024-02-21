@@ -45,7 +45,7 @@ class LLMAgent:
         if oai_api_type == "azure":
             print("Using Azure Chat API")
             self.llm = AzureChatOpenAI(
-                deployment_name="wrz",
+                deployment_name="GPT-16",
                 temperature=0.5,
                 max_tokens=2000,
                 request_timeout=60,
@@ -206,7 +206,7 @@ class LLMAgent:
             check_message = f"""
             You are an output-checking assistant who is responsible for checking the output of another agent.
             
-            The output you received is: {response.content}
+            The output you received is: {decision_action}
 
             Your should just output the right int type of action_id, with no other characters or delimiters.
             i.e. :

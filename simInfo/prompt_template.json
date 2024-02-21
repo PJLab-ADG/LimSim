@@ -11,6 +11,7 @@
         },
         "traffic_info_description": "The limit speed of the current lane is {speed_limit} m/s. ",
         "traffic_light_description": "The traffic light is currently {curr_tl_state}. ",
+        "traffic_light_change_des": "The traffic lights will change to {color} in {time} seconds. ",
 
         "ego_state_description": "Your current position is {ego_position}, speed is {ego_speed} m/s, acceleration is {ego_acceleration} m/s^2, and lane position is {ego_lane_position} m. ",
 

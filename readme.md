@@ -144,9 +144,9 @@ TODO
 
 ### 🦾 Framework Enhancement
 
-> LimSim++ supports the construction of tool libraries.
+> LimSim++ supports the construction of tool libraries for customized applications .
 
-- You can add your own tools for Driver Agent in the project.(???)
+- You can add your own tools for Driver Agent in the project (``LLMAgent_closeloop.py``, ``VLMAgentCloseLoop.py``).
 
 
 ## License and Citation
