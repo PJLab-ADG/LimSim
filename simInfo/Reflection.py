@@ -8,7 +8,7 @@ from langchain.schema import HumanMessage, SystemMessage
 from tenacity import *
 import json
 import logger, logging
-from typing import Dict
+from typing import Dict, Tuple
 import re
 
 class ReflectionAssistant:
@@ -50,7 +50,7 @@ class ReflectionAssistant:
         return None
 
 
-    def reflection(self, origin_message: str, llm_response: str, evaluation: str, action: int, caution: str) -> str:
+    def reflection(self, origin_message: str, llm_response: str, evaluation: str, action: int, caution: str) -> Tuple[str, int]:
         self.record_json = {
             "human_question":"",
             "reflection":"",
@@ -169,7 +169,7 @@ class ReflectionAssistant:
     def reacquire_answer(self, illegal_answer: str) -> int:
         delimiter = "####"
         check_message = textwrap.dedent(f"""\
-            You are a output checking assistant who is responsible for checking the output of another agent.
+            You are an output-checking assistant who is responsible for checking the output of another agent.
             
             The output you received is: {illegal_answer}
 

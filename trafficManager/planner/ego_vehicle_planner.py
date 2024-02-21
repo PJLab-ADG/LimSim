@@ -138,7 +138,7 @@ class LLMEgoPlanner(AbstractEgoPlanner):
                 target_acc = current_state.acc -config["NORMAL_DCC_DEFAULT"]
             if target_acc < config["ACC_MIN"]:
                 target_acc = config["ACC_MIN"]
-            # 需要计算如果减速结果为负数的时候，那么到零为止，后面就直接停车
+            # When the speed decreases to 0, it does not continue to decelerate and stops at the same place
             if current_state.vel + target_acc*course_t < 0:
                 course_t = (0.1 - current_state.vel)/target_acc
 

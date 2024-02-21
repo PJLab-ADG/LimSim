@@ -5,6 +5,6 @@ Your response should use the following format:
 <reasoning>
 <reasoning>
 <repeat until you have a decision>
-Response to user:{delimiter} <only output one `Action_id` as a int number of you decision, without any action name or explanation. The output decision must be unique and not ambiguous, for example if you decide to decelearate, then output `4`> 
+Response to user:{delimiter} <only output one `Action_id` as a int number of you decision, without any action name or explanation. The output decision must be unique and not ambiguous, for example if you decide to decelearate, then output `2`> 
 
 Make sure to include {delimiter} to separate every step.

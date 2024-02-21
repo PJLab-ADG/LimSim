@@ -137,11 +137,11 @@ class EnvDescription:
         else:
             return "yellow"
         
-    def getEgoInfo(self, vehicle_info: Dict) -> str:
+    def getEgoInfo(self, vehicle_info: Dict[str, Dict]) -> str:
         """get ego info, including speed, position, acceleration
 
         Args:
-            vehicle_info (Dict): all of vehicles info
+            vehicle_info (Dict[str, Dict]): all of vehicles info
 
         Returns:
             str: ego prompt
@@ -155,6 +155,15 @@ class EnvDescription:
         return ego_describe + "\n"
     
     def getNavigationInfo(self, roadgraph: RoadGraph, vehicles: Dict[str, Dict]) -> str:
+        """get navigation info, including lane change, go straight and go through the junction
+
+        Args:
+            roadgraph (RoadGraph): information of the relationship between lanes
+            vehicles (Dict[str, Dict]): all of vehicles info
+
+        Returns:
+            str: navigation prompt
+        """
         nav_describe = ''
         ego = vehicles['egoCar']
         curr_lane_id: str = ego['laneIDQ'][-1]
@@ -202,20 +211,20 @@ class EnvDescription:
         curr_lane_id: str = ego['laneIDQ'][-1]
         curr_lane = roadgraph.get_lane_by_id(curr_lane_id)
         next_lane = roadgraph.get_available_next_lane(curr_lane_id, ego["availableLanes"])
-        # 1. 距离交叉路口停止线小于30米，进行提示
+        # 1. If the distance from the intersection stop line is less than 30 meters, make notice 
         if curr_lane_id[0] != ':' and curr_lane.spline_length - ego["lanePosQ"][-1] < 30:
             notice_description += self.des_json["intension"]["junction"]
             if next_lane.tlLogic != None:
                 notice_description += self.des_json["intension"]["traffic_light"]
 
-        # 2. 速度提示
+        # 2. notice about speed
         elif ego["speedQ"][-1] < 5.0:
             notice_description += self.des_json["intension"]["low_speed"]
         
         elif ego["speedQ"][-1] > curr_lane.speed_limit * 0.9:
             notice_description += self.des_json["intension"]["high_speed"]
         
-        # 3. 他车提示
+        # 3. notice about other vehicle
         if not ("There are no other vehicles" in self.getOtherVehicleInfo(roadgraph, vehicles)):
             notice_description += self.des_json["intension"]["other_vehicles"]
 
@@ -381,13 +390,13 @@ class EnvDescription:
 
         else:
             if vehicle["laneIDQ"][-1] == current_lane.id:
-                # 车辆和 ego 在同一条 lane 上行驶
+                # The vehicle and ego are traveling in the same lane
                 lane_relative_position = "the same lane as you"
             elif vehicle["laneIDQ"][-1] == current_lane.left_lane():
-                # 车辆和 ego 在左侧 lane 上行驶
+                # The vehicle drives in the left lane of ego
                 lane_relative_position = "your left lane"
             elif vehicle["laneIDQ"][-1] == current_lane.right_lane():
-                # 车辆和 ego 在右侧 lane 上行驶
+                # The vehicle drives in the right lane of ego
                 lane_relative_position = "your right lane"
             else:
                 return ''
@@ -425,7 +434,7 @@ class EnvDescription:
             str: vehicle in junction prompt
         """
 
-        # 计算轨迹交点
+        # Compute the intersection point of trajectories
         if prediction_state == None or ego_prediction == None or len(prediction_state) == 0 or len(ego_prediction) == 0:
             self.logging.info("the prediction state of vehicle {} is None".format(vehicle["id"]))
             return ""
@@ -450,21 +459,21 @@ class EnvDescription:
         """judge if the ego trajectory and sv trajectory will overlap in the next 5 seconds
 
         Args:
-            ego_traj (List[State]): 自车轨迹
-            sv_traj (List[State]): SV轨迹
+            ego_traj (List[State]): trajectory of ego
+            sv_traj (List[State]): trajectory of SV
 
         Returns:
-            ego_time: 自车到达冲突点的时间
-            ego_s: 冲突点离自车的距离
-            sv_time: SV到达冲突点的时间
-            sv_s: 冲突点离SV的距离
+            ego_time: time for ego to arrive the collision point
+            ego_s: distance between ego and collision point
+            sv_time: time for SV to arrive the collision point
+            sv_s: distance between SV and collision point
         """
-        # 计算两条轨迹上每个点之间的距离
+        # Calculate the distance between each point on the two trajectories 
         ego_time, ego_s, sv_time, sv_s = None, None, None, None
 
-        ego_xy = np.array([[state.x, state.y] for state in ego_traj]) # 维度为 m x 2
+        ego_xy = np.array([[state.x, state.y] for state in ego_traj]) # m * 2
 
-        sv_xy = np.array([[state.x, state.y] for state in sv_traj]) # 维度为 n x 2
+        sv_xy = np.array([[state.x, state.y] for state in sv_traj]) # n * 2
 
         m, _ = ego_xy.shape
         n, _ = sv_xy.shape
@@ -476,13 +485,13 @@ class EnvDescription:
         arr2_power_sum = arr2_power[:, 0] + arr2_power[:, 1]
         arr2_power_sum = np.tile(arr2_power_sum, (m, 1))
         dis = arr1_power_sum + arr2_power_sum - (2 * np.dot(ego_xy, sv_xy.T))
-        dis = np.sqrt(dis) # 输出数组的维度为 m x n
+        dis = np.sqrt(dis) # m * n
         dis_statis = np.argwhere(dis < sv["width"])
 
         if dis_statis.size != 0:
             ego_min_index, sv_min_index = dis_statis[0]
 
-            # 如果在ego的第一个点和sv的第一个点就发生碰撞，说明是位于ego后面的车辆，不需要考虑
+            # If the collision occurs at the first point of ego and the first point of sv, it means that the vehicle behind ego does not need to be considered. 
             if ego_min_index == 0:
                 pass
             else:

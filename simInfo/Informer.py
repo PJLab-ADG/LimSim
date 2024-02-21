@@ -1,5 +1,5 @@
 """
-- 为 VLMAgent 提供驾驶辅助信息，比如导航信息和当前的 action_list
+- Provide VLMAgent with driving assistance information such as navigation information and current action_list 
 - Provides VLMAgent with driver assistance information, such as navigation information and the current action_list
 """
 from typing import Dict, Optional, Set
@@ -18,27 +18,27 @@ class Informer:
         curr_lane_id: str = ego_info['laneIDQ'][-1]
         curr_lane = roadgraph.get_lane_by_id(curr_lane_id)
         if curr_lane_id[0] == ':':
-            # 处于交叉口内部时不可换道
+            # Do not change lanes when inside an intersection 
             ActionInfo += ACCInfo
             ActionInfo += DECInfo
             ActionInfo += MVCInfo
         else:
             curr_edge = curr_lane.affiliated_edge
             if curr_edge.lane_num == 1:
-                # 当前车道只有一条时不可换道
+                # Do not change lanes when there is only one lane in the current lane 
                 ActionInfo += ACCInfo
                 ActionInfo += DECInfo
                 ActionInfo += MVCInfo
             else:
                 curr_lane_idx = curr_lane_id.split('_')
                 if curr_lane_idx == '0':
-                    # 处于最右侧车道
+                    # in the rightest lane. 
                     ActionInfo += ACCInfo
                     ActionInfo += DECInfo
                     ActionInfo += MVCInfo
                     ActionInfo += CLInfo
                 elif curr_lane_idx == str(curr_edge.lane_num-1):
-                    # 处于最左侧车道
+                    # In the leftmost lane.
                     ActionInfo += ACCInfo
                     ActionInfo += DECInfo
                     ActionInfo += MVCInfo
@@ -60,11 +60,11 @@ class Informer:
         availableLanes: Set[str] = ego_info['availableLanes']
         NaviTitle = '## Navigation Information\n'
         if curr_lane_id[0] == ':':
-            # 在交叉口内部，没有导航信息
+            # there is no navigation info when ego in junction
             return NaviTitle + SpeedINFO + "You should just drive carefully.\n"
         else:
             if curr_lane_id in availableLanes:
-                # 已经在正确的车道上，不需要导航信息
+                # no need to generate navigation info when ego in the correct lane
                 return NaviTitle + SpeedINFO + "You are on the proper lane.\n"
             else:
                 curr_lane_idx = int(curr_lane_id.split('_')[-1])

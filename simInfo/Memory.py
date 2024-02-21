@@ -159,21 +159,17 @@ class DrivingMemory:
 
         comment_phrase = f"{delimiter} What should driver do to avoid such errors in the future:"
         comment = LLM_response.partition(comment_phrase)[2].partition(decision_phrase)[0].strip()
-        # substring = LLM_response[LLM_response.find(
-            # target_phrase)+len(target_phrase):].strip()
-        # comment = f"{delimiter} I have made a misake before and below is my self-reflection:\n{comment_ori}"
-        # action = int(LLM_response.split(delimiter)[-1].strip(" "))
         memory.set_reflection(correct_answer, comment, action)
         return memory
     
     def divideBasedOnScore(self, database: str) -> Tuple[List[MemoryItem], List[MemoryItem]]:
-        """_summary_
+        """After finishing a route, the quality of decision is evaluated according to the decision score of each frame obtained by the evaluation module. First, the decision curve is segmented by the median. Then, the decision with the highest score in each continuous curve above the median is taken as a good decision. The decision result with the lowest score in each continuous curve less than the median is taken as the decision to be corrected.
 
         Args:
-            database (str): _description_
+            database (str): Database storing decisions and evaluation scores made by LLM Driver in a route.
 
         Returns:
-            Tuple[List[MemoryItem], List[MemoryItem]]: _description_
+            Tuple[List[MemoryItem], List[MemoryItem]]: Make the good decision and bad decision as memory item, return the good memories and bad memories.
         """
         good_memory = []
         bad_memory = []
@@ -185,20 +181,18 @@ class DrivingMemory:
         result_df = pd.read_sql_query('''SELECT * FROM resultINFO''', conn)
         
         if result_df["result"][0]:
-            # eval_df.sort_values(by=['decision_score'], inplace=True)
-            # eval_df.reset_index(drop=True, inplace=True)
-            # 找到中位数
+            # find median
             middle_score = eval_df["decision_score"].quantile(q = 0.2, interpolation="linear")
 
-            # 找到高/低于中位数的数据
+            # segmented by median
             low_index = eval_df[eval_df["decision_score"] <= middle_score].index.tolist()
             high_index = eval_df[eval_df["decision_score"] > middle_score].index.tolist()
-            # 对index基于不连续判断进行分段
+            # segment the decision curve
             low_split = self.split(low_index)
             high_split = self.split(high_index)
             bad_mem_index = []
             good_mem_index = []
-            # 对每一段进行判断
+            # judge each segment
             for i in low_split:
                 item = eval_df.loc[i].copy(True)
                 item.sort_values(by=['decision_score'], ascending=True, inplace=True)
@@ -213,15 +207,14 @@ class DrivingMemory:
                 item.sort_values(by=['decision_score'], ascending=False, inplace=True)
                 good_mem_index.append(item.index.tolist()[0])
 
-            # 筛选出前20%的数据
             good_eval_df = eval_df.loc[good_mem_index]
             bad_eval_df = eval_df.loc[bad_mem_index]
 
-            # 找出对应的QAINFO
+            # fine the QAINFO
             good_QA_df = QA_df.loc[good_mem_index]
             bad_QA_df = QA_df.loc[bad_mem_index]
 
-            # 整理成list
+            # convert to memory item
             for i in good_eval_df.index.to_list():
                 memory = MemoryItem()
                 memory.set_description(good_QA_df.loc[i])
@@ -233,10 +226,10 @@ class DrivingMemory:
                 memory.set_score(bad_eval_df.loc[i])
                 bad_memory.append(memory)
         
-        # 找出导致失败的数据，把最后五次决策的结果进行reflection
+        # If the route fails, the results of the last five decisions are taken as the decision to be corrected.
         else:
             # if "collision" in result_df["fail_reason"][0]:
-            #     # 找到最后一个choose_action不是2的frame
+            #     # find the last frame which the choose action is not deceleration
             #     QA_df = pd.read_sql_query('''SELECT * FROM QAINFO''', conn)
             #     QA_df.loc[QA_df["choose_action"] != 2, ["choose_action"]] = -1
             #     QA_df.sort_values(by=['frame', 'choose_action'], ascending=[False, True], inplace=True)

@@ -148,7 +148,7 @@ if __name__ == '__main__':
     sync_vehicle_lights = True
 
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
-    database = './experiments/zeroshot/gpt4v/' + stringTimestamp + '.db'
+    database = 'results/' + stringTimestamp + '.db'
 
     # init LLMDriver
     model = Model(

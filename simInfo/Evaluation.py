@@ -35,10 +35,10 @@ class Hyper_Parameter():
 
         self.stop_distance = 15.0
         self.judge_speed = 0.5
-        self.speed_limit_k = 1.0 # 越小惩罚越大
+        self.speed_limit_k = 1.0 # the speed_limit_k lower, penalty bigger
 
     def calculate_acc_score(self, acc: float, acc_ref: AccJerk_Ref) -> float:
-        # 分段线性函数，在normal时为0.6，到agressive时为0.0
+        # Piecewise linear function, 0.6 when normal and 0.0 when aggressive
         self.b1 = 1.0
         self.b2 = 0.6
         self.k1 = 0 # [0-cautious]
@@ -59,7 +59,7 @@ class Decision_Score():
         self.comfort = 0.0
         self.efficiency = 0.0
         self.speed_limit = 0
-        self.collision = 0.0
+        self.safety = 0.0
         self.red_light = 0.0
 
         self.longitudinal_acc = 0.0
@@ -68,38 +68,59 @@ class Decision_Score():
         self.lateral_jerk = 0.0
 
     def __repr__(self) -> str:
-        return "comfort score is {}, efficiency score is {}, speed limit score is {}, collision score is {}, red light score is {}".format(self.comfort, self.efficiency, self.speed_limit, self.collision, self.red_light)
+        return "comfort score is {}, efficiency score is {}, speed limit score is {}, safety score is {}, red light score is {}".format(self.comfort, self.efficiency, self.speed_limit, self.safety, self.red_light)
 
     def comfort_score(self):
         self.comfort = (self.longitudinal_acc + self.longitudinal_jerk + self.lateral_acc + self.lateral_jerk) / 4
         return self.comfort
     
-    def score(self, hyper_parameter: Hyper_Parameter):
-        return (hyper_parameter.score_weight["comfort"] * self.comfort + hyper_parameter.score_weight["efficiency"] * self.efficiency + hyper_parameter.score_weight["safety"] * self.collision) * self.red_light * self.speed_limit
+    def score(self, hyper_parameter: Hyper_Parameter) -> float:
+        """Calculate the score for each frame decision.
+        decision_score = (comfort_score + efficiency_score + safety_score) * red_light_penalty * speed_limit_penalty
+
+        Args:
+            hyper_parameter (Hyper_Parameter): The hyper-parameter set in this program, see it in the Hyper_Parameter class.
+
+        Returns:
+            float: The score for each frame decision.
+        """
+        return (hyper_parameter.score_weight["comfort"] * self.comfort + hyper_parameter.score_weight["efficiency"] * self.efficiency + hyper_parameter.score_weight["safety"] * self.safety) * self.red_light * self.speed_limit
 
 class Score_List(list):
     def __init__(self):
         super().__init__()
         self.penalty = 1.0
 
-    def eval_score(self, hyper_parameter: Hyper_Parameter):
+    def eval_score(self, hyper_parameter: Hyper_Parameter)-> float:
+        """Calculate the driving score for the LLM Driver in this route.
+        eval_score = (eval_comfort_score + eval_efficiency_score + eval_safety_score) * red_light_penalty * speed_limit_penalty * collision_penalty;
+        collision_penalty = 0.6 if ego has collision, else 1.0;
+        red_light_penalty = multiplication of red light scores among all decision scores;
+        speed_limit_penalty = 0.9 ^ ((number of speeding frames / total number of decisions) * 10).
+        
+        Args:
+            hyper_parameter (Hyper_Parameter): The hyper-parameter set in this program, see it in the Hyper_Parameter class.
+
+        Returns:
+            float: Driving score for the LLM Driver
+        """
         comfort = 0.0
         efficiency = 0.0
         speed_limit = 0
-        collision = 0.0
+        safety = 0.0
         red_light = 1.0
         for score_item in self:
             score_item.comfort = score_item.comfort_score()
             comfort += score_item.comfort
             efficiency += score_item.efficiency
             speed_limit += 1 if score_item.speed_limit == 0.9 else 0
-            collision += score_item.collision
+            safety += score_item.safety
             red_light *= score_item.red_light
         comfort /= len(self)
         efficiency /= len(self)
-        collision /= len(self)
+        safety /= len(self)
         speed_limit_penalty = 0.9 ** (speed_limit / len(self) * 10)
-        return (hyper_parameter.score_weight["comfort"] * comfort + hyper_parameter.score_weight["efficiency"] * efficiency + hyper_parameter.score_weight["safety"] * collision) * red_light * speed_limit_penalty * self.penalty * 100
+        return (hyper_parameter.score_weight["comfort"] * comfort + hyper_parameter.score_weight["efficiency"] * efficiency + hyper_parameter.score_weight["safety"] * safety) * red_light * speed_limit_penalty * self.penalty * 100
     
     def fail_result(self):
         self.penalty = 0.6
@@ -109,16 +130,15 @@ class Decision_Evaluation:
         self.complete_percentage: float = 0.0
 
         self.decision_score = Score_List() # decision eval based on the current 10 frames
-        self.final_score: float = 0.0 # based on the whole routes
+        self.final_score: float = 0.0 # based on the whole decision in one route
 
         self.red_junctionlane_record = []
         self.current_reasoning = ""
 
         self.current_time = timeStep
 
-        # 里程计
+        # odometer
         self.driving_mile = 0.0
-        # self.last_pos = 0.0
 
         # create database
         conn = sqlite3.connect(database)
@@ -143,7 +163,6 @@ class Decision_Evaluation:
         self.logger = logger.setup_app_level_logger(logger_name="Evaluation", file_name="llm_decision_result.log")
         self.logging = logging.getLogger("Evaluation").getChild(__name__)
         
-        # 超参数
         self.hyper_parameter = Hyper_Parameter()
 
         self.ttc_score = []
@@ -253,7 +272,7 @@ class Decision_Evaluation:
         return decision_score.comfort_score()
 
     def judge_wait_traffic_light(self, model: ReplayModel) -> bool:
-        """判断是否在等待红灯，如果下一车道是junctionlane，并且ego距离停止线15m且速度小于0.5m/s，则判断为等待红灯
+        """If the next lane is a junctionlane, and ego is 15m away from the stop line and the speed is less than 0.5 m/s, it is judged that the vehicle is waiting for a red light.
 
         Args:
             model (ReplayModel)
@@ -301,11 +320,6 @@ class Decision_Evaluation:
             veh_availablelanes = value.availableLanes(model.rb)
             vehicle_trajectory = getSVTrajectory(value, roadgraph, veh_availablelanes, self.hyper_parameter.TTC_THRESHOLD)
 
-            # if model.timeStep == 310:
-            #     import matplotlib.pyplot as plt
-            #     plt.plot([state.x for state in ego_trajectory], [state.y for state in ego_trajectory], 'r')
-            #     plt.plot([state.x for state in vehicle_trajectory], [state.y for state in vehicle_trajectory], 'b')
-            #     plt.show()
             # calculate ttc, if the (x, y) will collide, the time is ttc
             for index in range(0, min(len(ego_trajectory), len(vehicle_trajectory))):
                 recA = Rectangle([ego_trajectory[index].x, ego_trajectory[index].y],
@@ -327,7 +341,7 @@ class Decision_Evaluation:
                 frame, traffic_light_score, comfort_score, efficiency_score, speed_limit_score, collision_score, decision_score, caution
                 ) VALUES (?,?,?,?,?,?,?,?);""",
             (
-                model.timeStep, decision_score.red_light, decision_score.comfort, decision_score.efficiency, decision_score.speed_limit, decision_score.collision, decision_score.score(self.hyper_parameter), self.current_reasoning
+                model.timeStep, decision_score.red_light, decision_score.comfort, decision_score.efficiency, decision_score.speed_limit, decision_score.safety, decision_score.score(self.hyper_parameter), self.current_reasoning
             )
         )
         conn.commit()
@@ -341,7 +355,7 @@ class Decision_Evaluation:
         conn.close()
         return result
     
-    def SaveResultinDB(self, model: ReplayModel, result: bool, reason: str) -> None:
+    def SaveResultinDB(self, model: ReplayModel) -> None:
         conn = sqlite3.connect(model.dataBase)
         cur = conn.cursor()
         # add result data
@@ -357,6 +371,15 @@ class Decision_Evaluation:
 
 
     def Current_Decision_Score(self, model: ReplayModel, decision_score: Decision_Score) -> Decision_Score:
+        """Calculate the current decision score, include comfort, efficiency, speed limit, safety, red light
+
+        Args:
+            model (ReplayModel): class containing current frame information
+            decision_score (Decision_Score): current decision score
+
+        Returns:
+            Decision_Score: current decision score
+        """
         # 1. comfort -- evaluate comfortable of the driving
         decision_score.comfort = self.get_comfort_score(model.sr.ego, decision_score)
         
@@ -372,7 +395,7 @@ class Decision_Evaluation:
             speed_limit = model.rb.getJunctionLane(lane_id).speed_limit
         else:
             speed_limit = model.rb.getLane(lane_id).speed_limit
-        ## 3.1 判断是否在等红绿灯
+        ## 3.1 judge if wait for red light
         if self.judge_wait_traffic_light(model):
             decision_score.efficiency = 1.0
         ## 3.2 calculate the eval speed
@@ -409,7 +432,7 @@ class Decision_Evaluation:
             if decision_score.efficiency < 0.6:
                 self.current_reasoning += "your speed is so low that you have a low efficiency\n"
 
-        # 4. exceed speed limit, speed_limit/(speeding frames/ num)*100 as score
+        # 4. exceed speed limit
         decision_score.speed_limit = 0.0
         ego_speed = np.array(ego_history_speed)
         ego_speed = np.where(ego_speed > speed_limit, ego_speed - speed_limit, 0)  
@@ -418,35 +441,35 @@ class Decision_Evaluation:
             self.current_reasoning += "you exceed the speed limit\n"
         else:
             decision_score.speed_limit = 1.0
-        #     decision_score.speed_limit = 1 - (np.sum(ego_speed) / np.count_nonzero(ego_speed)) / (self.hyper_parameter.speed_limit_k * speed_limit)
-        #     self.current_reasoning += "you exceed the speed limit\n"
-        # else:
-        #     decision_score.speed_limit = 1.0
-        # decision_score.speed_limit = max(0, decision_score.speed_limit)
-        # decision_score.speed_limit = min(decision_score.speed_limit, 1.0)
 
         # 5. ttc: calculate the ego states and other car states in future 5s, take it as ttc(s)
-        decision_score.collision = min(self.ttc_score)
-        if decision_score.collision <= 0.6:
+        decision_score.safety = min(self.ttc_score)
+        if decision_score.safety <= 0.6:
             self.current_reasoning += "you have high risk of collision with other vehicles\n"
         self.ttc_score = []
         return decision_score
     
     def Evaluate(self, model: ReplayModel) -> None:
+        """Executes this function once per frame. It calculates the decision score and saves the data in the database.
+
+        Args:
+            model (ReplayModel): class containing current frame information
+        """
         self.current_reasoning = ""
         
-        # 2. calculate ttc: calculate the ego states and other car states in future 5s, take it as ttc(s)
+        # 1. calculate ttc: calculate the ego states and other car states in future 5s, take it as ttc(s)
         self.ttc_score.append(self.calculate_ttc(model) / self.hyper_parameter.TTC_THRESHOLD)
         
-        # 3. calculate decision score each 10 frames
+        # 2. calculate decision score each 10 frames
         if model.timeStep - self.current_time > 10 and model.timeStep % 10 == 0:
             current_decision_score = Decision_Score() # each decision's score
             self.Current_Decision_Score(model, current_decision_score)
             self.decision_score.append(current_decision_score)
             self.SaveDatainDB(model, current_decision_score)
-            # 1. update car mile
+            # update car mile
             self.CalculateDrivingMile(model)
         
+        # 3. if the route is end, calculate the final score
         if model.tpEnd:
             if not self.getResult(model):
                 self.decision_score.fail_result()
@@ -459,7 +482,7 @@ class Decision_Evaluation:
                 self.route_length = self.driving_mile
                 self.logging.info("the result is success!")
 
-            self.SaveResultinDB(model, False, "you don't arrive the destination")
+            self.SaveResultinDB(model)
             
             self.logger.info("your final score is {}".format(round(self.final_s, 3)))
             self.logger.info("your driving mile is {} m, the route length is {} m, the complete percentage is {}%".format(round(self.driving_mile, 3), round(self.route_length, 3), round(self.complete_p*100, 3)))
@@ -480,7 +503,7 @@ class Decision_Evaluation:
     
 
 def getSVTrajectory(vehicle: Vehicle, roadgraph: RoadGraph, available_lanes, T: float) -> List[State]:
-    """获取SV的未来5s轨迹
+    """Get the future 5s trajectory of vehicle
 
     Args:
         vehicle (Vehicle): predict object
@@ -492,10 +515,9 @@ def getSVTrajectory(vehicle: Vehicle, roadgraph: RoadGraph, available_lanes, T: 
         List[State]: state in future T times
     """
     # judge the vehicle lane and position
-    # current_lane = roadgraph.get_lane_by_id(vehicle.lane_id)
     prediction_trajectory = Trajectory()
-    # breakpoint()
     
+    # if the vehicle's lane position is near the end of the lane, need the next lane to predict
     next_lane = roadgraph.get_available_next_lane(
         vehicle.laneID, available_lanes)
     

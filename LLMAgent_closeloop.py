@@ -25,8 +25,6 @@ from simModel.DataQueue import QuestionAndAnswer
 import logger, logging
 from trafficManager.common.vehicle import Behaviour
 
-import sqlite3
-
 decision_logger = logger.setup_app_level_logger(
     logger_name="LLMAgent", file_name="llm_decision.log")
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
@@ -36,11 +34,18 @@ class LLMAgent:
     def __init__(
         self, use_memory: bool = True, delimiter: str = "####"
     ) -> None:
+        """
+        Initialize the LLMAgent_closeloop object.
+
+        Args:
+            use_memory (bool, optional): Flag indicating whether to use memory. Defaults to True.
+            delimiter (str, optional): Delimiter string. Defaults to "####".
+        """
         oai_api_type = os.getenv("OPENAI_API_TYPE")
         if oai_api_type == "azure":
             print("Using Azure Chat API")
             self.llm = AzureChatOpenAI(
-                deployment_name="GPT-16",
+                deployment_name="wrz",
                 temperature=0.5,
                 max_tokens=2000,
                 request_timeout=60,
@@ -52,7 +57,7 @@ class LLMAgent:
                 max_tokens=2000,
                 request_timeout=60,
             )
-        db_path = os.path.dirname(os.path.abspath(__file__)) + "/db/" + "decision_mem/"
+        db_path = os.path.dirname(os.path.abspath(__file__)) + "/db/" + "decision_mem/" # the path for the memory database
         self.agent_memory = DrivingMemory(db_path=db_path)
         self.few_shot_num = 3
 
@@ -67,6 +72,12 @@ class LLMAgent:
         }
 
     def getLLMSource(self, cb: OpenAICallbackHandler, init: bool):
+        """Calculate the time, money and token spent per call to LLM interface 
+
+        Args:
+            cb (OpenAICallbackHandler): callback handler of the LLM interface
+            init (bool): whether the call is the first call
+        """
         if init:
             self.llm_source["prompt_tokens"] = cb.prompt_tokens
             self.llm_source["completion_tokens"] = cb.completion_tokens
@@ -79,7 +90,27 @@ class LLMAgent:
             self.llm_source["cost"] += cb.total_cost
         return 
 
-    def makeDecision(self, information = None, image_base64 = None, descriptions: list = None) -> Tuple[int, str, str, str, dict]:
+    def makeDecision(self, descriptions: list = None) -> Tuple[int, str, str, str, dict]:
+        """Interaction with LLM through rule-based scenario descriptions and pre-written prompt allows LLM to make decisions based on known information. When using memory module, it will extract the memory most similar to the current scene and add it to prompt.
+        Components of Prompt:
+            ```
+            system_message
+            example_message
+            example_answer
+            fewshot_messages, including the message and answer of the relative memories (if use_memory)
+            human_message, including the current scenario description, navigation instruction and available actions
+            ```
+
+        Args:
+            descriptions (list, optional): the description of the current scenario, current naviagtion information and current available action. Defaults to None.
+
+        Raises:
+            ValueError: When the action number is not found from the LLM output, the LLM interface needs to be re-called to make the LLM rethink.
+
+        Returns:
+            Tuple[int, str, str, str, dict]: the decision action, the response from LLM, the promot for the current scenario, the few shot composed of memories and the LLM source information.
+        """
+
         # step1. get the scenario description
         scenario_description = descriptions[0]
         available_actions = descriptions[1]
@@ -107,6 +138,7 @@ class LLMAgent:
                 LLM_logger.warning("There is no memory!")
         else:
             fewshot_messages = []
+
         # step3. get system message and make prompt
         with open(os.path.dirname(os.path.abspath(__file__)) + "/simInfo/system_message.txt", "r") as f:
             system_message = f.read()
@@ -138,6 +170,7 @@ class LLMAgent:
             AIMessage(content=example_answer),
         ]
 
+        # add few shot examples to the prompt
         if len(fewshot_messages) > 0:
             messages.append(HumanMessage(content="----------\nHere are the results of good decisions you have made in the sane situation in the past, please observe them carefully and take them into full consideration when making your current decision!\n"))
             for i in range(len(fewshot_messages)):
@@ -152,6 +185,7 @@ class LLMAgent:
                         AIMessage(content=f"Here are some suggestions when driving in this scenario:\n"+fewshot_comment[len(fewshot_messages)-1-i])
                     )
                 messages.append(HumanMessage(content="----------\nAbove messages are some examples of how you make a decision successfully in the past and some advise. Those scenarios are similar to the current scenario. You should make your decisions with full reference to past cases of correct decision making! You should discuss prior experience in your current reasoning."))
+
         messages.append(
             HumanMessage(content=human_message)
         )
@@ -170,9 +204,9 @@ class LLMAgent:
         except ValueError:
             LLM_logger.warning("--------- Output is not available, checking the output... ---------")
             check_message = f"""
-            You are a output checking assistant who is responsible for checking the output of another agent.
+            You are an output-checking assistant who is responsible for checking the output of another agent.
             
-            The output you received is: {decision_action}
+            The output you received is: {response.content}
 
             Your should just output the right int type of action_id, with no other characters or delimiters.
             i.e. :
@@ -233,7 +267,7 @@ if __name__ == "__main__":
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
     database = 'results/' + stringTimestamp + '.db'
 
-    # init LLMDriver
+    # step1. init LLM_Driver
     model = Model(
         egoID=ego_id, netFile=sumo_net_file, rouFile=sumo_rou_file,
         cfgFile=sumo_cfg_file, dataBase=database, SUMOGUI=sumo_gui,
@@ -250,6 +284,7 @@ if __name__ == "__main__":
 
     action_list = []
     total_start_time = time.time()
+    # step2. run the model, use LLM to make decision per second. PS: the unit of timeStep is 0.1s
     try:
         while not model.tpEnd:
             model.moveStep()
@@ -258,14 +293,18 @@ if __name__ == "__main__":
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
                     LLM_logger.info(f"--------------- timestep is {model.timeStep} ---------------")
+                    # 2.1 get current description based on rules
                     navInfo = descriptor.getNavigationInfo(roadgraph, vehicles)
                     actionInfo = descriptor.getAvailableActionsInfo(roadgraph, vehicles)
                     envInfo = descriptor.getEnvPrompt(roadgraph, vehicles)
 
                     start_time = time.time()
-                    ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision("", "", [envInfo, actionInfo, navInfo])
+                    # 2.2 make decision by LLM
+                    ego_behaviour, response, human_question, fewshot, llm_cost = agent.makeDecision([envInfo, actionInfo, navInfo])
 
-                    descriptor.decision = ego_behaviour
+                    descriptor.decision = ego_behaviour # update the last decision
+
+                    # 2.3 
                     current_QA = QuestionAndAnswer(envInfo, navInfo, actionInfo, fewshot, response, llm_cost["prompt_tokens"], llm_cost["completion_tokens"], llm_cost["total_tokens"], time.time()-start_time, ego_behaviour)
 
                     model.putQA(current_QA)
@@ -286,6 +325,7 @@ if __name__ == "__main__":
 
             model.updateVeh()
 
+    # step3. record the result
     except (
         CollisionException, LaneChangeException, 
         BrainDeadlockException, TimeOutException
