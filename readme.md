@@ -1,23 +1,30 @@
-# LimSim++
+# LimSim++: A Closed-Loop Platform for Deploying Multimodal LLMs in Autonomous Driving
 
 [![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2402.01246)
 [![Custom badge](https://img.shields.io/badge/Project-page-green?logo=document)](https://pjlab-adg.github.io/limsim_plus/)
 
 
-LimSim++: an extended version of LimSim designed for the application of Multimodal Large Language Models ((M)LLMs) in autonomous driving. 
+LimSim++: an extended version of LimSim designed for the application of Multimodal Large Language Models ((M)LLMs) in autonomous driving. LimSim++ addresses the need for a long-term closed-loop infrastructure supporting continuous learning and improved generalization in autonomous driving.
 
-The following video shows the process of autonomous driving with VLM.  The top of the GUI is the image information in carla, the left is the information description of the current scene, and the right is the reasoning process of LLM. 
+The following video shows the process of autonomous driving with VLM.  The top of the GUI is the image information in Carla, the left is the information description of the current scene, and the right is the reasoning process of LLM. 
 
-<video src="https://pjlab-adg.github.io/limsim_plus/static/videos/zeroshot_gpt4v.mp4?raw=true" controls="controls" width="500" height="300">WARNING! Unable to play video! </video>
-
+https://github.com/Fdarco/LimSimLLM/assets/62456817/1b6491b7-e4d9-4e2b-8a30-fc4a9df7c3b8
 
 To run this project in minutes, check [Getting Started](#Getting-Started).
 
-## Set Up
+## Features
+
+- **Various Scenarios**: LimSim++ offers extended-duration, multi-scenario simulations, providing crucial information for (M)LLM-driven vehicles. Various scenarios include intersection, ramp, roundabout, etc. 
+
+- **Multimodal LLMs**: LimSim++ supports LLM of different modalities as the brain for autonomous driving. LimSim++ provides rule-based scenario information generation for language-based LLM. LimSim++ supports co-simulation with Carla, which provides image information in Carla for vision-based LLM. 
+
+- **Continuous Learning**: LimSim++ consists of evaluation, reflection, memory, and other modules, which can continually enhances decision-making capabilities of (M)LLM.
+
+## Installation
 
 - This project uses [conda](https://github.com/conda/conda) to manage the environment
 - [SUMO](https://www.eclipse.org/sumo/) >= 1.15.0 
-- [Carla](https://github.com/carla-simulator/carla) == 9.15.0 (?)
+- [Carla](https://github.com/carla-simulator/carla) >= 9.14.0
 
 After configuring the runtime environment, download the LimSim++ source code to your local machine:
 
@@ -44,14 +51,14 @@ To experience it, run the following command:
 ```bash
 # use openai
 export OPENAI_API_TYPE="openai"
-export OPENAI_API_VERSION="2020-11-07"
+export OPENAI_API_VERSION="your api version"
 export OPENAI_API_KEY='your openai key'
 # use azure
 export OPENAI_API_TYPE="azure"
 export OPENAI_API_KEY='your azure key'
 export OPENAI_API_BASE="your azure node"
-export OPENAI_API_VERSION="2023-07-01-preview"
-export EMBEDDING_MODEL="ada-002"
+export OPENAI_API_VERSION="your api version"
+export EMBEDDING_MODEL="your embedding model"
  
 python LLMAgent_closeloop.py 
 ```
@@ -94,7 +101,7 @@ In the root directory, running the following command will demonstrate the (M)LLM
 python ReplayExample.py
 ```
 
-### 3. Decisions evaluate 📝
+### 3. Decisions evaluation 📝
 After the (M)LLMs' autonomous driving task is completed, running the following code will evaluate the (M)LLMs' decision results :
 
 ```bash
@@ -112,11 +119,34 @@ The following command allows the LLM to self-reflect on this autonomous driving 
 python simInfo/Memory.py
 ```
 
-The memory database will be created in ``db/decision_mem``
+The memory database will be created in ``db/decision_mem``.
 
 - #### Maunal-add memory
 
 TODO
+
+## Create Your Own Driving Agent
+
+### ⚙️ Prompt Engineering
+
+> LimSim++ supports user-defined prompts. 
+
+- You can change system prompt of the Driver Agent by modifying ``simInfo/system_message.txt``.
+- You can change QA pair example by modifying ``simInfo/example_QA.txt`` to make the Driver Agent better compliance with format requirements. 
+- Furthermore, you can customize the information description of the current scenario by modifying ``simInfo/prompt_template.json``. **Be careful not to modify the contents in `{}`.**
+
+### 💯 Model Evaluation
+
+> LimSim++ supports user-defined evaluation. 
+
+- The evaluation methods used in the baseline contain some hyperparameters. You can set your evaluation preferences by modifying ``simInfo/Evaluation.py``. 
+- You can completely replace the evaluation algorithm with your own algorithm.
+
+### 🦾 Framework Enhancement
+
+> LimSim++ supports the construction of tool libraries.
+
+- You can add your own tools for Driver Agent in the project.(???)
 
 
 ## License and Citation
