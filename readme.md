@@ -8,8 +8,7 @@ LimSim++: an extended version of LimSim designed for the application of Multimod
 
 The following video shows the process of autonomous driving with VLM.  The top of the GUI is the image information in carla, the left is the information description of the current scene, and the right is the reasoning process of LLM. 
 
-<video src="https://pjlab-adg.github.io/limsim_plus/static/videos/zeroshot_gpt4v.mp4?raw=true" controls="controls" width="500" height="300">WARNING! Unable to play video! </video>
-
+https://github.com/Fdarco/LimSimLLM/assets/62456817/1b6491b7-e4d9-4e2b-8a30-fc4a9df7c3b8
 
 To run this project in minutes, check [Getting Started](#Getting-Started).
 
