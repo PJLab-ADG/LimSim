@@ -13,9 +13,10 @@ from threading import Thread
 import numpy as np
 import xml.etree.ElementTree as ET
 import dearpygui.dearpygui as dpg
+import matplotlib.pyplot as plt
 from rich import print
 from datetime import datetime
-
+from matplotlib.patches import Polygon
 
 class geoHash:
     def __init__(self, id: tuple[int]) -> None:
@@ -335,158 +336,64 @@ class NetworkBuild:
         Th = Thread(target=self.insertCommit)
         Th.start()
 
-    # These plots should be modified, since the y-axis is different in dpg
-    # def plotLane(
-    #         self, lane: NormalLane, flag, node: dpg.node, ex: float, ey: float,
-    #         ctf: CoordTF):
-    #     if flag & 0b10:
-    #         left_bound_tf = [
-    #             ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in lane.left_bound
-    #         ]
-    #         dpg.draw_polyline(
-    #             left_bound_tf,
-    #             color=(0, 0, 0), thickness = 2,
-    #             parent=node)
-    #     else:
-    #         left_bound_tf = [
-    #             ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in lane.left_bound
-    #         ]
-    #         # dpg.draw_polyline(left_bound_tf, color=(178, 190, 195), parent=node)
-    #         dpg.draw_polyline(left_bound_tf, color=(0, 0, 0, 70), thickness=1, parent=node)
-    #     if flag & 0b01:
-    #         right_bound_tf = [
-    #             ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in lane.right_bound
-    #         ]
-    #         dpg.draw_polyline(
-    #             right_bound_tf, color=(0, 0, 0), thickness = 2, parent=node
-    #         )
+    def plotLane(self, lane: NormalLane, ax: plt.Axes):
+        lines = list(zip(*lane.left_bound))
+        ax.plot(lines[0], lines[1], color='#000000', alpha=0.5, linewidth=0.5)
 
-    def plotLane(
-            self, lane: NormalLane, flag: int, ex: float, ey: float,
-            node: dpg.node, ctf: MapCoordTF
-    ):
-        if flag & 0b10:
-            return
-        else:
-            left_bound_tf = [
-                ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in lane.left_bound
-            ]
-            dpg.draw_polyline(
-                left_bound_tf, color=(0, 0, 0, 100), parent=node
-            )
-
-    def plotMapLane(
-            self, lane: NormalLane, flag: int, node: dpg.node, ctf: MapCoordTF
-    ):
-        if flag & 0b10:
-            left_bound_tf = [
-                ctf.dpgCoord(wp[0], wp[1]) for wp in lane.left_bound
-            ]
-            # print(lane.left_bound)
-            # print('#'*20)
-            # print(left_bound_tf)
-            dpg.draw_polyline(left_bound_tf, color=(
-                255, 255, 255), parent=node)
-        if flag & 0b01:
-            right_bound_tf = [
-                ctf.dpgCoord(wp[0], wp[1]) for wp in lane.right_bound
-            ]
-            dpg.draw_polyline(
-                right_bound_tf, color=(255, 255, 255, 100), parent=node
-            )
-
-    def plotMapEdge(self, eid: str, node: dpg.node, ctf: MapCoordTF):
+    def plotEdge(self, eid: str, ax: plt.Axes):
         edge = self.getEdge(eid)
+        vehicle_lane = 0
         for lane_index in range(edge.lane_num):
             lane_id = edge.id + '_' + str(lane_index)
             lane = self.getLane(lane_id)
-            flag = 0b00
-            if lane_index == 0:
-                flag += 1
+            if lane.width > 1:
+                self.plotLane(lane, ax)
+                if vehicle_lane == 0:
+                    vehicle_lane = 1
+            if vehicle_lane == 1:
+                last_lane = self.getLane(edge.id + '_' + str(lane_index - 1))
+                self.plotLane(last_lane, ax)
+                vehicle_lane = 2
             if lane_index == edge.lane_num - 1:
-                flag += 2
-            self.plotMapLane(lane, flag, node, ctf)
-
-    # def plotEdge(self, eid: str, node: dpg.node, ex: float, ey: float,
-    #              ctf: CoordTF):
-    #     edge = self.getEdge(eid)
-    #     for lane_index in range(edge.lane_num):
-    #         lane_id = edge.id + '_' + str(lane_index)
-    #         lane = self.getLane(lane_id)
-    #         flag = 0b00
-    #         if lane_index == 0:
-    #             flag += 1
-    #         if lane_index == edge.lane_num - 1:
-    #             flag += 2
-    #         self.plotLane(lane, flag, node, ex, ey, ctf)
-
-    def plotEdge(self, eid: str, node: dpg.node, ex: float, ey: float,
-                 ctf: CoordTF):
-        edge = self.getEdge(eid)
-        for lane_index in range(edge.lane_num):
-            lane_id = edge.id + '_' + str(lane_index)
-            lane = self.getLane(lane_id)
-            flag = 0b00
+                left_bound_tf = lane.left_bound
             if lane_index == 0:
-                flag += 1
-            if lane_index == edge.lane_num - 1:
-                flag += 2
-            self.plotLane(lane, flag, ex, ey, node, ctf)
-            if flag & 0b10:
-                left_bound_tf = [
-                    ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in lane.left_bound
-                ]
-            if flag & 0b01:
-                right_bound_tf = [
-                    ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in lane.right_bound
-                ]
+                right_bound_tf = lane.right_bound
         # 根据左右边界获取 edge 的封闭图形
         left_bound_tf.reverse()
         right_bound_tf.extend(left_bound_tf)
         right_bound_tf.append(right_bound_tf[0])
-        dpg.draw_polygon(right_bound_tf, color=(0, 0, 0),
-                         thickness=2, fill=(0, 0, 0, 30), parent=node)
 
-    def plotJunctionLane(self, jlid: str, node: dpg.node, ex: float, ey: float,
-                         ctf: CoordTF):
+        ax.add_patch(Polygon(right_bound_tf, closed=True, fill=True, color='#000000', alpha=0.2, linewidth=0.8))
+
+    def plotJunctionLane(self, jlid: str, ax: plt.Axes,):
         juncLane = self.getJunctionLane(jlid)
-        if juncLane:
+        if juncLane and juncLane.width > 0.8:
             try:
                 center_line = juncLane.center_line
             except AttributeError:
                 return
-            center_line_tf = [
-                ctf.dpgCoord(wp[0], wp[1], ex, ey) for wp in center_line
-            ]
             if juncLane.currTlState:
                 if juncLane.currTlState == 'r':
-                    # jlColor = (232, 65, 24)
-                    jlColor = (255, 107, 129, 100)
+                    jlColor = "#FF6B81"
+                    alpha = 0.3
                 elif juncLane.currTlState == 'y':
-                    jlColor = (251, 197, 49, 100)
+                    jlColor = "#FBC531"
+                    alpha = 0.3
                 elif juncLane.currTlState == 'g' or juncLane.currTlState == 'G':
-                    jlColor = (39, 174, 96, 50)
+                    jlColor = "#27AE60"
+                    alpha = 0.5
             else:
-                jlColor = (0, 0, 0, 30)
-            dpg.draw_polyline(center_line_tf, color=jlColor,
-                              thickness=17, parent=node)
+                jlColor = "#000000"
+                alpha = 0.2
+            center_point = list(zip(*center_line))
+            ax.plot(center_point[0], center_point[1], color=jlColor, alpha=alpha, linewidth=8)
 
-    def plotJunction(
-            self, jid: str, node: dpg.node, ex: float, ey: float, ctf: CoordTF):
+    def plotJunction(self, jid: str, ax: plt.Axes):
         junction = self.getJunction(jid)
-        polyShape = [ctf.dpgCoord(p[0], p[1], ex, ey) for p in junction.shape]
-        dpg.draw_polyline(polyShape, color=(0, 0, 0), thickness=2, parent=node)
+        polyShape = list(zip(*junction.shape))
+        ax.plot(polyShape[0], polyShape[1], color='#000000', alpha=0.5, linewidth=0.5)
         for jl in junction.JunctionLanes:
-            self.plotJunctionLane(jl, node, ex, ey, ctf)
-
-    def plotMapJunction(self, jid: str, node: dpg.node, ctf: MapCoordTF):
-        junction = self.getJunction(jid)
-        polyShape = [ctf.dpgCoord(p[0], p[1]) for p in junction.shape]
-        dpg.draw_polyline(polyShape, color=(255, 255, 255, 200), parent=node)
-        for inEdgeID in junction.incoming_edges:
-            self.plotMapEdge(inEdgeID, node, ctf)
-        for outEdgeID in junction.outgoing_edges:
-            self.plotMapEdge(outEdgeID, node, ctf)
+            self.plotJunctionLane(jl, ax)
 
 
 class Rebuild(NetworkBuild):

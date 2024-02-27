@@ -74,8 +74,6 @@ class EnvDescription:
 
         return current_lane_describe + "\n"
     
-    # TODO: 红绿灯中，如果当前是绿灯，下一个是红灯，在小于10s的时候，提示即将变红灯
-    # 要注意判断下一个相位是不是还是绿灯，如果是绿灯，就不用提示了
     def getNextLaneInfo(self, roadgraph: RoadGraph, vehicle_info: Dict) -> str:
         """get next lane info
             - if the next lane is normal lane: return number of lanes

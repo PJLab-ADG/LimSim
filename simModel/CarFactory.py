@@ -175,7 +175,7 @@ class Vehicle:
                 else:
                     return currEdge
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     @property
     def nextEdgeID(self) -> str:

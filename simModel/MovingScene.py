@@ -12,6 +12,7 @@ from simModel.DBBridge import DBBridge
 from simModel.NetworkBuild import NetworkBuild, Rebuild
 from utils.roadgraph import RoadGraph
 from utils.simBase import CoordTF
+import matplotlib.pyplot as plt
 
 
 class MovingScene:
@@ -396,11 +397,11 @@ class SceneReplay:
 
         return roadgraphRenderData, VRDDict
 
-    def plotScene(self, node: dpg.node, ex: float, ey: float, ctf: CoordTF):
+    def plotScene(self, ax: plt.Axes):
         if self.edges:
             for ed in self.edges:
-                self.netInfo.plotEdge(ed, node, ex, ey, ctf)
+                self.netInfo.plotEdge(ed, ax)
 
         if self.junctions:
             for jc in self.junctions:
-                self.netInfo.plotJunction(jc, node, ex, ey, ctf)
+                self.netInfo.plotJunction(jc, ax)
