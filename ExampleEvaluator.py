@@ -1,3 +1,5 @@
+# This script is used for offline evaluation of decisions and trajectories 
+
 from simInfo.Evaluation import Decision_Evaluation
 from simModel.Replay import ReplayModel
 

@@ -1,3 +1,5 @@
+# This script is a running example of Co-simulation
+
 from datetime import datetime
 import re
 import cv2
