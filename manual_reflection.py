@@ -9,6 +9,16 @@ from matplotlib.patches import Polygon
 from matplotlib.text import Text
 from simModel.Replay import ReplayModel
 import io
+from simInfo.Memory import DrivingMemory, MemoryItem
+
+db_path = "experiments/zeroshot/GPT-3.5/2024-01-29_13-28-36.db"
+replay = ReplayModel(db_path)
+memory_agent = DrivingMemory(db_path)
+# get data
+conn = sqlite3.connect(db_path)
+eval_df = pd.read_sql_query('''SELECT * FROM evaluationINFO''', conn)
+qa_df = pd.read_sql_query('''SELECT * FROM QAINFO''', conn)
+conn.close()
 
 def getVehShape(
         posx: float, posy: float,
@@ -34,7 +44,7 @@ def getVehShape(
     translated_vertices = rotated_vertices + position
     return translated_vertices.tolist()
 
-def plotSce(database, decisionFrame: int, replay:ReplayModel) -> str:
+def plotSce(decisionFrame: int, replay:ReplayModel) -> str:
     fig, ax = plt.subplots()
     replay.timeStep = decisionFrame
     replay.getSce()
@@ -59,7 +69,7 @@ def plotSce(database, decisionFrame: int, replay:ReplayModel) -> str:
     replay.sr.plotScene(ax)
 
     ax.set_xlim(ex-60, ex+60)
-    ax.set_ylim(ey-40, ey+40)
+    ax.set_ylim(ey-50, ey+50)
 
     plt.axis('off')
     buffer = io.BytesIO()
@@ -71,23 +81,38 @@ def plotSce(database, decisionFrame: int, replay:ReplayModel) -> str:
 
 def on_slider_change():
     st.session_state.x_position = st.session_state.slider_key
-    
+    get_memory()
+
+def on_button():
+    st.session_state.current_mem = memory_agent.getReflection(st.session_state.current_mem, False)
+
+def get_memory():
+    st.session_state.current_mem.reflection = ""
+    st.session_state.current_mem.set_description(qa_df.loc[st.session_state.x_position])
+    st.session_state.current_mem.set_score(eval_df.loc[st.session_state.x_position])
+
+def last_frame():
+    st.session_state.x_position = st.session_state.x_position - 1 if st.session_state.x_position > 1 else eval_df.shape[0]-1
+    get_memory()
+
+def next_frame():
+    st.session_state.x_position = st.session_state.x_position + 1 if st.session_state.x_position < eval_df.shape[0]-1 else 0
+    get_memory()
+
 if __name__ == "__main__":
-    st.title("Result Analysis")
+    st.set_page_config(
+    page_title="Result Analysis",
+    page_icon=":memo:",
+    layout="wide",
+    initial_sidebar_state="expanded")
 
-    # 1. confirm the database path
-    db_path = "experiments/zeroshot/GPT-4V/exp_2.db"
-    replay = ReplayModel(db_path)
-
-    # get data
-    conn = sqlite3.connect(db_path)
-    # get data from evaluationINFO
-    eval_df = pd.read_sql_query('''SELECT * FROM evaluationINFO''', conn)
-    qa_df = pd.read_sql_query('''SELECT * FROM QAINFO''', conn)
-    conn.close()
-
+    st.title(":memo: Result Analysis")
+    # 1. choose the frame
     if "x_position" not in st.session_state:
         st.session_state.x_position = 0
+    
+    if "current_mem" not in st.session_state:
+        st.session_state.current_mem = MemoryItem()
 
     with st.sidebar:
         st.title("Choose the Frame")
@@ -97,15 +122,10 @@ if __name__ == "__main__":
         frame_col1, frame_col2 = st.columns(2)
 
         with frame_col1:
-            frame_button1 = st.button("Last Frame", key="last_frame")
+            frame_button1 = st.button("Last Frame", key="last_frame", on_click=last_frame)
 
         with frame_col2:
-            frame_button2 = st.button("Next Frame", key="next_frame")
-
-        if frame_button1:
-            st.session_state.x_position = st.session_state.x_position - 1 if st.session_state.x_position > 1 else 0
-        if frame_button2:
-            st.session_state.x_position = st.session_state.x_position + 1 if st.session_state.x_position < eval_df.shape[0] else 0
+            frame_button2 = st.button("Next Frame", key="next_frame", on_click=next_frame)
         
         # 2.2 Slider for controlling the x-axis position
         slider_key = st.slider("#### Select Frame", min_value=0, max_value=eval_df.shape[0]-1, value=st.session_state.x_position, key="slider_key", on_change=on_slider_change)
@@ -137,11 +157,10 @@ if __name__ == "__main__":
         st.plotly_chart(fig, use_container_width=True)
 
         # 2.4 Display information about the selected point
-        st.write(f"""##### **Selected frame is {int(eval_df['frame'][slider_key])}, the score is {round(eval_df['decision_score'][slider_key], 2)}. The detail score is as follows:**\n
+        st.write(f"""#### **Selected frame is {int(eval_df['frame'][slider_key])}, the score is {round(eval_df['decision_score'][slider_key], 2)}. The detail score is as follows:**\n
         - comfort score: {round(eval_df['comfort_score'][slider_key], 2)}\n
         - safety score: {round(eval_df['collision_score'][slider_key], 2)}\n
-        - efficiency score: {round(eval_df['efficiency_score'][slider_key], 2)}\n
-        """.replace("   ", ""))
+        - efficiency score: {round(eval_df['efficiency_score'][slider_key], 2)}\n""".replace("   ", ""))
 
         if eval_df["caution"][slider_key] != "":
             caution = ""
@@ -149,7 +168,7 @@ if __name__ == "__main__":
                 if line != "":
                     caution += f"- {line}\n"
 
-            st.write(f"**There are a few things to note in this frame:**\n{caution}")
+            st.write(f"#### **:red[There are a few things to note in this frame:]**\n{caution}")
 
     text_col, image_col = st.columns(2)
 
@@ -165,10 +184,12 @@ if __name__ == "__main__":
     
     # 4. image
     with image_col:
-        buffer, image = plotSce(db_path, int(qa_df['frame'][slider_key]), replay)
+        buffer, image = plotSce(int(qa_df['frame'][slider_key]), replay)
+        st.write("### **BEV**")
         st.image(buffer, use_column_width=True)
         buffer.close()
         if image:
+            st.write("#### Camera")
             left_col, front_col, image_col = st.columns(3)
             with left_col:
                 st.image(image.ORI_CAM_FRONT_LEFT, use_column_width=True)
@@ -180,20 +201,25 @@ if __name__ == "__main__":
                 st.image(image.ORI_CAM_FRONT_RIGHT, use_column_width=True)
                 st.image(image.ORI_CAM_BACK_RIGHT, use_column_width=True)
 
-    # 5. function button
-    _, _, _, _, col1, col2 = st.columns(6)
-
+    # 5. memory moudle & function button
+    col0, _, _, _, col1, col2 = st.columns(6)
+    with col0:
+        st.write("#### Reflection: ")
     with col1:
-        button1 = st.button("Reflection", key="reflection")
+        button1 = st.button("Reflection", key="reflection", on_click=on_button)
 
     with col2:
         button2 = st.button("Add to Memory", key="add_to_memory")
 
-    # 添加按钮
-    if button2:
-         # LLM reflection result
-        default_text = ""
+    # reflection
+    if st.session_state.current_mem.reflection == "":
+        default_value = ""
     else:
-        default_text = ""
-    user_input = st.text_input("Reflection: ", value=default_text)
+        default_value = f"#### The correct result is:\n {st.session_state.current_mem.response} \n#### The suggestion is:\n {st.session_state.current_mem.reflection}"
+    user_input = st.text_area("#### Reflection: ", value=default_value, height=150, label_visibility='collapsed')
+
+    # add to memory
+    if button2:
+        st.session_state.current_mem.set_reflection(user_input, "", user_input.split("####")[1])
+        memory_agent.addMemory(st.session_state.current_mem)
 

@@ -50,7 +50,7 @@ class ReflectionAssistant:
         return None
 
 
-    def reflection(self, origin_message: str, llm_response: str, evaluation: str, action: int, caution: str) -> Tuple[str, int]:
+    def reflection(self, origin_message: str, llm_response: str, evaluation: str, action: int, caution: str, method: bool) -> Tuple[str, int]:
         self.record_json = {
             "human_question":"",
             "reflection":"",
@@ -115,7 +115,6 @@ class ReflectionAssistant:
         <Your corrected version of Driver's reasoning process and decision outcomes, the format should be same with the Driver's Decision>
         Response to user:{delimiter} <only output one `Action_id` as a int number of you decision, without any action name or explanation. The output decision must be unique and not ambiguous, for example if you decide to decelearate, then output `2`>
         """.replace("        ", "")
-        print(human_message)
         self.record_json["human_question"] = human_message
         print("[green bold]Reflection is running ...[/green bold]")
 
@@ -156,7 +155,7 @@ class ReflectionAssistant:
             response.content = response.content + f"\n{delimiter} Output checking result: {result}"
         finally:
             self.record_json["reflection_action"] = result
-            if result == action:
+            if result == action and method:
                 self.record_json["add_memory"] = False
                 self.record(self.record_json)
                 return None, None
