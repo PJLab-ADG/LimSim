@@ -44,14 +44,16 @@ def plotSce(database, decisionFrame: int, replay:ReplayModel) -> str:
         ex = egoVRD.x
         ey = egoVRD.y
         ego_shape = getVehShape(egoVRD.x, egoVRD.y, egoVRD.yaw, egoVRD.length, egoVRD.width)
-        vehRectangle = Polygon(ego_shape, closed=True, facecolor='#FF6D7D', alpha=1)
+        vehRectangle = Polygon(ego_shape, closed=True, facecolor="r", alpha=1)
         vehText = Text(ex, ey, 'ego', fontsize='x-small')
+        ax.plot(list(egoVRD.trajectoryXQ)[:len(egoVRD.trajectoryXQ)//2], list(egoVRD.trajectoryYQ)[:len(egoVRD.trajectoryXQ)//2], 'r', linewidth=1, alpha=0.8)
         ax.add_patch(vehRectangle)
         ax.add_artist(vehText)
         for car in VRDDict["carInAoI"]:
             av_shape = getVehShape(car.x, car.y, car.yaw, car.length, car.width)
             vehRectangle = Polygon(av_shape, facecolor='#47C5FF', alpha=1)
             vehText = Text(car.x, car.y, car.id, fontsize='x-small')
+            ax.plot(list(car.trajectoryXQ)[:len(car.trajectoryXQ)//2], list(car.trajectoryYQ)[:len(car.trajectoryXQ)//2], '#419CCD', linewidth=1, alpha=0.8)
             ax.add_patch(vehRectangle)
             ax.add_artist(vehText)
     replay.sr.plotScene(ax)
