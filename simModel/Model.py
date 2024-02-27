@@ -212,7 +212,10 @@ class Model:
                 self.commitFrameInfo(v1.id, 'AoI', v1)
         if self.ms.outOfAoI:
             for v2 in self.ms.outOfAoI.values():
-                self.commitFrameInfo(v2.id, 'outOfAoI', v2)
+                try:
+                    self.commitFrameInfo(v2.id, 'outOfAoI', v2)
+                except TypeError:
+                    return
 
     def getvTypeIns(self, vtid: str) -> vehType:
         return self.allvTypes[vtid]

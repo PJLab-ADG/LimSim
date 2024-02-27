@@ -3,11 +3,11 @@ from datetime import datetime
 from simModel.Model import Model
 from simModel.MPGUI import GUI
 
-ego_id = '10'
-sumo_gui = False
-sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
-sumo_net_file = "./networkFiles/CarlaTown06/Town06.net.xml"
-sumo_rou_file = "./networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml"
+ego_id = '12'
+sumo_gui = True
+sumo_cfg_file = './networkFiles/CarlaTown05/Town05.sumocfg'
+sumo_net_file = "./networkFiles/CarlaTown05/Town05.net.xml"
+sumo_rou_file = "./networkFiles/CarlaTown05/carlavtypes.rou.xml,networkFiles/CarlaTown05/Town05.rou.xml"
 carla_host = '127.0.0.1'
 carla_port = 2000
 step_length = 0.1

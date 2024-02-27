@@ -1,20 +1,38 @@
 import xml.etree.ElementTree as ET
+from typing import List
 import random
 
-vTypesFile = 'carlavtypes.rou.xml'
-vTypes = []
-elementTreeVT = ET.parse(vTypesFile)
-root = elementTreeVT.getroot()
-for child in root:
-    if child.tag == 'vType':
-        vtid = child.attrib['id']
-        vTypes.append(vtid)
 
-routeFile = 'output.rou.xml'
-elementTreeR = ET.parse(routeFile)
-root = elementTreeR.getroot()
-for child in root:
-    if child.tag == 'vehicle':
-        child.set('type', random.choice(vTypes))
+def get_all_vTypes(vTypesFile: str):
+    vTypes = []
+    elementTreeVT = ET.parse(vTypesFile)
+    root = elementTreeVT.getroot()
+    for child in root:
+        if child.tag == 'vType':
+            vtid = child.attrib['id']
+            vTypes.append(vtid)
+    return vTypes
 
-elementTreeR.write('Town06.rou.xml', encoding="utf-8", xml_declaration=True)
+def rewrite_route_file(
+    originalFile: str,
+    vTypes: List[str], 
+    rewriteFile: str
+):
+    elementTreeR = ET.parse(originalFile)
+    root = elementTreeR.getroot()
+    for child in root:
+        if child.tag == 'vehicle':
+            child.set('type', random.choice(vTypes))
+
+    elementTreeR.write(
+        rewriteFile, 
+        encoding="utf-8", 
+        xml_declaration=True
+    )
+
+if __name__ == '__main__':
+    originalFile = './output.rou.xml'
+    vTypesFile = 'carlavtypes.rou.xml'
+    rewriteFile = 'Town06.rou.xml'
+    vTypes = get_all_vTypes(vTypesFile)
+    rewrite_route_file(originalFile, vTypes, rewriteFile)

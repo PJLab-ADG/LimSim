@@ -112,7 +112,7 @@ class Vehicle:
         if self.yawQ:
             return self.yawQ[-1]
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     # return center x of the vehicle
     @property
@@ -120,7 +120,7 @@ class Vehicle:
         if self.xQ:
             return self.xQ[-1]
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     # return center y of the vehicle
     @property
@@ -128,35 +128,35 @@ class Vehicle:
         if self.yQ:
             return self.yQ[-1]
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     @property
     def speed(self):
         if self.speedQ:
             return self.speedQ[-1]
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     @property
     def accel(self):
         if self.accelQ:
             return self.accelQ[-1]
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     @property
     def laneID(self) -> str:
         if self.laneIDQ:
             return self.laneIDQ[-1]
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     @property
     def lanePos(self) -> float:
         if self.lanePosQ:
             return self.lanePosQ[-1]
         else:
-            raise TypeError('Please call Model.updateVeh() at first.')
+            raise TypeError(f'Vehicle {self.id}: Please call Model.updateVeh() at first.')
 
     @property
     def edgeID(self) -> str:

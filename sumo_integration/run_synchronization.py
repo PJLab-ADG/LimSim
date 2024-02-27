@@ -453,12 +453,6 @@ def synchronization_loop(args: Arguments, ego_id):
             vehicle = synchronization.getEgo()
             if vehicle:
                 synchronization.moveSpectator(vehicle)
-                synchronization.setFrontViewCamera(vehicle)
-                if cnt % 10 == 0:
-                    try:
-                        synchronization.getFrontViewImage()
-                    except NameError:
-                        pass
 
             end = time.time()
             elapsed = end - start

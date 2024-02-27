@@ -31,6 +31,15 @@ LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
     
 def NPImageEncode(npimage: np.ndarray) -> str:
+    """
+    Encode a numpy array image to base64 format.
+
+    Args:
+        npimage (np.ndarray): The numpy array image to be encoded.
+
+    Returns:
+        str: The base64 encoded string representation of the input image.
+    """
     _, buffer = cv2.imencode('.png', npimage)
     npimage_base64 = base64.b64encode(buffer).decode('utf-8')
     return npimage_base64
