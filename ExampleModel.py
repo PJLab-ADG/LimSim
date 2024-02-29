@@ -22,7 +22,8 @@ if __name__ == '__main__':
     model = Model(
         egoID=ego_id, netFile=sumo_net_file, rouFile=sumo_rou_file,
         cfgFile=sumo_cfg_file, dataBase=database, SUMOGUI=sumo_gui,
-        CARLACosim=True, carla_host=carla_host, carla_port=carla_port
+        CARLACosim=True, carla_host=carla_host, carla_port=carla_port,
+        tls_manager=tls_manager
     )
     model.start()
 

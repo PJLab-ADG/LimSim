@@ -53,24 +53,24 @@ class DBBridge:
                             width REAL,
                             maxSpeed REAL,
                             edgeID TEXT,
-                            length REAL);''')
+                            length REAL,
+                            type TEXT,
+                            allow TEXT,
+                            disallow TEXT);''')
 
         cur.execute('''CREATE TABLE IF NOT EXISTS junctionLaneINFO(
                             id TEXT PRIMARY KEY,
                             width REAL,
                             maxSpeed REAL,
                             length REAL,
-                            tlLogicID TEXT,
-                            tlsIndex INT);''')
+                            tlsIndex INT,
+                            type TEXT,
+                            allow TEXT,
+                            disallow TEXT);''')
 
         cur.execute('''CREATE TABLE IF NOT EXISTS junctionINFO(
                             id TEXT PRIMARY KEY,
                             rawShape TEXT);''')
-
-        cur.execute('''CREATE TABLE IF NOT EXISTS tlLogicINFO(
-                            id TEXT PRIMARY KEY,
-                            tlType TEXT,
-                            preDefPhases TEXT)''')
 
         cur.execute('''CREATE TABLE IF NOT EXISTS connectionINFO(
                             fromLane TEXT NOT NULL,
@@ -83,8 +83,6 @@ class DBBridge:
                             frame INT NOT NULL,
                             id TEXT NOT NULL,
                             currPhase TEXT,
-                            nextPhase TEXT,
-                            switchTime REAL,
                             PRIMARY KEY (frame, id));''')
 
         cur.execute('''CREATE TABLE IF NOT EXISTS circleObsINFO(

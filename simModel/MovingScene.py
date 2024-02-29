@@ -60,30 +60,20 @@ class MovingScene:
         self.edges = NowEdges
         self.junctions = NowJuncs
 
-        NowTLs = {}
-        for jid in NowJuncs:
+        # update all traffic lights junction states in the network
+        for jid in self.netInfo.tlJunctions:
+            try:
+                currPhase = traci.trafficlight.getRedYellowGreenState(jid)
+            except TraCIException:
+                continue
+            dbBridge.putData(
+                'trafficLightStates',
+                (timeStep, jid, currPhase)
+            )
             junc = self.netInfo.getJunction(jid)
             for jlid in junc.JunctionLanes:
                 jl = self.netInfo.getJunctionLane(jlid)
-                tlid = jl.tlLogic
-                if tlid:
-                    if tlid not in NowTLs.keys():
-                        currPhaseIndex = traci.trafficlight.getPhase(tlid)
-                        tlLogic = self.netInfo.getTlLogic(tlid)
-                        currPhase = tlLogic.currPhase(currPhaseIndex)
-                        nextPhase = tlLogic.nextPhase(currPhaseIndex)
-                        switchTime = round(traci.trafficlight.getNextSwitch(
-                            tlid) - traci.simulation.getTime(), 1)
-                        NowTLs[tlid] = (currPhase, nextPhase, switchTime)
-                        dbBridge.putData(
-                            'trafficLightStates',
-                            (timeStep, tlid, currPhase, nextPhase, switchTime)
-                        )
-                    else:
-                        currPhase, nextPhase, switchTime = NowTLs[tlid]
-                    jl.currTlState = currPhase[jl.tlsIndex]
-                    jl.nexttTlState = nextPhase[jl.tlsIndex]
-                    jl.switchTime = switchTime
+                jl.currTlState = currPhase[jl.tlsIndex]
 
     def addVeh(self, vdict: dict, vid: str) -> None:
         if vdict and vid in vdict.keys():
@@ -277,8 +267,8 @@ class SceneReplay:
         tlsINFO = cur.fetchall()
         if tlsINFO:
             for tls in tlsINFO:
-                frame, tlid, currPhase, nextPhase, switchTime = tls
-                NowTLs[tlid] = (currPhase, nextPhase, switchTime)
+                frame, jid, currPhase = tls
+                NowTLs[jid] = currPhase
 
         cur.close()
         conn.close()
@@ -289,15 +279,11 @@ class SceneReplay:
                 if junc:
                     for jlid in junc.JunctionLanes:
                         jl = self.netInfo.getJunctionLane(jlid)
-                        tlid = jl.tlLogic
-                        if tlid:
-                            try:
-                                currPhase, nextPhase, switchTime = NowTLs[tlid]
-                            except KeyError:
-                                continue
-                            jl.currTlState = currPhase[jl.tlsIndex]
-                            jl.nexttTlState = nextPhase[jl.tlsIndex]
-                            jl.switchTime = switchTime
+                        try:
+                            currPhase = NowTLs[jid]
+                        except KeyError:
+                            continue
+                        jl.currTlState = currPhase[jl.tlsIndex]
 
     def updateSurroudVeh(self):
         outOfRange = set()
