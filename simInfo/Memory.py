@@ -46,7 +46,7 @@ class MemoryItem():
 class DrivingMemory:
     def __init__(self, db_path=None) -> None:
         if os.environ["OPENAI_API_TYPE"] == 'azure':
-                self.embedding = OpenAIEmbeddings(
+            self.embedding = OpenAIEmbeddings(
                     deployment=os.environ['EMBEDDING_MODEL'], chunk_size=1)
         elif os.environ["OPENAI_API_TYPE"] == 'openai':
             self.embedding = OpenAIEmbeddings()
@@ -60,7 +60,6 @@ class DrivingMemory:
             embedding_function=self.embedding,
             persist_directory=db_path
         )
-
         print("==========Loaded Memory, Now the database has ", len(
             self.scenario_memory._collection.get(include=['embeddings'])['embeddings']), " items.==========")
 
@@ -137,7 +136,16 @@ class DrivingMemory:
                 include=['embeddings'])['embeddings']), " items.")
 
     
-    def getReflection(self, memory: MemoryItem) -> MemoryItem:
+    def getReflection(self, memory: MemoryItem, method: bool) -> MemoryItem:
+        """use the reflection assistant to get the reflection of the memory item
+
+        Args:
+            memory (MemoryItem): the memory item
+            method (bool): decide to auto reflection or manual reflection
+
+        Returns:
+            MemoryItem: the memory item with reflection
+        """
         delimiter = "####"
         human_message = "## Driving scenario description:\n" + memory.description + "\n## Navigation instruction:\n" + memory.navigation + "\n## Available actions:\n" + memory.available_action
         detail_score = ""
@@ -147,7 +155,7 @@ class DrivingMemory:
         evaluation = f"The current score is {memory.score}, the detail score is {detail_score.strip(', ')}."
         caution = "There are the current decision's cautions:\n{memory.cautious}"
         
-        LLM_response, action = self.reflector.reflection(human_message, memory.response, evaluation, memory.action, caution)
+        LLM_response, action = self.reflector.reflection(human_message, memory.response, evaluation, memory.action, caution, method)
         
         if LLM_response == None:
             return None
@@ -263,7 +271,7 @@ if __name__ == "__main__":
     
     good_mem, bad_mem = memory.divideBasedOnScore("results/2024-02-21_18-46-19.db")
     for mem_item in bad_mem:
-        reflection_memory = memory.getReflection(mem_item)
+        reflection_memory = memory.getReflection(mem_item, True)
         if reflection_memory == None:
             continue
         memory.addMemory(reflection_memory)
