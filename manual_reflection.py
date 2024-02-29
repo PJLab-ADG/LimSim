@@ -11,9 +11,9 @@ from simModel.Replay import ReplayModel
 import io
 from simInfo.Memory import DrivingMemory, MemoryItem
 
-db_path = "experiments/zeroshot/GPT-3.5/2024-01-29_13-28-36.db"
+db_path = "experiments/zeroshot/gpt4v/exp_0.db"
 replay = ReplayModel(db_path)
-memory_agent = DrivingMemory(db_path)
+memory_agent = DrivingMemory()
 # get data
 conn = sqlite3.connect(db_path)
 eval_df = pd.read_sql_query('''SELECT * FROM evaluationINFO''', conn)

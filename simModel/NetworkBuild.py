@@ -6,7 +6,7 @@
 from __future__ import annotations
 from utils.simBase import CoordTF, deduceEdge, MapCoordTF
 from utils.cubic_spline import Spline2D
-from utils.roadgraph import Junction, Edge, NormalLane, OVERLAP_DISTANCE, JunctionLane, TlLogic
+from utils.roadgraph import Junction, Edge, NormalLane, OVERLAP_DISTANCE, JunctionLane
 from queue import Queue
 import sqlite3
 from threading import Thread
@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 from rich import print
 from datetime import datetime
 from matplotlib.patches import Polygon
+from typing import Dict, List, Set
 
 class geoHash:
     def __init__(self, id: tuple[int]) -> None:
@@ -31,12 +32,11 @@ class NetworkBuild:
     ) -> None:
         self.dataBase = dataBase
         self.networkFile = networkFile
-        self.edges: dict[str, Edge] = {}
-        self.lanes: dict[str, NormalLane] = {}
-        self.junctions: dict[str, Junction] = {}
-        self.junctionLanes: dict[str, JunctionLane] = {}
-        self.tlLogics: dict[str, TlLogic] = {}
-        # self.obstacles: dict[str, circleObs | rectangleObs] = {}
+        self.edges: Dict[str, Edge] = {}
+        self.lanes: Dict[str, NormalLane] = {}
+        self.junctions: Dict[str, Junction] = {}
+        self.junctionLanes: Dict[str, JunctionLane] = {}
+        self.tlJunctions: Set[str] = set()   # id of junctions which has traffic light
         self.dataQue = Queue()
         self.geoHashes: dict[tuple[int], geoHash] = {}
 
@@ -63,18 +63,6 @@ class NetworkBuild:
             return self.junctionLanes[jlid]
         except KeyError:
             return
-
-    def getTlLogic(self, tlid: str) -> TlLogic:
-        try:
-            return self.tlLogics[tlid]
-        except KeyError:
-            return
-
-    # def getObstacle(self, obsid: str) -> circleObs | rectangleObs:
-    #     try:
-    #         return self.obstacles[obsid]
-    #     except KeyError:
-    #         return
 
     def affGridIDs(self, centerLine: list[tuple[float]]) -> set[tuple[int]]:
         affGridIDs = set()
@@ -132,8 +120,7 @@ class NetworkBuild:
                 )
                 self.dataQue.put((
                     'junctionLaneINFO', (
-                        ilid, ilwidth, ilspeed, ilLength,
-                        None, 0
+                        ilid, ilwidth, ilspeed, ilLength, 0
                     ), 'INSERT'
                 ))
         else:
@@ -214,16 +201,13 @@ class NetworkBuild:
             else:
                 # junctionLane = self.getJunctionLane(junctionLaneID)
                 if 'tl' in child.attrib.keys():
-                    tl = child.attrib['tl']
                     linkIndex = int(child.attrib['linkIndex'])
-                    junctionLane.tlLogic = tl
                     junctionLane.tlsIndex = linkIndex
                 self.dataQue.put((
                     'junctionLaneINFO', (
                         junctionLane.id, junctionLane.width,
                         junctionLane.speed_limit,
                         junctionLane.sumo_length,
-                        junctionLane.tlLogic,
                         junctionLane.tlsIndex
                     ), 'REPLACE'
                 ))
@@ -288,23 +272,12 @@ class NetworkBuild:
                     self.dataQue.put((
                         'junctionINFO', (jid, jrawShape), 'INSERT'
                     ))
+            elif child.tag == 'tlLogic':
+                self.tlJunctions.add(child.attrib['id'])
             elif child.tag == 'connection':
                 # in .net.xml, the elements 'edge' come first than elements
                 # 'connection', so the follow codes can work well.
                 self.processConnection(child)
-            elif child.tag == 'tlLogic':
-                tlid = child.attrib['id']
-                tlType = child.attrib['type']
-                preDefPhases = []
-                for gchild in child:
-                    if gchild.tag == 'phase':
-                        preDefPhases.append(gchild.attrib['state'])
-
-                self.tlLogics[tlid] = TlLogic(tlid, tlType, preDefPhases)
-                self.dataQue.put((
-                    'tlLogicINFO',
-                    (tlid, tlType, ' '.join(preDefPhases)), 'INSERT'
-                ))
         for junction in self.junctions.values():
             for gridID in junction.affGridIDs:
                 try:
@@ -461,20 +434,13 @@ class Rebuild(NetworkBuild):
         JunctionLaneINFO = cur.fetchall()
         if JunctionLaneINFO:
             for jl in JunctionLaneINFO:
-                jlid, jlwidth, jlspeed, jlLength, tlLogicID, tlsIndex = jl
+                jlid, jlwidth, jlspeed, jlLength, tlsIndex = jl
                 self.junctionLanes[jlid] = JunctionLane(
                     id=jlid, width=jlwidth,
-                    speed_limit=jlspeed, sumo_length=jlLength,
-                    tlLogic=tlLogicID, tlsIndex=tlsIndex
+                    speed_limit=jlspeed, 
+                    sumo_length=jlLength,
+                    tlsIndex=tlsIndex
                 )
-
-        cur.execute('SELECT * FROM tlLogicINFO;')
-        tlLogicINFO = cur.fetchall()
-        if tlLogicINFO:
-            for tll in tlLogicINFO:
-                tlid, tlType, preDefPhases = tll
-                self.tlLogics[tlid] = TlLogic(
-                    tlid, tlType, preDefPhases.split(' '))
 
         cur.execute('SELECT * FROM connectionINFO;')
         connectionINFO = cur.fetchall()

@@ -47,13 +47,6 @@ class Edge:
     _waypoints_x: list[float] = None
     _waypoints_y: list[float] = None
 
-    @property
-    def edge_width(self):
-        ew = 0
-        for lane in self.lanes:
-            ew += lane.width
-        return ew
-
     def __hash__(self):
         return hash(self.id)
 
@@ -134,32 +127,13 @@ class JunctionLane(AbstractLane):
     last_lane_id: str = None
     next_lane_id: str = None  # next lane's id
     affJunc: str = None   # affiliated junction ID
-    tlLogic: str = None
     tlsIndex: int = 0
     currTlState: str = None   # current traffic light phase state: r, g, y etc.
-    # remain time (second)  switch to next traffic light phase.
-    switchTime: float = 0.0
-    nexttTlState: str = None   # next traffic light phase state: r, g, y etc.
 
     def __repr__(self) -> str:
-        return f"JunctionLane(id={self.id} tlState={self.currTlState} switchTime={self.switchTime})"
+        return f"JunctionLane(id={self.id} tlState={self.currTlState})"
         # return f"JunctionLane(id={self.id}, width = {self.width}, next_lane={self.next_lane})"
 
-
-@dataclass
-class TlLogic:
-    id: str = None
-    tlType: str = None   # static or actuated
-    preDefPhases: list[str] = None
-
-    def currPhase(self, currPhaseIndex: int) -> str:
-        return self.preDefPhases[currPhaseIndex]
-
-    def nextPhase(self, currPhaseIndex: int) -> str:
-        if currPhaseIndex < len(self.preDefPhases)-1:
-            return self.preDefPhases[currPhaseIndex+1]
-        else:
-            return self.preDefPhases[0]
 
 
 @dataclass
