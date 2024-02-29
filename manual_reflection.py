@@ -15,7 +15,7 @@ import io, base64
 from simInfo.Memory import DrivingMemory, MemoryItem
 
 # the database need to analysis
-db_path = "experiments/zeroshot/GPT-4V/exp_0.db"
+db_path = "results/2024-02-29_17-33-48.db"
 # the database for memory
 memory_path = None
 replay = ReplayModel(db_path)
@@ -109,6 +109,13 @@ def last_frame():
 def next_frame():
     st.session_state.x_position = st.session_state.x_position + 1 if st.session_state.x_position < eval_df.shape[0]-1 else 0
     get_memory()
+
+def add_memory():
+    result = st.session_state.user_input.split("#### The correct result is:")[1].split("#### The comment of this state is:")[0]
+    comment = st.session_state.user_input.split("#### The comment of this state is:")[1]
+    st.session_state.current_mem.set_reflection(result, comment, int(result.split("####")[-1]))
+    memory_agent.addMemory(st.session_state.current_mem)
+
 
 if __name__ == "__main__":
     st.set_page_config(
@@ -244,18 +251,14 @@ if __name__ == "__main__":
     if st.session_state.current_mem.reflection == "":
         default_value = ""
     else:
-        default_value = f"#### The correct result is:\n {st.session_state.current_mem.response} \n#### The suggestion is:\n {st.session_state.current_mem.reflection}"
-    user_input = st.text_area("#### Reflection: ", value=default_value, height=150, label_visibility='collapsed')
+        default_value = f"#### The correct result is:\n {st.session_state.current_mem.response}\n #### The comment of this state is:\n {st.session_state.current_mem.reflection}"
+    user_input = st.text_area("#### Reflection: ", value=default_value, height=150, label_visibility='collapsed', key="user_input")
 
     col1, col2 = st.columns([1,7])
     with col1:
         button1 = st.button("Reflection", key="reflection", on_click=on_button)
 
     with col2:
-        button2 = st.button("Add to Memory", key="add_to_memory")
+        button2 = st.button("Add to Memory", key="add_to_memory", on_click=add_memory)
 
-    # add to memory
-    if button2:
-        st.session_state.current_mem.set_reflection(user_input, "", user_input.split("####")[1])
-        memory_agent.addMemory(st.session_state.current_mem)
 
