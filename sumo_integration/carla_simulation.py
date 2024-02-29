@@ -30,7 +30,7 @@ class CarlaSimulation(object):
     """
     CarlaSimulation is responsible for the management of the carla simulation.
     """
-    def __init__(self, host, port, step_length):
+    def __init__(self, host, port, step_length, map: str = ''):
         self.client = carla.Client(host, port)
         self.client.set_timeout(2.0)
 
@@ -49,9 +49,9 @@ class CarlaSimulation(object):
         tmp_map = self.world.get_map()
         for landmark in tmp_map.get_all_landmarks_of_type('1000001'):
             if landmark.id != '':
-                traffic_ligth = self.world.get_traffic_light(landmark)
-                if traffic_ligth is not None:
-                    self._tls[landmark.id] = traffic_ligth
+                traffic_light = self.world.get_traffic_light(landmark)
+                if traffic_light is not None:
+                    self._tls[landmark.id] = traffic_light
                 else:
                     logging.warning('Landmark %s is not linked to any traffic light', landmark.id)
 

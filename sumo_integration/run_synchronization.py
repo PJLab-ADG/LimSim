@@ -497,8 +497,8 @@ def getSynchronization(
     carla_simulation = CarlaSimulation(
         carla_host, carla_port, step_length
     )
-    carla_simulation.client.reload_world()
-    time.sleep(1)
+    # carla_simulation.client.reload_world()
+    # time.sleep(1)
     synchronization = SimulationSynchronization(
         sumo_simulation, carla_simulation, 
         ego_id, tls_manager,
