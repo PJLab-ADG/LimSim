@@ -352,7 +352,8 @@ class NetworkBuild:
                     vehicle_lane = 1
             if vehicle_lane == 1:
                 last_lane = self.getLane(edge.id + '_' + str(lane_index - 1))
-                self.plotLane(last_lane, ax)
+                if last_lane != None:
+                    self.plotLane(last_lane, ax)
                 vehicle_lane = 2
             if lane_index == edge.lane_num - 1:
                 left_bound_tf = lane.left_bound

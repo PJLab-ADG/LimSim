@@ -1,3 +1,6 @@
+"""This file contains the drawing functions and front-end presentation functions to build a web page to view decision scores, decision processes, bevs, and ringviews. Besides, the web page can get the user's reflection for a selected frame, and add it to the memory database.
+"""
+
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
@@ -8,12 +11,15 @@ import numpy as np
 from matplotlib.patches import Polygon
 from matplotlib.text import Text
 from simModel.Replay import ReplayModel
-import io
+import io, base64
 from simInfo.Memory import DrivingMemory, MemoryItem
 
-db_path = "experiments/zeroshot/GPT-3.5/2024-01-29_13-28-36.db"
+# the database need to analysis
+db_path = "experiments/zeroshot/GPT-4V/exp_0.db"
+# the database for memory
+memory_path = None
 replay = ReplayModel(db_path)
-memory_agent = DrivingMemory(db_path)
+memory_agent = DrivingMemory(memory_path)
 # get data
 conn = sqlite3.connect(db_path)
 eval_df = pd.read_sql_query('''SELECT * FROM evaluationINFO''', conn)
@@ -49,31 +55,36 @@ def plotSce(decisionFrame: int, replay:ReplayModel) -> str:
     replay.timeStep = decisionFrame
     replay.getSce()
     roadgraphRenderData, VRDDict = replay.exportRenderData()
+    # plot roadgraph
+    replay.sr.plotScene(ax)
+    # plot car
     if roadgraphRenderData and VRDDict:
         egoVRD = VRDDict['egoCar'][0]
         ex = egoVRD.x
         ey = egoVRD.y
         ego_shape = getVehShape(egoVRD.x, egoVRD.y, egoVRD.yaw, egoVRD.length, egoVRD.width)
-        vehRectangle = Polygon(ego_shape, closed=True, facecolor="r", alpha=1)
+        vehRectangle = Polygon(ego_shape, closed=True, facecolor="#D35400", alpha=1)
         vehText = Text(ex, ey, 'ego', fontsize='x-small')
-        ax.plot(list(egoVRD.trajectoryXQ)[:len(egoVRD.trajectoryXQ)//2], list(egoVRD.trajectoryYQ)[:len(egoVRD.trajectoryXQ)//2], 'r', linewidth=1, alpha=0.8)
+        ax.plot(list(egoVRD.trajectoryXQ)[:len(egoVRD.trajectoryXQ)//2], list(egoVRD.trajectoryYQ)[:len(egoVRD.trajectoryXQ)//2], '#CD84F1', linewidth=1.5, alpha=1)
         ax.add_patch(vehRectangle)
         ax.add_artist(vehText)
         for car in VRDDict["carInAoI"]:
             av_shape = getVehShape(car.x, car.y, car.yaw, car.length, car.width)
-            vehRectangle = Polygon(av_shape, facecolor='#47C5FF', alpha=1)
+            vehRectangle = Polygon(av_shape, facecolor='#2980B9', alpha=1)
             vehText = Text(car.x, car.y, car.id, fontsize='x-small')
-            ax.plot(list(car.trajectoryXQ)[:len(car.trajectoryXQ)//2], list(car.trajectoryYQ)[:len(car.trajectoryXQ)//2], '#419CCD', linewidth=1, alpha=0.8)
+            if car.trajectoryXQ != None:
+                ax.plot(list(car.trajectoryXQ)[:len(car.trajectoryXQ)//2], list(car.trajectoryYQ)[:len(car.trajectoryXQ)//2], '#CD84F1', linewidth=1.5, alpha=1)
             ax.add_patch(vehRectangle)
             ax.add_artist(vehText)
-    replay.sr.plotScene(ax)
+    
 
-    ax.set_xlim(ex-60, ex+60)
-    ax.set_ylim(ey-50, ey+50)
+    ax.set_xlim(ex-50, ex+50)
+    ax.set_ylim(ey-30, ey+30)
 
     plt.axis('off')
+    ax.set_aspect('equal', adjustable='box')
     buffer = io.BytesIO()
-    plt.savefig(buffer,format = 'png')
+    plt.savefig(buffer,format = 'png', dpi=600, bbox_inches='tight', pad_inches=0.0)
     plt.close()
 
     image = replay.exportImageData()
@@ -101,10 +112,10 @@ def next_frame():
 
 if __name__ == "__main__":
     st.set_page_config(
-    page_title="Result Analysis",
-    page_icon=":memo:",
-    layout="wide",
-    initial_sidebar_state="expanded")
+        page_title="Result Analysis",
+        page_icon=":memo:",
+        layout="wide",
+        initial_sidebar_state="expanded")
 
     st.title(":memo: Result Analysis")
     # 1. choose the frame
@@ -178,7 +189,7 @@ if __name__ == "__main__":
         
         st.write(f"#### Current Description")
 
-        st.text_area(value=question, label="## Current Description", height=600, label_visibility="collapsed")
+        st.text_area(value=question, label="## Current Description", height=400, label_visibility="collapsed")
         st.write(f"#### Reasoning from LLM")
         st.text_area(value=qa_df["response"][slider_key], label="## Reasoning from LLM", height=350, label_visibility="collapsed")
     
@@ -186,8 +197,33 @@ if __name__ == "__main__":
     with image_col:
         buffer, image = plotSce(int(qa_df['frame'][slider_key]), replay)
         st.write("### **BEV**")
-        st.image(buffer, use_column_width=True)
+        # show the image
+        image_data = buffer.getvalue() 
+        encoded_image = base64.b64encode(image_data).decode() 
+
+        custom_css = """
+            <style> 
+                .image-container { 
+                    width: auto;
+                    height: 400px;
+                    text-align: center;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center; } 
+                .image-with-border { 
+                    border: 1px solid #C0C0C0;
+                    padding: 5px;
+                    max-width: auto;
+                    max-height: 390px; 
+                    object-fit: contain;
+                } 
+            </style> 
+        """
+
+        st.markdown(custom_css, unsafe_allow_html=True) 
+        st.markdown( f""" <div class="image-container"> <img src="data:image/png;base64,{encoded_image}" class="image-with-border"> </div> """, unsafe_allow_html=True )
         buffer.close()
+
         if image:
             st.write("#### Camera")
             left_col, front_col, image_col = st.columns(3)
@@ -202,21 +238,21 @@ if __name__ == "__main__":
                 st.image(image.ORI_CAM_BACK_RIGHT, use_column_width=True)
 
     # 5. memory moudle & function button
-    col0, _, _, _, col1, col2 = st.columns(6)
-    with col0:
-        st.write("#### Reflection: ")
-    with col1:
-        button1 = st.button("Reflection", key="reflection", on_click=on_button)
-
-    with col2:
-        button2 = st.button("Add to Memory", key="add_to_memory")
-
+    st.write("#### Reflection: ")
+    
     # reflection
     if st.session_state.current_mem.reflection == "":
         default_value = ""
     else:
         default_value = f"#### The correct result is:\n {st.session_state.current_mem.response} \n#### The suggestion is:\n {st.session_state.current_mem.reflection}"
     user_input = st.text_area("#### Reflection: ", value=default_value, height=150, label_visibility='collapsed')
+
+    col1, col2 = st.columns([1,7])
+    with col1:
+        button1 = st.button("Reflection", key="reflection", on_click=on_button)
+
+    with col2:
+        button2 = st.button("Add to Memory", key="add_to_memory")
 
     # add to memory
     if button2:

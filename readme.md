@@ -123,7 +123,17 @@ The memory database will be created in ``db/decision_mem``.
 
 - #### Maunal-add memory
 
-TODO
+If you want to get a more intuitive feel for the entire decision-making process and want to be able to manually intervene in the reflection process, you can run the following code:
+
+```bash
+streamlit run manual_reflection.py
+```
+
+A web page will then pop up where you can view the reasoning process for each frame. The `reflection` button allows you to get the results of the reflection output by LLM. If you think that the reflection result from LLM is not reliable, you can change it directly in the **input box**. Finally, by clicking on the `add to Memory` button, the reflection for this frame decision will be added to the memory library.
+
+**Note: If the web is not open, you can http://0.0.0.0:8501**
+
+![Reflection Page](fig/manual_reflection_page.png)
 
 ## Create Your Own Driving Agent
 

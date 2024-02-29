@@ -179,7 +179,7 @@ class Model:
                 carla_port=self.carla_port,
                 ego_id=self.ego.id,
                 step_length=0.1,
-                tls_manager='carla',
+                tls_manager='sumo',
                 sync_vehicle_color=True,
                 sync_vehicle_lights=True
             )
