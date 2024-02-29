@@ -64,6 +64,9 @@ class AbstractLane(ABC):
     width: float = 0
     speed_limit: float = 13.89
     sumo_length: float = 0
+    laneType: str = ''
+    laneAllow: str = ''
+    laneDisallow: str = ''
     course_spline: Spline2D = None
 
     @property

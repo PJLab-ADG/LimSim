@@ -44,7 +44,8 @@ class Model:
         SUMOGUI: bool = False, 
         CARLACosim: bool = True,
         carla_host: str = '127.0.0.1',
-        carla_port: int = 2000
+        carla_port: int = 2000,
+        tls_manager: str = 'sumo'
     ) -> None:
         print('[green bold]Model initialized at {}.[/green bold]'.format(
             datetime.now().strftime('%H:%M:%S.%f')[:-3]))
@@ -55,6 +56,7 @@ class Model:
         self.CARLACosim = CARLACosim
         self.carla_host = carla_host
         self.carla_port = carla_port
+        self.tls_manager = tls_manager
         self.sim_mode: str = 'RealTime'
         self.timeStep = 0
         # tpStart marks whether the trajectory planning is started,
@@ -179,7 +181,7 @@ class Model:
                 carla_port=self.carla_port,
                 ego_id=self.ego.id,
                 step_length=0.1,
-                tls_manager='carla',
+                tls_manager=self.tls_manager,
                 sync_vehicle_color=True,
                 sync_vehicle_lights=True
             )

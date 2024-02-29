@@ -100,27 +100,48 @@ class NetworkBuild:
         rawList = rawShape.split(' ')
         floatShape = [list(map(float, p.split(','))) for p in rawList]
         return floatShape
+    
+    def getLaneAttrib(self, laneElem: ET.Element):
+        try:
+            laneSpeed = float(laneElem.attrib['speed'])
+        except:
+            laneSpeed = 13.89
+        try:
+            laneWidth = float(laneElem.attrib['width'])
+        except KeyError:
+            laneWidth = 3.2
+        try:
+            laneType = laneElem.attrib['type']
+        except KeyError:
+            laneType = ''
+        try:
+            laneAllow = laneElem.attrib['allow']
+        except KeyError:
+            laneAllow = ''
+        try:
+            laneDisallow = laneElem.attrib['disallow']
+        except:
+            laneDisallow = ''
+        laneLength = float(laneElem.attrib['length'])
+        return laneSpeed, laneWidth, laneType, laneAllow, laneDisallow, laneLength
 
     def processEdge(self, eid: str, child: ET.Element):
         if eid[0] == ':':
             for gchild in child:
                 ilid = gchild.attrib['id']
-                try:
-                    ilspeed = float(gchild.attrib['speed'])
-                except:
-                    ilspeed = 13.89
-                try:
-                    ilwidth = float(gchild.attrib['width'])
-                except KeyError:
-                    ilwidth = 3.2
-                ilLength = float(gchild.attrib['length'])
+                (
+                    ilspeed, ilwidth, ilaneType, 
+                    ilaneAllow, ilaneDisallow, ilLength
+                ) = self.getLaneAttrib(gchild)
                 self.junctionLanes[ilid] = JunctionLane(
                     id=ilid, width=ilwidth, speed_limit=ilspeed,
-                    sumo_length=ilLength,
+                    sumo_length=ilLength, laneType=ilaneType,
+                    laneAllow=ilaneAllow, laneDisallow=ilaneDisallow
                 )
                 self.dataQue.put((
                     'junctionLaneINFO', (
-                        ilid, ilwidth, ilspeed, ilLength, 0
+                        ilid, ilwidth, ilspeed, ilLength, 0, 
+                        ilaneType, ilaneAllow, ilaneDisallow
                     ), 'INSERT'
                 ))
         else:
@@ -131,19 +152,21 @@ class NetworkBuild:
             for gchild in child:
                 if gchild.tag == 'lane':
                     lid = gchild.attrib['id']
-                    try:
-                        lwidth = float(gchild.attrib['width'])
-                    except KeyError:
-                        lwidth = 3.2
-                    lspeed = float(gchild.attrib['speed'])
+                    (
+                        lspeed, lwidth, ltype, lallow, ldisallow, lLength
+                    ) = self.getLaneAttrib(gchild)
                     rawShape = gchild.attrib['shape']
                     lshape = self.processRawShape(rawShape)
-                    llength = float(gchild.attrib['length'])
-                    lane = NormalLane(id=lid, width=lwidth, speed_limit=lspeed,
-                                      sumo_length=llength, affiliated_edge=edge)
+                    lane = NormalLane(
+                        id=lid, width=lwidth, speed_limit=lspeed,
+                        sumo_length=lLength, affiliated_edge=edge,
+                        laneType=ltype, laneAllow=lallow, 
+                        laneDisallow=ldisallow
+                    )
                     self.dataQue.put((
                         'laneINFO', (
-                            lid, rawShape, lwidth, lspeed, eid, llength
+                            lid, rawShape, lwidth, lspeed, eid, 
+                            lLength, ltype, lallow, ldisallow
                         ), 'INSERT'
                     ))
                     shapeUnzip = list(zip(*lshape))
@@ -208,7 +231,10 @@ class NetworkBuild:
                         junctionLane.id, junctionLane.width,
                         junctionLane.speed_limit,
                         junctionLane.sumo_length,
-                        junctionLane.tlsIndex
+                        junctionLane.tlsIndex,
+                        junctionLane.laneType,
+                        junctionLane.laneAllow,
+                        junctionLane.laneDisallow
                     ), 'REPLACE'
                 ))
                 center_line = []
@@ -409,12 +435,16 @@ class Rebuild(NetworkBuild):
         laneINFO = cur.fetchall()
         if laneINFO:
             for la in laneINFO:
-                lid, rawShape, lwidth, lspeed, eid, llength = la
+                (
+                    lid, rawShape, lwidth, lspeed, 
+                    eid, llength, ltype, lallow, ldisallow
+                ) = la
                 lshape = self.processRawShape(rawShape)
-                lane = NormalLane(lid, lwidth, lspeed, eid, llength)
                 lane = NormalLane(
                     id=lid, width=lwidth, speed_limit=lspeed,
-                    affiliated_edge=self.getEdge(eid), sumo_length=llength
+                    affiliated_edge=self.getEdge(eid), sumo_length=llength,
+                    laneType=ltype, laneAllow=lallow,
+                    laneDisallow=ldisallow
                 )
                 shapeUnzip = list(zip(*lshape))
                 # interpolate shape points for better represent shape
@@ -434,12 +464,18 @@ class Rebuild(NetworkBuild):
         JunctionLaneINFO = cur.fetchall()
         if JunctionLaneINFO:
             for jl in JunctionLaneINFO:
-                jlid, jlwidth, jlspeed, jlLength, tlsIndex = jl
+                (
+                    jlid, jlwidth, jlspeed, jlLength, 
+                    tlsIndex, jltype, jlallow, jldisallow
+                ) = jl
                 self.junctionLanes[jlid] = JunctionLane(
                     id=jlid, width=jlwidth,
                     speed_limit=jlspeed, 
                     sumo_length=jlLength,
-                    tlsIndex=tlsIndex
+                    tlsIndex=tlsIndex,
+                    laneType=jltype,
+                    laneAllow=jlallow,
+                    laneDisallow=jldisallow
                 )
 
         cur.execute('SELECT * FROM connectionINFO;')

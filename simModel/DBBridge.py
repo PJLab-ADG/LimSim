@@ -53,14 +53,20 @@ class DBBridge:
                             width REAL,
                             maxSpeed REAL,
                             edgeID TEXT,
-                            length REAL);''')
+                            length REAL,
+                            type TEXT,
+                            allow TEXT,
+                            disallow TEXT);''')
 
         cur.execute('''CREATE TABLE IF NOT EXISTS junctionLaneINFO(
                             id TEXT PRIMARY KEY,
                             width REAL,
                             maxSpeed REAL,
                             length REAL,
-                            tlsIndex INT);''')
+                            tlsIndex INT,
+                            type TEXT,
+                            allow TEXT,
+                            disallow TEXT);''')
 
         cur.execute('''CREATE TABLE IF NOT EXISTS junctionINFO(
                             id TEXT PRIMARY KEY,
