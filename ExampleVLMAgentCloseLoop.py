@@ -44,6 +44,11 @@ def NPImageEncode(npimage: np.ndarray) -> str:
     npimage_base64 = base64.b64encode(buffer).decode('utf-8')
     return npimage_base64
 
+# ----------------------------------------------------------------------
+
+# Define a driver agent based on GPT-4V
+
+# ----------------------------------------------------------------------
 class VLMAgent:
     def __init__(self, max_tokens: int = 4000) -> None:
         self.api_key = os.environ.get('OPENAI_API_KEY')
@@ -51,6 +56,15 @@ class VLMAgent:
         self.content = []
 
     def addImageBase64(self, image_base64: str):
+        """
+        Adds an image encoded in base64 to the prompt content list.
+
+        Args:
+            image_base64 (str): The base64 encoded string of the image.
+
+        Returns:
+            None
+        """
         imagePrompt = {
             "type": "image_url",
             "image_url": {
@@ -94,22 +108,37 @@ class VLMAgent:
         return response.json()
 
     def str2behavior(self, decision: str) -> Behaviour:
-            if decision.upper() == 'IDLE':
-                return Behaviour.IDLE
-            elif decision.capitalize() == 'Acceleration':
-                return Behaviour.AC
-            elif decision.capitalize() == 'Deceleration':
-                return Behaviour.DC
-            elif decision.capitalize() == 'Turn-right':
-                return Behaviour.LCR
-            elif decision.capitalize() == 'Turn-left':
-                return Behaviour.LCL
-            else:
-                errorStr = f'The decision `{decision}` is not implemented yet!'
-            raise NotImplementedError(errorStr)
+        """
+        Convert a string decision to a Behaviour enum.
+
+        Args:
+            decision (str): The decision string to be converted to Behaviour.
+            
+        Returns:
+            Behaviour: The corresponding Behaviour enum for the given decision string.
+            
+        Raises:
+            NotImplementedError: If the decision string is not recognized.
+        """
+        if decision.upper() == 'IDLE':
+            return Behaviour.IDLE
+        elif decision.capitalize() == 'Acceleration':
+            return Behaviour.AC
+        elif decision.capitalize() == 'Deceleration':
+            return Behaviour.DC
+        elif decision.capitalize() == 'Turn-right':
+            return Behaviour.LCR
+        elif decision.capitalize() == 'Turn-left':
+            return Behaviour.LCL
+        else:
+            errorStr = f'The decision `{decision}` is not implemented yet!'
+        raise NotImplementedError(errorStr)
 
 
     def makeDecision(self):
+        """
+        A function that makes a decision based on a prompt, measures the time it takes to make the decision, and returns various relevant data including the behavior, the decision message, prompt tokens, completion tokens, total tokens, and the time cost.
+        """
         start = time.time()
         response = self.request()
         print(response)
@@ -143,7 +172,9 @@ reasoning based on the navigation information and the front-view image.
 ## Decision
 one of the actions in the action set.(SHOULD BE exactly same and no other words!)
 """
+
 if __name__ == '__main__':
+    # Simulation settings
     ego_id = '50'
     sumo_gui = False
     sumo_cfg_file = './networkFiles/CarlaTown06/Town06.sumocfg'
@@ -159,7 +190,7 @@ if __name__ == '__main__':
     stringTimestamp = datetime.strftime(datetime.now(), '%Y-%m-%d_%H-%M-%S')
     database = 'results/' + stringTimestamp + '.db'
 
-    # init LLMDriver
+    # init simulation
     model = Model(
         egoID=ego_id, netFile=sumo_net_file, rouFile=sumo_rou_file,
         cfgFile=sumo_cfg_file, dataBase=database, SUMOGUI=sumo_gui,
@@ -173,8 +204,10 @@ if __name__ == '__main__':
     gui = GUI(model)
     gui.start()
 
+    # init GPT-4V-based driver agent
     gpt4v = VLMAgent()
 
+    # close loop simulation
     total_start_time = time.time()
     try:
         while not model.tpEnd:
@@ -183,16 +216,20 @@ if __name__ == '__main__':
             if model.timeStep % 10 == 0:
                 roadgraph, vehicles = model.exportSce()
                 if model.tpStart and roadgraph:
+                    # get the text prompt: available actions, navigation and ego state
                     actionInfo = descriptor.getAvailableActionsInfo(roadgraph, vehicles)
                     naviInfo = descriptor.getNavigationInfo(roadgraph, vehicles)
                     egoInfo = descriptor.getEgoInfo(vehicles)
                     currentLaneInfo = descriptor.getCurrentLaneInfo(roadgraph, vehicles)
                     TotalInfo = '## Available actions\n\n' + actionInfo + '\n\n' + '## Navigation information\n\n' + currentLaneInfo + egoInfo + naviInfo
+
+                    # get the image prompt: the left front, front, and right front
                     images = model.getCARLAImage(1, 1)
                     front_img = images[-1].CAM_FRONT
                     front_left_img = images[-1].CAM_FRONT_LEFT
                     front_right_img = images[-1].CAM_FRONT_RIGHT
                     if isinstance(front_img, np.ndarray):
+                        # wrap the prompt and pass it to the driver agent
                         gpt4v.addTextPrompt(SYSTEM_PROMPT)
                         gpt4v.addTextPrompt('The next three images are images captured by the left front, front, and right front cameras.\n')
                         gpt4v.addImageBase64(NPImageEncode(front_left_img))
@@ -200,7 +237,13 @@ if __name__ == '__main__':
                         gpt4v.addImageBase64(NPImageEncode(front_right_img))
                         gpt4v.addTextPrompt(f'\nThe current frame information is:\n{TotalInfo}')
                         gpt4v.addTextPrompt('Now, please tell me your answer. Please think step by step and make sure it is right.')
-                        behaviour, ans, prompt_tokens, completion_tokens, total_tokens,timecost = gpt4v.makeDecision()
+                        # get the decision made by the driver agent
+                        (
+                            behaviour, ans, 
+                            prompt_tokens, completion_tokens, 
+                            total_tokens, timecost
+                        ) = gpt4v.makeDecision()
+                        # put the decision into the database
                         model.putQA(
                             QuestionAndAnswer(
                                 currentLaneInfo+egoInfo, naviInfo, actionInfo, '', 
@@ -208,6 +251,7 @@ if __name__ == '__main__':
                                 timecost, int(behaviour)
                             )
                         )
+                        # plan trajectories according to the decision made by driver agent
                         trajectories = planner.plan(
                             model.timeStep * 0.1, roadgraph, vehicles, Behaviour(behaviour), other_plan=False
                         )
@@ -220,6 +264,7 @@ if __name__ == '__main__':
         CollisionException, LaneChangeException, 
         BrainDeadlockException, TimeOutException
         ) as e:
+        # record the failed decision made by the driver agent
         record_result(model, total_start_time, False, str(e))
         model.dbBridge.commitData()
     except Exception as e:
