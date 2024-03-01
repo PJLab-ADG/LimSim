@@ -8,6 +8,10 @@ import base64
 import numpy as np
 import requests
 from rich import print
+from functools import wraps
+from urllib3.exceptions import NameResolutionError, MaxRetryError
+from socket import gaierror
+from requests.exceptions import ConnectionError
 
 import logger, logging
 from simInfo.EnvDescriptor import EnvDescription
@@ -28,6 +32,22 @@ decision_logger = logger.setup_app_level_logger(
     logger_name="LLMAgent", file_name="llm_decision.log")
 LLM_logger = logging.getLogger("LLMAgent").getChild(__name__)
 
+
+def retry_on_exception(exceptions, delay=1, max_retries=5):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    print(f"Caught exception: {e}. Retrying after {delay} seconds...")
+                    time.sleep(delay)
+                    retries += 1
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
 
     
 def NPImageEncode(npimage: np.ndarray) -> str:
@@ -135,6 +155,9 @@ class VLMAgent:
         raise NotImplementedError(errorStr)
 
 
+    @retry_on_exception(
+        (ConnectionError,NameResolutionError, MaxRetryError, gaierror)
+    )
     def makeDecision(self):
         """
         A function that makes a decision based on a prompt, measures the time it takes to make the decision, and returns various relevant data including the behavior, the decision message, prompt tokens, completion tokens, total tokens, and the time cost.
