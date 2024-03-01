@@ -87,12 +87,12 @@ Now the map in Carla is successfully switch to Town06 map.
 # Termnial 2
 export OPENAI_API_KEY='your openai key'
 cd path-to-LimSimLLM/
-python VLMAgentCloseLoop.py
+python ExampleLLMAgentCloseLoop.py
 ```
 
 **Use reflection module:**
 
-To activate the memory module, set ``use_memory`` to True in ``LLMAgent_closeloop.py``. The default setting uses 3-shots memory. You can modify this in the code.
+To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify this in the code.
 
 ### 2. Simulation replay 🎥
 In the root directory, running the following command will demonstrate the (M)LLMs decision-making process :

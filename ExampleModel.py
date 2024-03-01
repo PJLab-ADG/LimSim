@@ -11,7 +11,7 @@ sumo_rou_file = "./networkFiles/CarlaTown05/carlavtypes.rou.xml,networkFiles/Car
 carla_host = '127.0.0.1'
 carla_port = 2000
 step_length = 0.1
-tls_manager = 'sumo'
+tls_manager = 'carla'
 sync_vehicle_color = True
 sync_vehicle_lights = True
 
