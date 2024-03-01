@@ -205,7 +205,7 @@ class Decision_Evaluation:
             return False
         if model.sr.ego.laneID[0] == ":" and model.sr.ego.laneIDQ[-11][0] != ":" and model.sr.ego.laneID not in self.red_junctionlane_record:
             current_lane = model.rb.getJunctionLane(model.sr.ego.laneID)
-            if current_lane.tlLogic != None:
+            if current_lane.currTlState != None:
                 if current_lane.currTlState == "r" or current_lane.currTlState == "R":
                     self.red_junctionlane_record.append(model.sr.ego.laneID)
                     self.current_reasoning += "you pass the red light\n"
@@ -287,7 +287,7 @@ class Decision_Evaluation:
             ego_availablelanes = model.sr.ego.availableLanes(model.rb)
             next_lane = roadgraph.get_available_next_lane(model.sr.ego.laneID[0], ego_availablelanes)
             next_lane = model.rb.getJunctionLane(model.sr.ego.laneID)
-            if isinstance(next_lane, JunctionLane) and next_lane.tlLogic != None:
+            if isinstance(next_lane, JunctionLane) and next_lane.currTlState != None:
                 if next_lane.currTlState == "r" or next_lane.currTlState == "R":
                     lane_length = model.rb.getLane(model.sr.ego.laneID[0]).sumo_length
                     if lane_length - model.sr.ego.lanePos <= self.hyper_parameter.stop_distance and model.sr.ego.speed <= self.hyper_parameter.judge_speed:

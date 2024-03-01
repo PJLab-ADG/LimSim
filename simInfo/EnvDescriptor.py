@@ -114,7 +114,7 @@ class EnvDescription:
 
         elif isinstance(next_lane, JunctionLane):
             #----------- get traffic light state ------------#
-            if next_lane.tlLogic != None:
+            if next_lane.currTlState != None:
                 tl_state = "with"
             else:
                 tl_state = "without"
@@ -125,9 +125,10 @@ class EnvDescription:
             if tl_state == "with":
                 next_lane_describe += self.des_json["basic_description"]["traffic_light_description"].format(curr_tl_state = self.trafficLightProcess(next_lane.currTlState))
 
-                if self.trafficLightProcess(next_lane.currTlState) == "green" and next_lane.switchTime < 10:
-                    if self.trafficLightProcess(next_lane.nexttTlState) != "green":
-                        next_lane_describe += self.des_json["basic_description"]["traffic_light_change_des"].format(color = self.trafficLightProcess(next_lane.nexttTlState), time=next_lane.switchTime)
+                #TODO: get the green light time
+                # if self.trafficLightProcess(next_lane.currTlState) == "green" and next_lane.switchTime < 10:
+                #     if self.trafficLightProcess(next_lane.nexttTlState) != "green":
+                #         next_lane_describe += self.des_json["basic_description"]["traffic_light_change_des"].format(color = self.trafficLightProcess(next_lane.nexttTlState), time=next_lane.switchTime)
 
         return next_lane_describe + "\n"
     
@@ -216,7 +217,7 @@ class EnvDescription:
         # 1. If the distance from the intersection stop line is less than 30 meters, make notice 
         if curr_lane_id[0] != ':' and curr_lane.spline_length - ego["lanePosQ"][-1] < 30:
             notice_description += self.des_json["intension"]["junction"]
-            if next_lane.tlLogic != None:
+            if next_lane.currTlState != None:
                 notice_description += self.des_json["intension"]["traffic_light"]
 
         # 2. notice about speed

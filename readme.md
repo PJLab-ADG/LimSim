@@ -60,7 +60,7 @@ export OPENAI_API_BASE="your azure node"
 export OPENAI_API_VERSION="your api version"
 export EMBEDDING_MODEL="your embedding model"
  
-python LLMAgent_closeloop.py 
+python ExampleLLMAgentCloseLoop.py 
 ```
 
 - #### LimSim++ supports Vision-Language Models, such as GPT-4V. 
@@ -93,19 +93,20 @@ python ExampleLLMAgentCloseLoop.py
 **Use reflection module:**
 
 To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify this in the code.
+To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify this in the code.
 
 ### 2. Simulation replay 🎥
 In the root directory, running the following command will demonstrate the (M)LLMs decision-making process :
 
-```powershell
-python ReplayExample.py
+```bash
+python ExampleReplay.py
 ```
 
 ### 3. Decisions evaluation 📝
 After the (M)LLMs' autonomous driving task is completed, running the following code will evaluate the (M)LLMs' decision results :
 
 ```bash
-python Evaluator.py
+python ExampleEvaluator.py
 ```
 
 Then you can see the scores for each frame of the decision in the database, and the evaluation result of the whole route in the file ``llm_decision_result.log``.
@@ -123,7 +124,17 @@ The memory database will be created in ``db/decision_mem``.
 
 - #### Maunal-add memory
 
-TODO
+If you want to get a more intuitive feel for the entire decision-making process and want to be able to manually intervene in the reflection process, you can run the following code:
+
+```bash
+streamlit run manual_reflection.py
+```
+
+A web page will then pop up where you can view the reasoning process for each frame. The **`reflection`** button allows you to get the results of the reflection output by LLM. If you think that the reflection result from LLM is not reliable, you can change it directly in the **input box**. Finally, by clicking on the **`add to Memory`** button, the reflection for this frame decision will be added to the memory library.
+
+**Note: If the web page doesn't open automatically, you can go to it via http://0.0.0.0:8501.**
+
+![Reflection Page](fig/manual_reflection_page.png)
 
 ## Create Your Own Driving Agent
 
@@ -146,7 +157,7 @@ TODO
 
 > LimSim++ supports the construction of tool libraries for customized applications .
 
-- You can add your own tools for Driver Agent in the project (``LLMAgent_closeloop.py``, ``VLMAgentCloseLoop.py``).
+- You can add your own tools for Driver Agent in the project (``ExampleLLMAgentCloseLoop.py``, ``ExampleVLMAgentCloseLoop.py``).
 
 
 ## License and Citation

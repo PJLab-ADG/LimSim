@@ -138,7 +138,12 @@ class ReflectionAssistant:
         try:
             result = int(decision_action)
             if result not in [1, 2, 3, 4, 8]:
-                raise ValueError
+                pattern = r"[3,8,4,1,2]"
+                result_list = re.findall(pattern, response.content.split("\n")[-1])
+                if len(result_list) > 0:
+                    result = int(result_list[0])
+                else:
+                    raise ValueError
         except ValueError:
             print("[red bold]--------- Output is not available, checking the output... ---------[/red bold]")
             self.logging.error("The output is illegal!")
@@ -152,7 +157,7 @@ class ReflectionAssistant:
                 print("[red bold]The reflection result is not illegal after 2 trys! Please check the reflection.json and retry it.[/red bold]")
                 self.record(self.record_json)
                 return None, None
-            response.content = response.content + f"\n{delimiter} Output checking result: {result}"
+            response.content = response.content + f"\nResponse to user:{delimiter} {result}"
         finally:
             self.record_json["reflection_action"] = result
             if result == action and method:
