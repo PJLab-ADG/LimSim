@@ -87,7 +87,9 @@ Now the map in Carla is successfully switch to Town06 map.
 # Termnial 2
 export OPENAI_API_KEY='your openai key'
 cd path-to-LimSimLLM/
+# python ExampleModel.py
 python ExampleLLMAgentCloseLoop.py
+# python ExampleVLMAgentCloseLoop.py
 ```
 
 **Use memory module:**
@@ -100,6 +102,8 @@ In the root directory, running the following command will demonstrate the (M)LLM
 ```bash
 python ExampleReplay.py
 ```
+
+> We've uploaded some simulation cases on OneDrive, which you can download and replay by clicking on the links: [Google Drive](https://drive.google.com/drive/folders/1x2H-wkl1XyxkSzkdMfnEEJMzn3QHnN_0?usp=drive_link)
 
 ### 3. Decisions evaluation 📝
 After the (M)LLMs' autonomous driving task is completed, running the following code will evaluate the (M)LLMs' decision results :
