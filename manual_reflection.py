@@ -104,11 +104,20 @@ def next_frame():
     get_memory()
 
 def add_memory():
-    result = st.session_state.user_input.split("#### Corrected version of Driver's Decision:")[1].split("#### What should driver do to avoid such errors in the future:")[0]
-    comment = st.session_state.user_input.split("#### What should driver do to avoid such errors in the future:")[1]
-    st.session_state.current_mem.set_reflection(result, comment, int(result.split("####")[-1]))
-    st.session_state.memory_agent.addMemory(st.session_state.current_mem)
-    st.session_state.memory_agent.scenario_memory.persist()
+    try:
+        result = st.session_state.user_input.split("#### Corrected version of Driver's Decision:")[1].split("#### What should driver do to avoid such errors in the future:")[0]
+        comment = st.session_state.user_input.split("#### What should driver do to avoid such errors in the future:")[1]
+        action = int(result.split("####")[-1])
+    except:
+        st.error("Please make sure your reflection is formatted correctly.")
+        return
+    st.session_state.current_mem.set_reflection(result, comment, action)
+    try:
+        st.session_state.memory_agent.addMemory(None)
+        st.session_state.memory_agent.scenario_memory.persist()
+        st.success("Reflection added successfully.")
+    except Exception as e:
+        st.error(f"Reflection added failed, the reason is: {e}")
     
 def cleanup():
     print("stopping")
@@ -125,7 +134,7 @@ if __name__ == "__main__":
     st.title(":memo: Result Analysis")
     # 0. init the variant
     if "replay" not in st.session_state:
-        db_path = "results/2024-02-29_17-33-48.db" # the database need to analysis
+        db_path = "results/2024-03-04_17-46-55.db" # the database need to analysis
         # get data
         conn = sqlite3.connect(db_path)
         st.session_state.eval_df = pd.read_sql_query('''SELECT * FROM evaluationINFO''', conn)
@@ -241,7 +250,7 @@ if __name__ == "__main__":
         st.markdown(custom_css, unsafe_allow_html=True) 
         st.markdown( f""" <div class="image-container"> <img src="data:image/png;base64,{encoded_image}" class="image-with-border"> </div> """, unsafe_allow_html=True )
         buffer.close()
-        st.write("#### Camera")
+
         if image:
             st.write("#### Camera")
             left_col, front_col, image_col = st.columns(3)

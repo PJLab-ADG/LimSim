@@ -41,7 +41,15 @@ class LLMAgent:
             use_memory (bool, optional): Flag indicating whether to use memory. Defaults to True.
             delimiter (str, optional): Delimiter string. Defaults to "####".
         """
-        ## For azure user, if you want to use azure key in this project, you need to check if your azure has deployed embedding model
+
+        """ 
+        For azure user, if you want to use azure key in this project, you need to check if your azure has deployed embedding model. You need to set your environment as follow and modify the code in file "simInfo/Memory.py" and "simInfo/Reflection.py":
+        export OPENAI_API_TYPE="azure"
+        export OPENAI_API_KEY='your azure key'
+        export OPENAI_API_BASE="your azure node"
+        export OPENAI_API_VERSION="your api version"
+        export EMBEDDING_MODEL="your embedding model"
+        """
         # oai_api_type = os.getenv("OPENAI_API_TYPE")
         # if oai_api_type == "azure":
         #     print("Using Azure Chat API")

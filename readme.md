@@ -49,17 +49,7 @@ Now, the local installation and deployment of LimSim++ is complete.
 To experience it, run the following command:
 
 ```bash
-# use openai
-export OPENAI_API_TYPE="openai"
-export OPENAI_API_VERSION="your api version"
 export OPENAI_API_KEY='your openai key'
-# use azure
-export OPENAI_API_TYPE="azure"
-export OPENAI_API_KEY='your azure key'
-export OPENAI_API_BASE="your azure node"
-export OPENAI_API_VERSION="your api version"
-export EMBEDDING_MODEL="your embedding model"
- 
 python ExampleLLMAgentCloseLoop.py 
 ```
 
@@ -92,9 +82,9 @@ python ExampleLLMAgentCloseLoop.py
 # python ExampleVLMAgentCloseLoop.py
 ```
 
-**Use memory module:**
+**Use memory module:** 
 
-To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify this in the code.
+To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify `few_shot_num` in the file.
 
 ### 2. Simulation replay 🎥
 In the root directory, running the following command will demonstrate the (M)LLMs decision-making process :
@@ -103,7 +93,9 @@ In the root directory, running the following command will demonstrate the (M)LLM
 python ExampleReplay.py
 ```
 
-> We've uploaded some simulation cases on OneDrive, which you can download and replay by clicking on the links: [Google Drive](https://drive.google.com/drive/folders/1x2H-wkl1XyxkSzkdMfnEEJMzn3QHnN_0?usp=drive_link)
+> We've uploaded some simulation cases on OneDrive, which you can download and replay by clicking on the links: [Google Drive](https://drive.google.com/drive/folders/1x2H-wkl1XyxkSzkdMfnEEJMzn3QHnN_0?usp=drive_link).
+> 
+> If you want to try a close-loop simulation with memory module, you need to download the folder `memory_library` and put it under the `db/` path.
 
 ### 3. Decisions evaluation 📝
 After the (M)LLMs' autonomous driving task is completed, running the following code will evaluate the (M)LLMs' decision results :

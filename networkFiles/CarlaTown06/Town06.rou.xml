@@ -240,9 +240,9 @@
     <vehicle id="78" depart="156.00" type="vehicle.toyota.prius">
         <route edges="-38 5 4 -48#0 -48#1 -49 -50 54 -46 -10 -54" />
     </vehicle>
-    <vehicle id="79" depart="158.00" type="vehicle.mercedes.coupe">
+    <!-- <vehicle id="79" depart="158.00" type="vehicle.mercedes.coupe">
         <route edges="-32 68 -37 -70 24 -30" />
-    </vehicle>
+    </vehicle> -->
     <vehicle id="80" depart="160.00" type="vehicle.seat.leon">
         <route edges="-14 -15#0 -15#1 -41 -50 -51 -52#0 -52#1 -59" />
     </vehicle>

@@ -36,7 +36,7 @@ class ReflectionAssistant:
         # openai key
         self.llm = ChatOpenAI(
                 temperature=temperature,
-                model_name='gpt-3.5-turbo-0125',
+                model_name='gpt-4-0125-preview',
                 max_tokens=2000
             )
 
