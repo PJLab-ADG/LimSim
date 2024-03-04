@@ -354,16 +354,16 @@ class NetworkBuild:
                 if last_lane != None:
                     self.plotLane(last_lane, ax)
                 vehicle_lane = 2
-            if lane_index == edge.lane_num - 1:
-                left_bound_tf = lane.left_bound
-            if lane_index == 0:
-                right_bound_tf = lane.right_bound
         # 根据左右边界获取 edge 的封闭图形
-        left_bound_tf.reverse()
-        right_bound_tf.extend(left_bound_tf)
-        right_bound_tf.append(right_bound_tf[0])
+        lane_id = edge.id + '_' + str(0)
+        lane = self.getLane(lane_id)
+        bbx = lane.right_bound[::]
+        lane_id = edge.id + '_' + str(edge.lane_num - 1)
+        lane = self.getLane(lane_id)
+        bbx.extend(lane.left_bound[::-1])
+        bbx.append(bbx[0])
 
-        ax.add_patch(Polygon(right_bound_tf, closed=True, fill=True, color='#000000', alpha=0.2, linewidth=0.8))
+        ax.add_patch(Polygon(bbx, closed=True, fill=True, color='#000000', alpha=0.2, linewidth=0.8))
 
     def plotJunctionLane(self, jlid: str, ax: plt.Axes,):
         juncLane = self.getJunctionLane(jlid)

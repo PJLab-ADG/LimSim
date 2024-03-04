@@ -90,9 +90,8 @@ cd path-to-LimSimLLM/
 python ExampleLLMAgentCloseLoop.py
 ```
 
-**Use reflection module:**
+**Use memory module:**
 
-To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify this in the code.
 To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify this in the code.
 
 ### 2. Simulation replay 🎥
@@ -120,7 +119,7 @@ The following command allows the LLM to self-reflect on this autonomous driving 
 python simInfo/Memory.py
 ```
 
-The memory database will be created in ``db/decision_mem``.
+The memory database will be created in ``db/memory_library``. You can change the memory path at line 60 in the file ``simInfo/Memory.py``.
 
 - #### Maunal-add memory
 
@@ -132,7 +131,9 @@ streamlit run manual_reflection.py
 
 A web page will then pop up where you can view the reasoning process for each frame. The **`reflection`** button allows you to get the results of the reflection output by LLM. If you think that the reflection result from LLM is not reliable, you can change it directly in the **input box**. Finally, by clicking on the **`add to Memory`** button, the reflection for this frame decision will be added to the memory library.
 
-**Note: If the web page doesn't open automatically, you can go to it via http://0.0.0.0:8501.**
+You can change the database path and memory path at line 128-137 in the file ``manual_reflection.py``.
+
+**Note: If the reflection result from LLM is short, you might consider changing to a different LLM model to achieve a better experience.**
 
 ![Reflection Page](fig/manual_reflection_page.png)
 

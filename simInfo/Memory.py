@@ -45,17 +45,20 @@ class MemoryItem():
 
 class DrivingMemory:
     def __init__(self, db_path=None) -> None:
-        if os.environ["OPENAI_API_TYPE"] == 'azure':
-            self.embedding = OpenAIEmbeddings(
-                    deployment=os.environ['EMBEDDING_MODEL'], chunk_size=1)
-        elif os.environ["OPENAI_API_TYPE"] == 'openai':
-            self.embedding = OpenAIEmbeddings()
-        else:
-            raise ValueError(
-                "Unknown OPENAI_API_TYPE: should be azure or openai")
+        ## For azure user, if you want to use azure key in this project, you need to check if your azure has deployed embedding model
+        # if os.environ["OPENAI_API_TYPE"] == 'azure':
+        #     self.embedding = OpenAIEmbeddings(
+        #             deployment=os.environ['EMBEDDING_MODEL'], chunk_size=1)
+        # elif os.environ["OPENAI_API_TYPE"] == 'openai':
+        #     self.embedding = OpenAIEmbeddings()
+        # else:
+        #     raise ValueError(
+        #         "Unknown OPENAI_API_TYPE: should be azure or openai")
+
+        self.embedding = OpenAIEmbeddings() # openai embedding model
         
         db_path = os.path.join(
-            './db', 'decision_mem/') if db_path is None else db_path
+            './db', 'memory_library/') if db_path is None else db_path
         self.scenario_memory = Chroma(
             embedding_function=self.embedding,
             persist_directory=db_path
@@ -142,6 +145,8 @@ class DrivingMemory:
         Args:
             memory (MemoryItem): the memory item
             method (bool): decide to auto reflection or manual reflection
+                            if True, use the auto reflection
+                            if False, use the manual reflection
 
         Returns:
             MemoryItem: the memory item with reflection
@@ -153,19 +158,22 @@ class DrivingMemory:
             detail_score += f"{key}: {value}, "
 
         evaluation = f"The current score is {memory.score}, the detail score is {detail_score.strip(', ')}."
-        caution = "There are the current decision's cautions:\n{memory.cautious}"
+        caution = "There are the current decision's cautions:\n{cautious}".format(cautious=memory.cautious if memory.cautious != "" else "None\n")
         
         LLM_response, action = self.reflector.reflection(human_message, memory.response, evaluation, memory.action, caution, method)
         
         if LLM_response == None:
             return None
         
-        decision_phrase = f"{delimiter} Corrected version of Driver's Decision:"
-        correct_answer = LLM_response.partition(decision_phrase)[2].strip()
+        if method:
+            decision_phrase = f"{delimiter} Corrected version of Driver's Decision:"
+            correct_answer = LLM_response.partition(decision_phrase)[2].strip()
 
-        comment_phrase = f"{delimiter} What should driver do to avoid such errors in the future:"
-        comment = LLM_response.partition(comment_phrase)[2].partition(decision_phrase)[0].strip()
-        memory.set_reflection(correct_answer, comment, action)
+            comment_phrase = f"{delimiter} What should driver do to avoid such errors in the future:"
+            comment = LLM_response.partition(comment_phrase)[2].partition(decision_phrase)[0].strip()
+            memory.set_reflection(correct_answer, comment, action)
+        else:
+            memory.set_reflection("", LLM_response, action) # manual reflection, no need to format the response
         return memory
     
     def divideBasedOnScore(self, database: str) -> Tuple[List[MemoryItem], List[MemoryItem]]:
