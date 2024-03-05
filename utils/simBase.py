@@ -1,4 +1,7 @@
 import dearpygui.dearpygui as dpg
+from typing import Tuple
+
+
 class CoordTF:
     # Ego is always in the center of the window
     def __init__(self, realSize: float, windowTag: str) -> None:
@@ -12,20 +15,20 @@ class CoordTF:
         return self.dpgDrawSize / self.realSize
 
     def dpgCoord(
-            self, x: float, y: float, ex: float, ey: float) -> tuple[float]:
+            self, x: float, y: float, ex: float, ey: float) -> Tuple[float]:
         relx, rely = x - ex, y - ey
         return (
             self.zoomScale * (self.drawCenter + relx + self.offset[0]),
             self.zoomScale * (self.drawCenter - rely + self.offset[1])
         )
-    
+
 
 class MapCoordTF:
     def __init__(
-            self, leftBottom: tuple[float], 
-            topRight: tuple[float], 
-            windowTag: str
-        ) -> None:
+        self, leftBottom: Tuple[float],
+        topRight: Tuple[float],
+        windowTag: str
+    ) -> None:
         self.netLeftBottom = leftBottom
         self.netTopRight = topRight
         self.netHeight = topRight[1] - leftBottom[1]
@@ -35,12 +38,11 @@ class MapCoordTF:
             (topRight[1] + leftBottom[1]) / 2
         )
         self.dpgSize = dpg.get_item_height(windowTag) - 35
-        
+
         self.zoomScale = self.dpgSize / max(self.netHeight, self.netWidth)
         self.dpgCenter = (self.dpgSize / 2) / self.zoomScale
-        
-        
-    def dpgCoord(self, x: float, y: float) -> tuple[float]:
+
+    def dpgCoord(self, x: float, y: float) -> Tuple[float]:
         # relativex = x - self.netLeftBottom[0]
         # relativey = y - self.netLeftBottom[1]
         relativex = x - self.netCenter[0]

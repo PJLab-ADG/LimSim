@@ -182,3 +182,27 @@ report/
 
 *.pptx
 
+FVCFigs/
+
+*Test.py
+
+*Test.ipynb
+
+DriverAgent/GT/config.yaml
+
+db/
+
+results/
+
+networkFiles/OpenDrive/Town05.xodr
+text_example/
+DriverAgent/loadConfig.py
+
+OpenDriveFiles/
+simInfo/test
+
+reflection.json
+
+experiments/
+*.sh
+demo/

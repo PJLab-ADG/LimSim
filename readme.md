@@ -1,162 +1,169 @@
-![logo-full.svg](assets/limsimLOGO.png)
+# LimSim++: A Closed-Loop Platform for Deploying Multimodal LLMs in Autonomous Driving
 
-[![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2307.06648)
-[![Custom badge](https://img.shields.io/badge/Docs-page-green?logo=document)](https://pjlab-adg.github.io/LimSim)
-[![Custom badge](https://img.shields.io/badge/video-Bilibili-74b9ff?logo=bilibili&logoColor=white)](https://www.bilibili.com/video/BV1rT411x7VF)
-[![Custom badge](https://img.shields.io/badge/video-YouTube-FF0000?logo=youtube&logoColor=white)](https://youtu.be/YR2A25v0hj4)
+[![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2402.01246)
+[![Custom badge](https://img.shields.io/badge/Project-page-green?logo=document)](https://pjlab-adg.github.io/limsim_plus/)
 
-## 🚀News: 
 
-- **2023/07/26** Add [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) about co-sim with CARLA.
-- **2023/07/13** The code is now released!
-  
-# LimSim
+LimSim++: an extended version of LimSim designed for the application of Multimodal Large Language Models ((M)LLMs) in autonomous driving. LimSim++ addresses the need for a long-term closed-loop infrastructure supporting continuous learning and improved generalization in autonomous driving.
 
-LimSim is a Long-term Interactive Multi-scenario traffic Simulator, which aims to provide a continuous simulation capability under the complex urban road network.
+The following video shows the process of autonomous driving with VLM.  The top of the GUI is the image information in Carla, the left is the information description of the current scene, and the right is the reasoning process of LLM. 
 
-## Quick Start
+https://github.com/Fdarco/LimSimLLM/assets/62456817/1b6491b7-e4d9-4e2b-8a30-fc4a9df7c3b8
 
-- **3.9.0** <= [Python](https://www.python.org/) <= 3.11.0
+To run this project in minutes, check [Getting Started](#Getting-Started).
+
+## Features
+
+- **Various Scenarios**: LimSim++ offers extended-duration, multi-scenario simulations, providing crucial information for (M)LLM-driven vehicles. Various scenarios include intersection, ramp, roundabout, etc. 
+
+- **Multimodal LLMs**: LimSim++ supports LLM of different modalities as the brain for autonomous driving. LimSim++ provides rule-based scenario information generation for language-based LLM. LimSim++ supports co-simulation with Carla, which provides image information in Carla for vision-based LLM. 
+
+- **Continuous Learning**: LimSim++ consists of evaluation, reflection, memory, and other modules, which can continually enhances decision-making capabilities of (M)LLM.
+
+## Installation
+
+- This project uses [conda](https://github.com/conda/conda) to manage the environment
 - [SUMO](https://www.eclipse.org/sumo/) >= 1.15.0 
+- [Carla](https://github.com/carla-simulator/carla) >= 9.14.0
 
-After configuring the runtime environment, download the LimSim source code to your local machine:
-
-```powershell
-git clone https://github.com/PJLab-ADG/LimSim.git
-```
-
-Finally, you need to install the required Python extensions:
+After configuring the runtime environment, download the LimSim++ source code to your local machine:
 
 ```powershell
-cd LimSim
-pip install -r requirements.txt
+git clone https://github.com/Fdarco/LimSimLLM.git
 ```
 
-Now, the local installation and deployment of LimSim are complete.
+Finally, you need to create environments using the ``environment.yml``:
 
-### 1. Real-time Sim
-Real-time simulation following the Ego vehicle is the fundamental feature of LimSim. To experience it, run the following command:
+```powershell
+cd LimSimLLM
+conda env create -f environment.yml
+```
+
+Now, the local installation and deployment of LimSim++ is complete.
+
+## Getting Started
+
+### 1. Using (M)LLMs in autonomous driving 🚙
+
+- #### LimSim++ supports Large-Language Models, such as GPT-3.5, GPT-4, etc. 
+To experience it, run the following command:
 
 ```bash
-python ModelExample.py
+export OPENAI_API_KEY='your openai key'
+python ExampleLLMAgentCloseLoop.py 
 ```
 
-### 2. Simulation replay
-In the root directory, running the following command will invoke LimSim's replay feature:
+- #### LimSim++ supports Vision-Language Models, such as GPT-4V. 
+To experience it, You should open two terminal.
 
-```powershell
-python ReplayExample.py
+```bash
+# Terminal 1
+cd path-to-carla/
+./CarlaUE4.sh
 ```
 
-**For more information of our code, please see our [Online Documentation](https://pjlab-adg.github.io/LimSim/)**.
+Now you should see CARLA GUI. Then switch to another terminal:
 
-If you have any problem when installing and deployment, feel free to [open an issue here](https://github.com/PJLab-ADG/LimSim/issues)!
-
-
-## 🎁 Main Features
-
-- [x] **Long-term**: Traffic flow can be generated over long periods under the guidance of demand and route planning.
-
-- [x] **Diversity**: The built-in behavioral models take heterogeneous driving styles of vehicles into account.
-
-- [x] **Interactivity**: Vehicles in the scenario area are controlled  address sophisticated interactions among vehicles.
-
-- [x] **Multi-scenario**: The universal road components supports a variety of road structures in the real world.
-
-## 🖥️ GUI
-
-LimSim has a cross-platform user-friendly GUI, which includes not only a beautiful simulation interface, but also information on road network and ego-vehicle status.
-<p align="center">
-  <img src="assets/limsim_gui.png" title="" alt="limsim_gui.png">
-</p>
-
-
-
-<details><summary><h2>🛣️ Multi-scenarios support</h2></summary>
-<p>
-  
-
-LimSim supports road scenarios not limited to freeways, signalized intersections, roundabouts and overpasses.
-
-<p align="center">
- <img src="assets/scenarios.gif" title="" alt="scenarios.gif" data-align="center" width="700">
-</p>
-
-
-</p>
-</details>
-
-
-<details><summary><h2>📊 Scenario Evaluation</h2></summary>
-<p>
-  
-
-After running a long-term simulation with all kinds of scenarios contained in it, LimSim generates a log report and extract the key scenarios via the evaluation results.
-
-<p align="center">
- <img src="assets/evaluation.gif" title="" alt="evaluation.gif" data-align="center" width="700">
-</p>
-
-
-</p>
-</details>
-
-
-
-<details><summary><h2>💡Co-sim with SUMO & CARLA</h2></summary>
-<p>
-
-LimSim supports co-simulation with CARLA and SUMO, guaranteeing that all three softwares show identical vehicle status.  Please see [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) for more information.
-
-<p align="center">
- <img src="assets/cosim.gif" title="" alt="cosim.gif" data-align="center" width="700">
-</p>
-
-
-</p>
-</details>
-
-
-
-## ➕Additional Maps
-
-LimSim supports the `freewayB` and `Expressway_A` maps from the CitySim datasets. However, we have not included these two road network files in this library due to copyright.
-
-To run these two maps, you need to:
-1. Go to [CitySim Repo](https://github.com/ozheng1993/UCF-SST-CitySim-Dataset#Full%20Data%20Access) and submit the data access form.
-2. Get access to the dataset and download the **`.net.xml` files** in both the `freewayB` and `Expressway_A` data folders.
-3. Copy the road network files (.net.xml) to the relevant `networkFiles/CitySim` folder and ensure that your file paths are as follows:
-   ```
-   networkFiles/CitySim/freewayB/freewayB.net.xml
-   networkFiles/CitySim/Expressway_A/Expressway_A.net.xml
-   ```
-
-## Acknowledgments
-
-We would like to thank the authors and developers of the following projects, this project is built upon these great projects.
-- [SUMO (Simulation of Urban MObility)](https://sumo.dlr.de/)
-- [CitySim](https://github.com/ozheng1993/UCF-SST-CitySim-Dataset)
-- [DearPyGUI](https://dearpygui.readthedocs.io/en/latest/?badge=latest)
-
-
-## Contact
-
-If you have any suggestions or collaboration about this repo, feel free to create a issue/PR or send email to us (<a href="mailto:wenlicheng@pjlab.org.cn">wenlicheng@pjlab.org.cn</a>).
-
-
-## Citation
-If you use LimSim in your research , please use the following BibTeX entry.
+```bash
+# Termnial 2
+cd path-to-carla/
+cd PythonAPI/util/
+python3 config.py --map Town06
 ```
-@misc{wen2023limsim,
-      title={LimSim: A Long-term Interactive Multi-scenario Traffic Simulator}, 
-      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou and Yikang Li and Yu Qiao},
-      year={2023},
-      eprint={2307.06648},
-      archivePrefix={arXiv},
-      primaryClass={eess.SY}
+
+Now the map in Carla is successfully switch to Town06 map.
+
+```bash
+# Termnial 2
+export OPENAI_API_KEY='your openai key'
+cd path-to-LimSimLLM/
+# python ExampleModel.py
+python ExampleVLMAgentCloseLoop.py
+```
+
+**Use memory module:** 
+
+To activate the memory module, set ``use_memory`` to True in ``ExampleLLMAgentCloseLoop.py``. The default setting uses 3-shots memory. You can modify it by variable `few_shot_num` in the file.
+
+### 2. Simulation replay 🎥
+In the root directory, running the following command will demonstrate the (M)LLMs decision-making process :
+
+```bash
+python ExampleReplay.py
+```
+
+> We've uploaded some simulation cases on OneDrive, which you can download and replay by clicking on the links: [Google Drive](https://drive.google.com/drive/folders/1x2H-wkl1XyxkSzkdMfnEEJMzn3QHnN_0?usp=drive_link).
+> 
+> If you want to try a close-loop simulation with memory module, you need to download the folder `memory_library` and put it under the `db/` path.
+
+### 3. Decisions evaluation 📝
+After the (M)LLMs' autonomous driving task is completed, running the following code will evaluate the (M)LLMs' decision results :
+
+```bash
+python ExampleEvaluator.py
+```
+
+Then you can see the scores for each frame of the decision in the database, and the evaluation result of the whole route in the file ``llm_decision_result.log``.
+
+### 4. Reflection & Memory 🧐
+
+- #### Auto-add memory
+The following command allows the LLM to self-reflect on this autonomous driving task and automatically add items to the memory library:
+
+```bash
+python simInfo/Memory.py
+```
+
+The memory database will be created in ``db/memory_library``. You can change the memory path at line 60 in the file ``simInfo/Memory.py``.
+
+- #### Maunal-add memory
+
+If you want to get a more intuitive feel for the entire decision-making process and want to be able to manually intervene in the reflection process, you can run the following code:
+
+```bash
+streamlit run manual_reflection.py
+```
+
+A web page will then pop up where you can view the reasoning process for each frame. The **`reflection`** button allows you to get the results of the reflection output by LLM. If you think that the reflection result from LLM is not reliable, you can change it directly in the **input box**. Finally, by clicking on the **`add to Memory`** button, the reflection for this frame decision will be added to the memory library.
+
+You can change the database path and memory path at line 128-137 in the file ``manual_reflection.py``.
+
+**Note: If the reflection result from LLM is short, you might consider changing to a different LLM model to achieve a better experience.**
+
+![Reflection Page](fig/manual_reflection_page.png)
+
+## Create Your Own Driving Agent
+
+### ⚙️ Prompt Engineering
+
+> LimSim++ supports user-defined prompts. 
+
+- You can change system prompt of the Driver Agent by modifying ``simInfo/system_message.txt``.
+- You can change QA pair example by modifying ``simInfo/example_QA.txt`` to make the Driver Agent better compliance with format requirements. 
+- Furthermore, you can customize the information description of the current scenario by modifying ``simInfo/prompt_template.json``. **Be careful not to modify the contents in `{}`.**
+
+### 💯 Model Evaluation
+
+> LimSim++ supports user-defined evaluation. 
+
+- The evaluation methods used in the baseline contain some hyperparameters. You can set your evaluation preferences by modifying ``simInfo/Evaluation.py``. 
+- You can completely replace the evaluation algorithm with your own algorithm.
+
+### 🦾 Framework Enhancement
+
+> LimSim++ supports the construction of tool libraries for customized applications .
+
+- You can add your own tools for Driver Agent in the project (``ExampleLLMAgentCloseLoop.py``, ``ExampleVLMAgentCloseLoop.py``).
+
+
+## License and Citation
+All assets and code in this repository are under the Apache 2.0 license. If you use LimSim++ in your research , please use the following BibTeX entry.
+```
+@article{fu2024limsim++,
+  title={LimSim++: A Closed-Loop Platform for Deploying Multimodal LLMs in Autonomous Driving},
+  author={Fu, Daocheng and Lei, Wenjie and Wen, Licheng and Cai, Pinlong and Mao, Song and Dou, Min and Shi, Botian and Qiao, Yu},
+  journal={arXiv preprint arXiv:2402.01246},
+  year={2024}
 }
 ```
 
-## License
-
-LimSim is released under the [GNU GPL v3.0 license](https://github.com/PJLab-ADG/limsim/blob/master/LICENSE).

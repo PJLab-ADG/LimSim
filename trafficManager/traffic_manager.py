@@ -14,10 +14,10 @@ from trafficManager.decision_maker.mcts_decision_maker import (
     EgoDecisionMaker,
     MultiDecisionMaker,
 )
-from planner.ego_vehicle_planner import EgoPlanner
+from planner.ego_vehicle_planner import LLMEgoPlanner
 from planner.multi_vehicle_planner import MultiVehiclePlanner
 from predictor.simple_predictor import UncontrolledPredictor
-from simModel.egoTracking.model import Model
+from simModel.Model import Model
 from trafficManager.decision_maker.abstract_decision_maker import AbstractEgoDecisionMaker, EgoDecision
 from trafficManager.planner.abstract_planner import AbstractEgoPlanner, AbstractMultiPlanner
 from trafficManager.predictor.abstract_predictor import AbstractPredictor
@@ -26,15 +26,12 @@ from utils.obstacles import StaticObstacle
 from utils.roadgraph import AbstractLane, JunctionLane, NormalLane, RoadGraph
 from utils import data_copy
 from utils.trajectory import State, Trajectory
-
 import logger
+from simInfo.CustomExceptions import LaneChangeException
 
 
 logging = logger.get_logger(__name__)
-
-global KEY_INPUT
-KEY_INPUT = ""
-
+    
 class TrafficManager:
     """
     TrafficManager is a class that manages the traffic simulation, including vehicle behavior updates,
@@ -66,35 +63,16 @@ class TrafficManager:
         self.config = load_config(config_file_path)
         self.last_decision_time = -self.config["DECISION_INTERVAL"]
         self.mul_decisions =None
-        self._set_up_keyboard_listener()
+        # self._set_up_keyboard_listener()
 
         self.predictor = predictor if predictor is not None else UncontrolledPredictor()
         self.ego_decision = ego_decision if ego_decision is not None else EgoDecisionMaker()
-        self.ego_planner = ego_planner if ego_planner is not None else EgoPlanner()
+        self.ego_planner = ego_planner if ego_planner is not None else LLMEgoPlanner()
         self.multi_decision = multi_decision if multi_decision is not None else MultiDecisionMaker()
         self.multi_veh_planner = multi_veh_planner if multi_veh_planner is not None else MultiVehiclePlanner()
 
-    def _set_up_keyboard_listener(self):
-
-        def on_press(key):
-            """
-            This function is used to detect the key press from the keyboard.
-            When the left arrow key or 'a' is pressed, the global variable KEY_INPUT is set to 'Left'.
-            When the right arrow key or 'd' is pressed, the global variable KEY_INPUT is set to 'Right'.
-            """
-            global KEY_INPUT
-            if key == keyboard.Key.left or key == keyboard.KeyCode.from_char(
-                    'a'):
-                KEY_INPUT = 'Left'
-            elif key == keyboard.Key.right or key == keyboard.KeyCode.from_char(
-                    'd'):
-                KEY_INPUT = 'Right'
-
-        listener = keyboard.Listener(on_press=on_press)
-        listener.start()  # start to listen on a separate thread
-
     def plan(self, T: float, roadgraph: RoadGraph,
-             vehicles_info: dict) -> Dict[int, Trajectory]:
+             vehicles_info: dict, ego_behaviour: Behaviour = Behaviour(8), other_plan: bool = True) -> Dict[int, Trajectory]:
         """
         This function plans the trajectories of vehicles in a given roadgraph. 
         It takes in the total time T, the roadgraph, and the vehicles_info as parameters. 
@@ -106,7 +84,6 @@ class TrafficManager:
         It then plans the trajectories of the vehicles and updates the last seen vehicles. 
         Finally, it returns the output trajectories.
         """
-        global KEY_INPUT
 
         start = time.time()
 
@@ -128,20 +105,28 @@ class TrafficManager:
                                             self.lastseen_vehicles,
                                             through_timestep, self.config)
 
-        # Update Behavior
-        for vehicle_id, vehicle in vehicles.items():
-            # only vehicles in AoI will be controlled
-            if vehicle.vtype == VehicleType.OUT_OF_AOI:
-                continue
-            vehicle.update_behaviour(roadgraph, KEY_INPUT)
-            KEY_INPUT = ""
-
         # make sure ego car exists when EGO_PLANNER is used
         if self.config["EGO_PLANNER"]:
             ego_id = vehicles_info.get("egoCar")["id"]
             if ego_id is None:
                 raise ValueError("Ego car is not found when EGO_PLANER is used.")
 
+        # Update Behavior
+        for vehicle_id, vehicle in vehicles.items():
+            # only vehicles in AoI will be controlled
+            if other_plan and vehicle.vtype == VehicleType.IN_AOI:
+                try:
+                    vehicle.update_behaviour(roadgraph)
+                except Exception as e:
+                    logging.error(f"Error when updating behaviour of vehicle {vehicle_id}: {e}")
+            if vehicle.vtype == VehicleType.EGO:
+                try:
+                    vehicle.update_behaviour(roadgraph)
+                except Exception as e:
+                    logging.error(f"Error when updating behaviour of vehicle {vehicle_id}: {e}")
+                    raise LaneChangeException()
+
+        # Decision Module
         ego_decision: EgoDecision = None
         if self.config["USE_DECISION_MAKER"] and T - self.last_decision_time >= self.config["DECISION_INTERVAL"]:
             if self.config["EGO_PLANNER"]:
@@ -150,30 +135,39 @@ class TrafficManager:
             self.mul_decisions = self.multi_decision.make_decision(
                 T, observation, roadgraph, prediction, self.config)
             self.last_decision_time = T
-        # Planner
-        result_paths = self.multi_veh_planner.plan(observation, roadgraph,
-                                                   prediction,
-                                                   multi_decision=self.mul_decisions,
-                                                   T=T, config=self.config)
 
-        # an example of ego planner
-        if self.config["EGO_PLANNER"]:
-            ego_path = self.ego_planner.plan(vehicles[ego_id], observation,
-                                             roadgraph, prediction, T,
-                                             self.config, ego_decision)
-            result_paths[ego_id] = ego_path
+        result_paths = dict()
+        # Planner
+        if other_plan:
+            result_paths = self.multi_veh_planner.plan(observation, roadgraph,
+                                                    prediction,
+                                                    multi_decision=self.mul_decisions,
+                                                    T=T, config=self.config)
+
+        # default: use the ego_planner, in trafficManager/planner/ego_vehicle_planner.py
+        # if self.config["EGO_PLANNER"]:
+        vehicles[ego_id].behaviour = ego_behaviour
+        ego_path = self.ego_planner.plan(vehicles[ego_id], observation,
+                                            roadgraph, prediction, T,
+                                            self.config)
+        result_paths[ego_id] = ego_path
 
         # Update Last Seen
         output_trajectories = {}
-        self.lastseen_vehicles = dict(
-            (vehicle_id, vehicle)
-            for vehicle_id, vehicle in vehicles.items()
-            if vehicle.vtype != VehicleType.OUT_OF_AOI)
+        if other_plan:
+            self.lastseen_vehicles = dict(
+                (vehicle_id, vehicle)
+                for vehicle_id, vehicle in vehicles.items()
+                if vehicle.vtype != VehicleType.OUT_OF_AOI)
+        else:
+            self.lastseen_vehicles = dict(
+                (vehicle_id, vehicle)
+                for vehicle_id, vehicle in vehicles.items()
+                if vehicle.vtype == VehicleType.EGO)
         for vehicle_id, trajectory in result_paths.items():
             self.lastseen_vehicles[vehicle_id].trajectory = trajectory
             output_trajectories[vehicle_id] = data_copy.deepcopy(trajectory)
             del output_trajectories[vehicle_id].states[0]
-
         # update self.T
         self.time_step = current_time_step
 

@@ -1,0 +1,21 @@
+# Configuration for the simulation
+
+# Logging level
+logging_level: "INFO"
+
+# Basic settings
+ego_id: 10
+sumo_gui: False
+sumo_cfg_file: './networkFiles/CarlaTown06/Town06.sumocfg'
+sumo_net_file: './networkFiles/CarlaTown06/Town06.net.xml'
+sumo_rou_file: './networkFiles/CarlaTown06/carlavtypes.rou.xml,networkFiles/CarlaTown06/Town06.rou.xml'
+carla_host: '127.0.0.1'
+carla_port: 2000
+step_length: 0.1
+tls_manager: 'sumo'
+sync_vehicle_color: True
+sync_vehicle_lights: True
+database: 'visionCloseLoop.db'
+
+# Decision settings
+decision_frequency: 2 # Hz

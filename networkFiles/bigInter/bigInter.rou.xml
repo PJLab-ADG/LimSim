@@ -72,6 +72,7 @@
     <vehicle id="58" depart="116.0" route="r_5"/>
     <vehicle id="59" depart="118.0" route="r_2"/>
     <vehicle id="60" depart="120.0" route="r_6"/>
+   
     <vehicle id="61" depart="122.0" route="r_3"/>
     <vehicle id="62" depart="124.0" route="r_9"/>
     <vehicle id="63" depart="126.0" route="r_11"/>
@@ -130,21 +131,25 @@
     <vehicle id="116" depart="232.0" route="r_1"/>
     <vehicle id="117" depart="234.0" route="r_0"/>
     <vehicle id="118" depart="236.0" route="r_2"/>
+    
     <vehicle id="119" depart="238.0" route="r_4"/>
     <vehicle id="120" depart="240.0" route="r_1"/>
     <vehicle id="121" depart="242.0" route="r_1"/>
     <vehicle id="122" depart="244.0" route="r_9"/>
     <vehicle id="123" depart="246.0" route="r_4"/>
+    
     <vehicle id="124" depart="248.0" route="r_3"/>
     <vehicle id="125" depart="250.0" route="r_3"/>
     <vehicle id="126" depart="252.0" route="r_6"/>
     <vehicle id="127" depart="254.0" route="r_5"/>
+    
     <vehicle id="128" depart="256.0" route="r_1"/>
     <vehicle id="129" depart="258.0" route="r_2"/>
     <vehicle id="130" depart="260.0" route="r_8"/>
     <vehicle id="131" depart="262.0" route="r_7"/>
     <vehicle id="132" depart="264.0" route="r_3"/>
     <vehicle id="133" depart="266.0" route="r_11"/>
+    
     <vehicle id="134" depart="268.0" route="r_6"/>
     <vehicle id="135" depart="270.0" route="r_4"/>
     <vehicle id="136" depart="272.0" route="r_10"/>
@@ -935,25 +940,32 @@
     <vehicle id="921" depart="1842.0" route="r_2"/>
     <vehicle id="922" depart="1844.0" route="r_6"/>
     <vehicle id="923" depart="1846.0" route="r_4"/>
-    <vehicle id="924" depart="1848.0" route="r_7"/>
+    <vehicle id="924" depart="1848.0">
+        <route edges="-E3 -E0"/>
+    </vehicle>
     <vehicle id="925" depart="1850.0" route="r_8"/>
     <vehicle id="926" depart="1852.0" route="r_0"/>
-    <vehicle id="927" depart="1854.0" route="r_6"/>
+    <vehicle id="927" depart="1854.0" route="r_1"/>
     <vehicle id="928" depart="1856.0" route="r_10"/>
-    <vehicle id="929" depart="1858.0" route="r_11"/>
-    <vehicle id="930" depart="1860.0" route="r_7"/>
+    <vehicle id="929" depart="1858.0" route="r_1"/>
+    <vehicle id="930" depart="1860.0" route="r_1"/>
     <vehicle id="931" depart="1862.0" route="r_8"/>
-    <vehicle id="932" depart="1864.0" route="r_2"/>
-    <vehicle id="933" depart="1866.0" route="r_1"/>
-    <vehicle id="934" depart="1868.0" route="r_4"/>
+    <vehicle id="932" depart="1864.0" route="r_7"/>
+    <vehicle id="933" depart="1866.0" route="r_2"/>
+    <vehicle id="934" depart="1868.0">
+        <route edges="-E3 -E0"/>
+    </vehicle>
     <vehicle id="935" depart="1870.0" route="r_10"/>
-    <vehicle id="936" depart="1872.0" route="r_9"/>
-    <vehicle id="937" depart="1874.0" route="r_8"/>
+    <vehicle id="936" depart="1872.0" route="r_7"/>
+    <vehicle id="937" depart="1874.0" route="r_7"/>
     <vehicle id="938" depart="1876.0" route="r_3"/>
     <vehicle id="939" depart="1878.0" route="r_6"/>
     <vehicle id="940" depart="1880.0" route="r_5"/>
     <vehicle id="941" depart="1882.0" route="r_5"/>
-    <vehicle id="942" depart="1884.0" route="r_8"/>
+    <!-- <vehicle id="942" depart="1884.0" route="r_8"/> -->
+    <vehicle id="942" depart="1884.0" departPos="430" departLane="2" arrivalPos="50">
+        <route edges="-E3 -E0"/>
+    </vehicle>
     <vehicle id="943" depart="1886.0" route="r_7"/>
     <vehicle id="944" depart="1888.0" route="r_9"/>
     <vehicle id="945" depart="1890.0" route="r_1"/>
@@ -965,7 +977,9 @@
     <vehicle id="951" depart="1902.0" route="r_10"/>
     <vehicle id="952" depart="1904.0" route="r_3"/>
     <vehicle id="953" depart="1906.0" route="r_6"/>
-    <vehicle id="954" depart="1908.0" route="r_7"/>
+    <vehicle id="954" depart="1908.0" departPos="300">
+        <route edges="-E3 -E0"/>
+    </vehicle>
     <vehicle id="955" depart="1910.0" route="r_7"/>
     <vehicle id="956" depart="1912.0" route="r_4"/>
     <vehicle id="957" depart="1914.0" route="r_1"/>
@@ -986,7 +1000,9 @@
     <vehicle id="972" depart="1944.0" route="r_6"/>
     <vehicle id="973" depart="1946.0" route="r_0"/>
     <vehicle id="974" depart="1948.0" route="r_0"/>
-    <vehicle id="975" depart="1950.0" route="r_9"/>
+    <vehicle id="975" depart="1950.0">
+        <route edges="-E3 -E0"/>
+    </vehicle>
     <vehicle id="976" depart="1952.0" route="r_1"/>
     <vehicle id="977" depart="1954.0" route="r_1"/>
     <vehicle id="978" depart="1956.0" route="r_0"/>
@@ -1007,7 +1023,8 @@
     <vehicle id="993" depart="1986.0" route="r_0"/>
     <vehicle id="994" depart="1988.0" route="r_8"/>
     <vehicle id="995" depart="1990.0" route="r_1"/>
-    <vehicle id="996" depart="1992.0" route="r_9"/>
+    <!-- <vehicle id="996" depart="1992.0" route="r_9"/> -->
+    
     <vehicle id="997" depart="1994.0" route="r_2"/>
     <vehicle id="998" depart="1996.0" route="r_6"/>
     <vehicle id="999" depart="1998.0" route="r_8"/>
@@ -1128,7 +1145,7 @@
     <vehicle id="1114" depart="2228.0" route="r_10"/>
     <vehicle id="1115" depart="2230.0" route="r_7"/>
     <vehicle id="1116" depart="2232.0" route="r_2"/>
-    <vehicle id="1117" depart="2234.0" route="r_9"/>
+    <vehicle id="1117" depart="2234.0" route="r_9"/>?
     <vehicle id="1118" depart="2236.0" route="r_8"/>
     <vehicle id="1119" depart="2238.0" route="r_2"/>
     <vehicle id="1120" depart="2240.0" route="r_3"/>

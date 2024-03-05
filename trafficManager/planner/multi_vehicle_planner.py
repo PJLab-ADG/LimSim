@@ -1,5 +1,5 @@
 import time
-from typing import Dict
+from typing import Dict, List
 
 from common.observation import Observation
 from common.vehicle import Behaviour, Vehicle, VehicleType
@@ -40,7 +40,7 @@ class MultiVehiclePlanner(AbstractMultiPlanner):
 
             obs_list = self.extract_obstacles(controlled_observation,
                                               uncontrolled_prediction,
-                                              vehicle,roadgraph)
+                                              vehicle, roadgraph)
             decision_list = self.find_decision(vehicle, multi_decision, T,
                                                config)
             # Plan for current vehicle
@@ -55,12 +55,13 @@ class MultiVehiclePlanner(AbstractMultiPlanner):
         return plan_result
 
     def generate_trajectory(
-        self, roadgraph:RoadGraph, T, config, vehicle: Vehicle, current_lane : AbstractLane, obs_list, decision_list
+        self, roadgraph: RoadGraph, T, config, vehicle: Vehicle, current_lane: AbstractLane, obs_list, decision_list
     ):
         next_lane = roadgraph.get_available_next_lane(
             current_lane.id, vehicle.available_lanes
         )
-        lanes = [current_lane, next_lane] if next_lane != None else [current_lane]
+        lanes = [current_lane, next_lane] if next_lane != None else [
+            current_lane]
 
         if vehicle.behaviour == Behaviour.KL:
             if self.is_waiting_for_green_light(current_lane, next_lane):
@@ -77,7 +78,8 @@ class MultiVehiclePlanner(AbstractMultiPlanner):
                             vehicle, lanes, obs_list, config, T, decision_list,
                         )
                         if path is None:
-                            logging.info("Fail to plan DECISION KL path for vehicle %s back to normal planner", vehicle.id)
+                            logging.info(
+                                "Fail to plan DECISION KL path for vehicle %s back to normal planner", vehicle.id)
                     if path is None:
                         path = traj_generator.lanekeeping_trajectory_generator(
                             vehicle, lanes, obs_list, config, T
@@ -93,7 +95,8 @@ class MultiVehiclePlanner(AbstractMultiPlanner):
             )
         elif vehicle.behaviour == Behaviour.LCL:
             # Turn Left
-            logging.debug(f"vehicle {vehicle.id} is planning to change to left lane")
+            logging.debug(
+                f"vehicle {vehicle.id} is planning to change to left lane")
             left_lane = roadgraph.get_lane_by_id(current_lane.left_lane())
             path = None
             if config["USE_DECISION_MAKER"] and decision_list is not None:
@@ -133,13 +136,14 @@ class MultiVehiclePlanner(AbstractMultiPlanner):
                 vehicle, lanes, obs_list, roadgraph, config, T,
             )
         else:
-            logging.error(f"Vehicle {vehicle.id} has unknown behaviour {vehicle.behaviour}")
+            logging.error(
+                f"Vehicle {vehicle.id} has unknown behaviour {vehicle.behaviour}")
 
         return path
 
     def find_decision(
         self, vehicle, mul_decisions, T, config
-    ) -> list[SingleStepDecision]:
+    ) -> List[SingleStepDecision]:
         if mul_decisions is not None:
             for dec_vehicle, decision_list in mul_decisions.results.items():
                 if (

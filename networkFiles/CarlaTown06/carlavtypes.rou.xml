@@ -16,16 +16,16 @@
   <vType id="vehicle.citroen.c3" length="3.9753477573394775" width="1.862074851989746" height="1.6257729530334473" vClass="passenger"/>
   <vType id="vehicle.ford.mustang" length="4.904701232910156" width="2.0606582164764404" height="1.478397011756897" vClass="passenger"/>
   <vType id="vehicle.tesla.model3" length="4.808821678161621" width="2.1695058345794678" height="1.5231821537017822" vClass="evehicle"/>
-  <vType id="vehicle.diamondback.century" length="1.6562436819076538" width="0.42141881585121155" height="1.49351167678833" vClass="bicycle"/>
+  <!-- <vType id="vehicle.diamondback.century" length="1.6562436819076538" width="0.42141881585121155" height="1.49351167678833" vClass="bicycle"/>
   <vType id="vehicle.gazelle.omafiets" length="1.843441367149353" width="0.4674844741821289" height="1.590073823928833" vClass="bicycle"/>
-  <vType id="vehicle.harley-davidson.low_rider" length="2.350175619125366" width="0.7662330269813538" height="1.4637391567230225" vClass="motorcycle"/>
-  <vType id="vehicle.bh.crossbike" length="1.5093227624893188" width="0.8659406304359436" height="1.5306309461593628" vClass="bicycle"/>
+  <vType id="vehicle.harley-davidson.low_rider" length="2.350175619125366" width="0.7662330269813538" height="1.4637391567230225" vClass="motorcycle"/> -->
+  <!-- <vType id="vehicle.bh.crossbike" length="1.5093227624893188" width="0.8659406304359436" height="1.5306309461593628" vClass="bicycle"/> -->
   <vType id="vehicle.tesla.cybertruck" length="6.364232063293457" width="2.3934903144836426" height="2.1439828872680664" vClass="evehicle"/>
   <vType id="vehicle.volkswagen.t2" length="4.473711013793945" width="1.8112499713897705" height="2.0543651580810547" vClass="passenger" guiShape="passenger/van"/>
-  <vType id="vehicle.kawasaki.ninja" length="2.043684244155884" width="0.7969123125076294" height="1.374603033065796" vClass="motorcycle"/>
+  <!-- <vType id="vehicle.kawasaki.ninja" length="2.043684244155884" width="0.7969123125076294" height="1.374603033065796" vClass="motorcycle"/> -->
   <vType id="vehicle.lincoln.mkz_2017" length="4.904701232910156" width="2.0606582164764404" height="1.478397011756897" vClass="passenger"/>
   <vType id="vehicle.seat.leon" length="4.207873821258545" width="1.8198652267456055" height="1.4694602489471436" vClass="passenger"/>
-  <vType id="vehicle.yamaha.yzf" length="2.1907684803009033" width="0.7662330269813538" height="1.6345058679580688" vClass="motorcycle"/>
+  <!-- <vType id="vehicle.yamaha.yzf" length="2.1907684803009033" width="0.7662330269813538" height="1.6345058679580688" vClass="motorcycle"/> -->
   <vType id="vehicle.nissan.patrol" length="4.519999980926514" width="1.9199999570846558" height="1.8871309757232666" vClass="passenger"/>
   <vType id="vehicle.nissan.micra" length="3.6688475608825684" width="1.8561522960662842" height="1.5232137441635132" vClass="passenger"/>
 </routes>

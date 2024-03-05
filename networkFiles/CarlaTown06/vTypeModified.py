@@ -33,6 +33,6 @@ def rewrite_route_file(
 if __name__ == '__main__':
     originalFile = './output.rou.xml'
     vTypesFile = 'carlavtypes.rou.xml'
-    rewriteFile = 'Town05.rou.xml'
+    rewriteFile = 'Town06.rou.xml'
     vTypes = get_all_vTypes(vTypesFile)
     rewrite_route_file(originalFile, vTypes, rewriteFile)

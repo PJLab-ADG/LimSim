@@ -14,7 +14,7 @@ import numpy as np
 from common.vehicle import Vehicle
 from common import cost
 
-from utils.roadgraph import AbstractLane, JunctionLane, RoadGraph,NormalLane
+from utils.roadgraph import AbstractLane, JunctionLane, RoadGraph, NormalLane
 from utils.obstacles import ObsType, Obstacle
 from utils.trajectory import State, Trajectory
 
@@ -106,11 +106,13 @@ def lanechange_trajectory_generator(
                     best_path = path
 
     if best_path is not None:
-        logging.debug(f"Vehicle {vehicle.id} found a lane change path with cost: {best_cost}")
+        logging.debug(
+            f"Vehicle {vehicle.id} found a lane change path with cost: {best_cost}")
         return best_path
 
     # return stop path
-    logging.info(f"vehicle {vehicle.id} found no lane change paths, calculating a stop path instead.")
+    logging.info(
+        f"vehicle {vehicle.id} found no lane change paths, calculating a stop path instead.")
 
     stop_path = frenet_optimal_planner.calc_stop_path(state_in_target_lane,
                                                       vehicle.max_decel,
@@ -126,7 +128,7 @@ def lanechange_trajectory_generator(
 
 
 def stop_trajectory_generator(vehicle: Vehicle,
-                              lanes: list[AbstractLane],
+                              lanes: List[AbstractLane],
                               obs_list: List[Obstacle],
                               roadgraph: RoadGraph,
                               config,
@@ -139,7 +141,7 @@ def stop_trajectory_generator(vehicle: Vehicle,
     dt = config["DT"]
     max_acc = vehicle.max_accel
     car_length = vehicle.length
-    
+
     # Step 1: find the right stopping position
     s = np.linspace(
         current_state.s,
@@ -195,7 +197,8 @@ def stop_trajectory_generator(vehicle: Vehicle,
                         obs.future_trajectory.states[i].x,
                         obs.future_trajectory.states[i].y)
                     if obs_s <= s[0] or obs_s >= s[-1]:
-                        next_lane = roadgraph.get_lane_by_id(current_lane.next_lane_id)
+                        next_lane = roadgraph.get_lane_by_id(
+                            current_lane.next_lane_id)
                         nextlane_spline = next_lane.course_spline
                         obs_s, obs_d = nextlane_spline.cartesian_to_frenet1D(
                             obs.future_trajectory.states[i].x,
@@ -203,14 +206,17 @@ def stop_trajectory_generator(vehicle: Vehicle,
                         obs_s += current_lane.course_spline.s[-1]
                     obs_near_d = max(0, abs(obs_d) - obs.shape.width / 2)
                     if obs_near_d < current_lane.width / 2:
-                        min_s = min(min_s, obs_s - obs.shape.length - car_length)
+                        min_s = min(min_s, obs_s -
+                                    obs.shape.length - car_length)
             else:  # in normal lane
-                if isinstance(roadgraph.get_lane_by_id(obs.lane_id),NormalLane):
+                if isinstance(roadgraph.get_lane_by_id(obs.lane_id), NormalLane):
                     edge_1 = current_lane.affiliated_edge
-                    edge_2 = roadgraph.get_lane_by_id(obs.lane_id).affiliated_edge
+                    edge_2 = roadgraph.get_lane_by_id(
+                        obs.lane_id).affiliated_edge
                     if edge_1 != edge_2:
                         continue
-                    obs_state_on_current_lane = obs.update_frenet_coord_in_lane(current_lane)
+                    obs_state_on_current_lane = obs.update_frenet_coord_in_lane(
+                        current_lane)
                     obs_s, obs_d = obs_state_on_current_lane.s, obs_state_on_current_lane.d
                     if obs_s <= s[0] or obs_s >= s[-1]:
                         continue
@@ -234,7 +240,7 @@ def stop_trajectory_generator(vehicle: Vehicle,
                     # next_lane = roadgraph.get_available_next_lane(
                     #     current_lane.id, vehicle.available_lanes
                     # )
-                    next_lanes =list(current_lane.next_lanes.values())
+                    next_lanes = list(current_lane.next_lanes.values())
                     next_lanes = [l[0] for l in next_lanes]
                     if (
                         next_lanes is not None
@@ -248,14 +254,15 @@ def stop_trajectory_generator(vehicle: Vehicle,
                             - car_length / 2
                             - 2.0,
                         )
-    # Step 2: 
+    # Step 2:
     path = Trajectory()
     if (current_state.vel <= 1.0 and
-        (min_s - current_state.s) <= car_length):  # already stopped, keep it
+            (min_s - current_state.s) <= car_length):  # already stopped, keep it
         logging.debug(f"Vehicle {vehicle.id} Already stopped")
         path = Trajectory()
         for t in np.arange(0, course_t, dt):
-            path.states.append(State(t=t, s=current_state.s, d=current_state.d))
+            path.states.append(
+                State(t=t, s=current_state.s, d=current_state.d))
         path.frenet_to_cartesian(lanes, vehicle.current_state)
         path.cost = (
             cost.smoothness(path, lanes[0].course_spline, config["weights"]) *
@@ -277,7 +284,7 @@ def stop_trajectory_generator(vehicle: Vehicle,
                          (target_vel - current_state.s_d) / 1.3) * course_t)
             target_state = State(s=target_s, s_d=target_vel, d=0)
             if target_vel > current_state.s_d:
-                current_state.s_dd = max(1e-2,current_state.s_dd)
+                current_state.s_dd = max(1e-2, current_state.s_dd)
 
         path = frenet_optimal_planner.calc_spec_path(current_state,
                                                      target_state, course_t, dt
@@ -342,7 +349,7 @@ def stop_trajectory_generator(vehicle: Vehicle,
 
 
 def lanekeeping_trajectory_generator(vehicle: Vehicle,
-                                     lanes: list[AbstractLane], obs_list,
+                                     lanes: List[AbstractLane], obs_list,
                                      config, T) -> Trajectory:
     road_width = lanes[0].width
     current_state = vehicle.current_state
@@ -368,7 +375,8 @@ def lanekeeping_trajectory_generator(vehicle: Vehicle,
         speed_limit = 25 / 3.6
         if len(lanes) > 1:
             speed_limit = min(speed_limit, lanes[1].speed_limit)
-        sample_vel = np.linspace(min(current_state.vel, 10 / 3.6), speed_limit, 4)
+        sample_vel = np.linspace(
+            min(current_state.vel, 10 / 3.6), speed_limit, 4)
     else:
         sample_vel = np.linspace(
             max(1e-9, current_state.vel - d_t_sample * n_s_d_sample),
@@ -387,7 +395,8 @@ def lanekeeping_trajectory_generator(vehicle: Vehicle,
         for path in center_paths:
             path.frenet_to_cartesian(lanes, current_state)
             path.cost = (
-                cost.smoothness(path, lanes[0].course_spline, config["weights"])
+                cost.smoothness(
+                    path, lanes[0].course_spline, config["weights"])
                 * dt + cost.vel_diff(path, target_vel, config["weights"]) * dt +
                 cost.guidance(path, config["weights"]) * dt +
                 cost.acc(path, config["weights"]) * dt +
@@ -399,7 +408,7 @@ def lanekeeping_trajectory_generator(vehicle: Vehicle,
 
     if best_path is not None:
         return best_path
-    
+
     # Step 3: If no valid path, Generate nudge trajectories
     paths = frenet_optimal_planner.calc_frenet_paths(current_state, sample_d,
                                                      sample_t, sample_vel, dt,
@@ -409,7 +418,8 @@ def lanekeeping_trajectory_generator(vehicle: Vehicle,
         for path in paths:
             path.frenet_to_cartesian(lanes, current_state)
             path.cost = (
-                cost.smoothness(path, lanes[0].course_spline, config["weights"])
+                cost.smoothness(
+                    path, lanes[0].course_spline, config["weights"])
                 * dt + cost.vel_diff(path, target_vel, config["weights"]) * dt +
                 cost.guidance(path, config["weights"]) * dt +
                 cost.acc(path, config["weights"]) * dt +
@@ -435,7 +445,8 @@ def lanekeeping_trajectory_generator(vehicle: Vehicle,
                                                       sample_t[0], dt, config)
     stop_path.frenet_to_cartesian(lanes, current_state)
     stop_path.cost = (
-        cost.smoothness(stop_path, lanes[0].course_spline, config["weights"]) * dt
+        cost.smoothness(
+            stop_path, lanes[0].course_spline, config["weights"]) * dt
         + cost.guidance(stop_path, config["weights"]) * dt
         + cost.acc(stop_path, config["weights"]) * dt
         + cost.jerk(stop_path, config["weights"]) * dt
@@ -446,11 +457,11 @@ def lanekeeping_trajectory_generator(vehicle: Vehicle,
 
 def decision_trajectory_generator(
     vehicle: Vehicle,
-    lanes: list[AbstractLane],
+    lanes: List[AbstractLane],
     obs_list,
     config,
     T,
-    decision_list: list[SingleStepDecision],
+    decision_list: List[SingleStepDecision],
 ) -> Trajectory:
     d_road_w = config["D_ROAD_W"]
     d_vel = config["D_T_S"] / 3.6
@@ -489,22 +500,24 @@ def decision_trajectory_generator(
             5,
         )
         sample_vel = np.linspace(
-            max(1e-9, decision.expected_state.vel - 3* d_vel),
+            max(1e-9, decision.expected_state.vel - 3 * d_vel),
             min(decision.expected_state.vel + d_vel, lanes[0].speed_limit),
             10,
         )
 
         seg_paths = frenet_optimal_planner.calc_frenet_paths(
             current_state, sample_d, [seg_time], sample_vel, dt, config
-        )  
+        )
         offset_frame = len(fullpath.states)
         best_path = None
         best_cost = math.inf
         for path in seg_paths:
             path.frenet_to_cartesian(lanes, current_state)
             path.cost = (
-                cost.smoothness(path, lanes[0].course_spline, config["weights"]) * dt
-                + cost.vel_diff(path, vehicle.target_speed, config["weights"]) * dt
+                cost.smoothness(
+                    path, lanes[0].course_spline, config["weights"]) * dt
+                + cost.vel_diff(path, vehicle.target_speed,
+                                config["weights"]) * dt
                 + cost.guidance(path, config["weights"]) * dt
                 + cost.acc(path, config["weights"]) * dt
                 + cost.jerk(path, config["weights"]) * dt

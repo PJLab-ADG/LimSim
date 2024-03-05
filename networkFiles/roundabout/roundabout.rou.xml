@@ -327,9 +327,9 @@
     <vehicle id="96" depart="192.00">
         <route edges="-E2 E11 E9"/>
     </vehicle>
-    <!-- <vehicle id="97" depart="194.00">
-        <route edges="E0 E9 E8"/>
-    </vehicle> -->
+    <vehicle id="97" depart="194.00" departPos="180" departLane="1" arrivalPos="100">
+        <route edges="-E3 E8 E10"/>
+    </vehicle>
     <vehicle id="98" depart="196.00">
         <route edges="E11 -E00"/>
     </vehicle>
@@ -339,9 +339,9 @@
     <vehicle id="100" depart="200.00">
         <route edges="E9"/>
     </vehicle>
-    <vehicle id="101" depart="202.00">
+    <!-- <vehicle id="101" depart="202.00">
         <route edges="E8 E10"/>
-    </vehicle>
+    </vehicle> -->
     <vehicle id="102" depart="204.00">
         <route edges="E0 E9 E8 E7 E20"/>
     </vehicle>

@@ -35,8 +35,8 @@ class Behaviour(IntEnum):
     STOP = 5
     IN_JUNCTION = 6
     OVERTAKE = 7
+    IDLE = 8
     OTHER = 100
-
 
 class VehicleType(str, Enum):
     EGO = "Ego_Car"
@@ -172,7 +172,7 @@ class Vehicle:
             logging.warning(
                 f"Key command Vehicle {self.id} to change Right lane")
 
-    def update_behaviour(self, roadgraph: RoadGraph, manual_input: str = None) -> None:
+    def update_behaviour(self, roadgraph: RoadGraph) -> None:
         """Update the behaviour of a vehicle.
 
         Args:
@@ -182,8 +182,6 @@ class Vehicle:
         logging.debug(
             f"Vehicle {self.id} is in lane {self.lane_id}, "
             f"In available_lanes? {current_lane.id in self.available_lanes}")
-
-        self.update_behavior_with_manual_input(manual_input, current_lane)
 
         # Lane change behavior
         if isinstance(current_lane, NormalLane):
@@ -244,7 +242,11 @@ class Vehicle:
             if isinstance(current_lane, NormalLane):
                 next_lane = roadgraph.get_available_next_lane(
                     current_lane.id, self.available_lanes)
-                self.lane_id = next_lane.id
+                try:
+                    self.lane_id = next_lane.id
+                except AttributeError as e:
+                    print(self.id)
+                    logging.error(f"Vehicle {self.id} cannot switch to the next lane, the reason is {e}")
                 self.current_state = self.get_state_in_lane(next_lane)
                 current_lane = next_lane
             elif isinstance(current_lane, JunctionLane):

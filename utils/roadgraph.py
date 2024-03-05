@@ -7,7 +7,7 @@ Copyright (c) 2022 by PJLab, All Rights Reserved.
 from __future__ import annotations
 from cubic_spline import Spline2D
 import numpy as np
-from typing import Dict, Set
+from typing import Dict, Set, Union
 from dataclasses import dataclass, field
 from collections import defaultdict
 from abc import ABC
@@ -47,13 +47,6 @@ class Edge:
     _waypoints_x: list[float] = None
     _waypoints_y: list[float] = None
 
-    @property
-    def edge_width(self):
-        ew = 0
-        for lane in self.lanes:
-            ew += lane.width
-        return ew
-
     def __hash__(self):
         return hash(self.id)
 
@@ -71,6 +64,9 @@ class AbstractLane(ABC):
     width: float = 0
     speed_limit: float = 13.89
     sumo_length: float = 0
+    laneType: str = ''
+    laneAllow: str = ''
+    laneDisallow: str = ''
     course_spline: Spline2D = None
 
     @property
@@ -134,32 +130,13 @@ class JunctionLane(AbstractLane):
     last_lane_id: str = None
     next_lane_id: str = None  # next lane's id
     affJunc: str = None   # affiliated junction ID
-    tlLogic: str = None
     tlsIndex: int = 0
     currTlState: str = None   # current traffic light phase state: r, g, y etc.
-    # remain time (second)  switch to next traffic light phase.
-    switchTime: float = 0.0
-    nexttTlState: str = None   # next traffic light phase state: r, g, y etc.
 
     def __repr__(self) -> str:
-        return f"JunctionLane(id={self.id} tlState={self.currTlState} switchTime={self.switchTime})"
+        return f"JunctionLane(id={self.id} tlState={self.currTlState})"
         # return f"JunctionLane(id={self.id}, width = {self.width}, next_lane={self.next_lane})"
 
-
-@dataclass
-class TlLogic:
-    id: str = None
-    tlType: str = None   # static or actuated
-    preDefPhases: list[str] = None
-
-    def currPhase(self, currPhaseIndex: int) -> str:
-        return self.preDefPhases[currPhaseIndex]
-
-    def nextPhase(self, currPhaseIndex: int) -> str:
-        if currPhaseIndex < len(self.preDefPhases)-1:
-            return self.preDefPhases[currPhaseIndex+1]
-        else:
-            return self.preDefPhases[0]
 
 
 @dataclass
@@ -172,7 +149,7 @@ class RoadGraph:
     lanes: Dict[str, AbstractLane] = field(default_factory=dict)
     junction_lanes: Dict[str, JunctionLane] = field(default_factory=dict)
 
-    def get_lane_by_id(self, lane_id: str) -> AbstractLane:
+    def get_lane_by_id(self, lane_id: str) -> Union[NormalLane, JunctionLane]:
         if lane_id in self.lanes:
             return self.lanes[lane_id]
         elif lane_id in self.junction_lanes:
@@ -181,7 +158,7 @@ class RoadGraph:
             logging.debug(f"cannot find lane {lane_id}")
             return None
 
-    def get_next_lane(self, lane_id: str) -> AbstractLane:
+    def get_next_lane(self, lane_id: str)  -> Union[NormalLane, JunctionLane]:
         lane = self.get_lane_by_id(lane_id)
         if isinstance(lane, NormalLane):
             next_lanes = list(lane.next_lanes.values())
