@@ -38,6 +38,7 @@ Finally, you need to create environments using the ``environment.yml``:
 cd LimSimLLM
 # checkout to LimSim++ branch
 git checkout LimSim_plus
+# create conda environment
 conda env create -f environment.yml
 ```
 
