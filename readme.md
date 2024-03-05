@@ -36,6 +36,7 @@ Finally, you need to create environments using the ``environment.yml``:
 
 ```powershell
 cd LimSimLLM
+git checkout LimSim_plus
 conda env create -f environment.yml
 ```
 
