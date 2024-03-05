@@ -29,13 +29,14 @@ To run this project in minutes, check [Getting Started](#Getting-Started).
 After configuring the runtime environment, download the LimSim++ source code to your local machine:
 
 ```powershell
-git clone https://github.com/Fdarco/LimSimLLM.git
+git clone https://github.com/PJLab-ADG/LimSim.git
 ```
 
 Finally, you need to create environments using the ``environment.yml``:
 
 ```powershell
 cd LimSimLLM
+# checkout to LimSim++ branch
 git checkout LimSim_plus
 conda env create -f environment.yml
 ```
