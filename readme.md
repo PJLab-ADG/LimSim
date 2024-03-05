@@ -7,6 +7,7 @@
 
 ## 🚀News: 
 
+- **2024/03/05** [LimSim++](https://github.com/PJLab-ADG/LimSim/tree/LimSim_plus) is now released!
 - **2023/07/26** Add [the docs](https://pjlab-adg.github.io/LimSim/zh/GettingStarted/carla_cosim/) about co-sim with CARLA.
 - **2023/07/13** The code is now released!
   
