@@ -35,7 +35,7 @@ git clone https://github.com/PJLab-ADG/LimSim.git
 Finally, you need to create environments using the ``environment.yml``:
 
 ```powershell
-cd LimSimLLM
+cd LimSim
 # checkout to LimSim++ branch
 git checkout LimSim_plus
 # create conda environment
@@ -79,7 +79,7 @@ Now the map in Carla is successfully switch to Town06 map.
 ```bash
 # Termnial 2
 export OPENAI_API_KEY='your openai key'
-cd path-to-LimSimLLM/
+cd path-to-LimSim/
 # python ExampleModel.py
 python ExampleVLMAgentCloseLoop.py
 ```
