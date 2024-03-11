@@ -2,25 +2,25 @@ name: limsim_plus
 channels:
   - defaults
 dependencies:
-  - _libgcc_mutex=0.1=main
-  - _openmp_mutex=5.1=1_gnu
-  - ca-certificates=2023.12.12=h06a4308_0
-  - ld_impl_linux-64=2.38=h1181459_1
-  - libffi=3.3=he6710b0_2
-  - libgcc-ng=11.2.0=h1234567_1
-  - libgomp=11.2.0=h1234567_1
-  - libstdcxx-ng=11.2.0=h1234567_1
-  - ncurses=6.4=h6a678d5_0
-  - openssl=1.1.1w=h7f8727e_0
-  - pip=23.3.1=py38h06a4308_0
-  - python=3.8.10=h12debd9_8
-  - readline=8.2=h5eee18b_0
-  - setuptools=68.2.2=py38h06a4308_0
-  - sqlite=3.41.2=h5eee18b_0
-  - tk=8.6.12=h1ccaba5_0
-  - wheel=0.41.2=py38h06a4308_0
-  - xz=5.4.5=h5eee18b_0
-  - zlib=1.2.13=h5eee18b_0
+  - _libgcc_mutex=0.1
+  - _openmp_mutex=5.1
+  - ca-certificates=2023.12.12
+  - ld_impl_linux-64=2.38
+  - libffi=3.3
+  - libgcc-ng=11.2.0
+  - libgomp=11.2.0
+  - libstdcxx-ng=11.2.0
+  - ncurses=6.4
+  - openssl=1.1.1w
+  - pip=23.3.1
+  - python=3.8.10
+  - readline=8.2
+  - setuptools=68.2.2
+  - sqlite=3.41.2
+  - tk=8.6.12
+  - wheel=0.41.2
+  - xz=5.4.5
+  - zlib=1.2.13
   - pip:
       - aiofiles==23.2.1
       - aiohttp==3.8.6
@@ -80,7 +80,7 @@ dependencies:
       - httpcore==1.0.1
       - httptools==0.6.1
       - httpx==0.25.1
-      - huggingface-hub==0.17.3
+      - huggingface-hub==0.21.3
       - humanfriendly==10.0
       - idna==3.4
       - imageio==2.32.0
@@ -91,6 +91,7 @@ dependencies:
       - jax-jumpy==1.0.0
       - jedi==0.19.1
       - jinja2==3.1.2
+      - joblib==1.3.2
       - jsonpatch==1.33
       - jsonpointer==2.4
       - jsonschema==4.19.2
@@ -120,6 +121,8 @@ dependencies:
       - nbclient==0.9.0
       - nbconvert==7.16.1
       - nbformat==5.9.2
+      - networkx==3.1
+      - nltk==3.8.1
       - numpy==1.24.3
       - onnxruntime==1.16.1
       - openai==0.28.0
@@ -133,8 +136,10 @@ dependencies:
       - pexpect==4.9.0
       - pickleshare==0.7.5
       - pillow==10.0.1
+      - pipreqs==0.5.0
       - pkgutil-resolve-name==1.3.10
       - platformdirs==4.2.0
+      - plotly==5.19.0
       - posthog==3.0.2
       - proglog==0.1.10
       - prompt-toolkit==3.0.43
@@ -166,8 +171,12 @@ dependencies:
       - retrying==1.3.4
       - rich==13.6.0
       - rpds-py==0.12.0
+      - safetensors==0.4.2
+      - scikit-learn==1.3.2
       - scipy==1.10.1
       - semantic-version==2.10.0
+      - sentence-transformers==2.2.2
+      - sentencepiece==0.2.0
       - six==1.16.0
       - smmap==5.0.1
       - sniffio==1.3.0
@@ -179,9 +188,10 @@ dependencies:
       - sumolib==1.19.0
       - sympy==1.12
       - tenacity==8.2.3
+      - threadpoolctl==3.3.0
       - tiktoken==0.5.1
       - tinycss2==1.2.1
-      - tokenizers==0.14.1
+      - tokenizers==0.15.2
       - toml==0.10.2
       - toolz==0.12.0
       - tornado==6.4
