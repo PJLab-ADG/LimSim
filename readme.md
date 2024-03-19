@@ -9,6 +9,8 @@ The following video shows the process of autonomous driving with VLM.  The top o
 
 https://github.com/Fdarco/LimSimLLM/assets/62456817/1b6491b7-e4d9-4e2b-8a30-fc4a9df7c3b8
 
+[![](https://www.bilibili.com/video/BV1Eu4m1M7Y4)](https://www.bilibili.com/video/BV1Eu4m1M7Y4)
+
 To run this project in minutes, check [Getting Started](#Getting-Started).
 
 ## Features
