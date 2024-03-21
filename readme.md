@@ -7,8 +7,6 @@
 
 LimSim++: an extended version of LimSim designed for the application of Multimodal Large Language Models ((M)LLMs) in autonomous driving. LimSim++ addresses the need for a long-term closed-loop infrastructure supporting continuous learning and improved generalization in autonomous driving.
 
-The following video shows the process of autonomous driving with VLM.  The top of the GUI is the image information in Carla, the left is the information description of the current scene, and the right is the reasoning process of LLM.
-
 <!-- https://github.com/Fdarco/LimSimLLM/assets/62456817/1b6491b7-e4d9-4e2b-8a30-fc4a9df7c3b8 -->
 
 [![](fig/LimSim++.jpg)](https://www.bilibili.com/video/BV1Eu4m1M7Y4)
