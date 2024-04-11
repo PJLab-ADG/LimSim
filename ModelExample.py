@@ -11,6 +11,10 @@ file_paths = {
         "networkFiles/corridor/corridor.net.xml",
         "networkFiles/corridor/corridor.rou.xml",
     ),
+    "CarlaTown01": (
+        "networkFiles/CarlaTown01/Town01.net.xml",
+        "networkFiles/CarlaTown01/carlavtypes.rou.xml,networkFiles/CarlaTown01/Town01.rou.xml",
+    ),
     "CarlaTown05": (
         "networkFiles/CarlaTown05/Town05.net.xml",
         "networkFiles/CarlaTown05/carlavtypes.rou.xml,networkFiles/CarlaTown05/Town05.rou.xml",

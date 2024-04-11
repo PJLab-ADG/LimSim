@@ -13,6 +13,7 @@ import numpy as np
 import traci
 from rich import print
 from traci import TraCIException
+from typing import Dict
 
 from simModel.common.carFactory import Vehicle, egoCar
 from simModel.common.gui import GUI
@@ -520,7 +521,7 @@ class Model:
             for v in self.ms.currVehicles.values():
                 self.vehMoveStep(v)
 
-    def setTrajectories(self, trajectories: dict[str, Trajectory]):
+    def setTrajectories(self, trajectories: Dict[str, Trajectory]):
         for k, v in trajectories.items():
             if k == self.ego.id:
                 self.ego.plannedTrajectory = v

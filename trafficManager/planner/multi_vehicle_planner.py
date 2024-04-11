@@ -1,5 +1,5 @@
 import time
-from typing import Dict
+from typing import Dict, List
 
 from common.observation import Observation
 from common.vehicle import Behaviour, Vehicle, VehicleType
@@ -139,7 +139,7 @@ class MultiVehiclePlanner(AbstractMultiPlanner):
 
     def find_decision(
         self, vehicle, mul_decisions, T, config
-    ) -> list[SingleStepDecision]:
+    ) -> List[SingleStepDecision]:
         if mul_decisions is not None:
             for dec_vehicle, decision_list in mul_decisions.results.items():
                 if (

@@ -1,5 +1,6 @@
 import dearpygui.dearpygui as dpg
 from utils.simBase import CoordTF
+from typing import Tuple
 
 
 class GUI:
@@ -321,7 +322,7 @@ class GUI:
         else:
             raise TypeError('Nonexistent mode!')
         
-    def drawMainWindowWhiteBG(self, pmin: tuple[float], pmax: tuple[float]):
+    def drawMainWindowWhiteBG(self, pmin: Tuple[float], pmax: Tuple[float]):
         centerx = (pmin[0] + pmax[0]) / 2
         centery = (pmin[1] + pmax[1]) / 2
         dpg.draw_rectangle(

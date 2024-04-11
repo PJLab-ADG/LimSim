@@ -17,6 +17,7 @@ from utils.roadgraph import RoadGraph, NormalLane, JunctionLane
 from utils import data_copy
 from abstract_decision_maker import MultiDecision
 from predictor.abstract_predictor import Prediction
+from typing import Dict, List
 
 
 class FlowState:
@@ -28,13 +29,13 @@ class FlowState:
 
     def __init__(
         self,
-        states_list: list,
+        states_list: List,
         road_graph: RoadGraph,
-        actions: dict[str, list],
+        actions: Dict[str, List],
         complete_decisions: MultiDecision,
         prediction: Prediction,
         time: float,
-        config: dict,
+        config: Dict,
     ) -> None:
         self.states_list = states_list
         self.time = time

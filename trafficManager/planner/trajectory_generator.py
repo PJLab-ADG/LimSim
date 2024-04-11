@@ -126,7 +126,7 @@ def lanechange_trajectory_generator(
 
 
 def stop_trajectory_generator(vehicle: Vehicle,
-                              lanes: list[AbstractLane],
+                              lanes: List[AbstractLane],
                               obs_list: List[Obstacle],
                               roadgraph: RoadGraph,
                               config,
@@ -342,7 +342,7 @@ def stop_trajectory_generator(vehicle: Vehicle,
 
 
 def lanekeeping_trajectory_generator(vehicle: Vehicle,
-                                     lanes: list[AbstractLane], obs_list,
+                                     lanes: List[AbstractLane], obs_list,
                                      config, T) -> Trajectory:
     road_width = lanes[0].width
     current_state = vehicle.current_state
@@ -446,11 +446,11 @@ def lanekeeping_trajectory_generator(vehicle: Vehicle,
 
 def decision_trajectory_generator(
     vehicle: Vehicle,
-    lanes: list[AbstractLane],
+    lanes: List[AbstractLane],
     obs_list,
     config,
     T,
-    decision_list: list[SingleStepDecision],
+    decision_list: List[SingleStepDecision],
 ) -> Trajectory:
     d_road_w = config["D_ROAD_W"]
     d_vel = config["D_T_S"] / 3.6
