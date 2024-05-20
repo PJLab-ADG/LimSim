@@ -1,7 +1,7 @@
 # LimSim++: A Closed-Loop Platform for Deploying Multimodal LLMs in Autonomous Driving
 
 [![Custom badge](https://img.shields.io/badge/paper-Arxiv-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2402.01246)
-[![Custom badge](https://img.shields.io/badge/Project-page-green?logo=document)](https://pjlab-adg.github.io/limsim_plus/)
+[![Custom badge](https://img.shields.io/badge/Project-page-green?logo=document)](https://pjlab-adg.github.io/limsim-plus/)
 [![Custom badge](https://img.shields.io/badge/bilibili-DTSM-blue?logo=bilibili)](https://www.bilibili.com/video/BV1Eu4m1M7Y4/)
 
 
