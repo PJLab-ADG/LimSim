@@ -51,7 +51,7 @@ OpenDrive files are available in ``networkFiles/CarlaTown`` got from [CARLA](htt
 
 - Modify the traffic demands (optional):
 ```powershell
-vit demands.txt
+vi demands.txt
 ```
 
 ## Module Introduction
