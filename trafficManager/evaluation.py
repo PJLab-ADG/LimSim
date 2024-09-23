@@ -148,12 +148,11 @@ class ScoreCalculator:
                     junction = self.netInfo.junctions[road.junction]
                     if junction not in shapes:
                         shapes.append(junction)
-                        road_polys.append(ShapelyPolygon(junction.boundary).buffer(0))
+                        road_polys.append(self.netInfo.junctionPolys[junction.id])
                 else:
                     if road not in shapes:
                         shapes.append(road)
-                        road_polys.append(ShapelyPolygon(road.boundary).buffer(0))
-
+                        road_polys.append(self.netInfo.roadPolys[road.id])
             return road_polys
 
         def is_inside(t, phase):

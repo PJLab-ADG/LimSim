@@ -12,6 +12,7 @@ from simModel.common.opendriveparser.elements.junction import Junction
 from simModel.common.dataQueue import NetInfo, JunctionInfo, LaneInfo
 from simModel.common.geom.Vector3D import Vector3D
 from trafficManager.trafficLight import TrafficLight
+from shapely.geometry import Polygon as ShapelyPolygon
 
 
 class geoHash:
@@ -39,6 +40,8 @@ class NetworkBuild:
         self.boundries: list[float] = []  # boudries of x, y to plot map
         self.precision = 2  # scatter spacing for road line (meter)
         self.plotInfo = None
+        self.roadPolys = dict()
+        self.junctionPolys = dict()
 
     def getData(self):
         parser = etree.XMLParser()
@@ -213,7 +216,6 @@ class NetworkBuild:
                         x1, y1 = left_waypoints[i + 1][j]
                         x2, y2 = left_waypoints[i][j]
                         lane.centerLine.append(((x1 + x2) / 2, (y1 + y2) / 2))
-                    # print(lane.leftBorders, lane.rightBorders)
                 for i in range(len(lane_section.rightLanes)):
                     lane = lane_section.rightLanes[i]
                     lane.setBorders(right_waypoints[i + 1], "right")
@@ -287,6 +289,10 @@ class NetworkBuild:
                 right_bound_ls.extend(left_bound_ls)
                 right_bound_ls.append(right_bound_ls[0])
             road.boundary = right_bound_ls
+            if road.id not in self.roadPolys and road.junction is None:
+                self.roadPolys[road.id] = (
+                    ShapelyPolygon(road.boundary).simplify(tolerance=0.1).buffer(0)
+                )
 
     def getJunctionBoundry(self):
         """
@@ -367,6 +373,10 @@ class NetworkBuild:
 
             junction.boundary = find_nearest_points_sequential(boundary_points)
             junction.boundary.append(junction.boundary[0])
+            if junction.id not in self.junctionPolys:
+                self.junctionPolys[junction.id] = (
+                    ShapelyPolygon(junction.boundary).simplify(tolerance=0.1).buffer(0)
+                )
 
     def getRoadTopology(self):
         """
@@ -663,8 +673,6 @@ class NetworkBuild:
             )
             roadId, laneId, direction = road_next_id, lane_next_id, next_direction
         [x, y, hdg] = self.getPosition(roadId, direction, scf, tcf, yaw)
-        if np.hypot(veh.x, veh.y) > 1 and np.hypot(x - veh.x, y - veh.y) > 100:
-            pdb.set_trace()
         return roadId, laneId, direction, x, y, hdg, scf, tcf
 
     def getTcfNextRoad(self, roadId, direction, road_next_id, next_direction, tcf, yaw):
