@@ -1,11 +1,15 @@
-# LimSim Light: A lightweight LimSim simulator that parses OpenDrive standard format files
+# LimSimLight: A lightweight LimSim simulator that parses OpenDrive standard format files
 
-Although LimSim, leveraging SUMO as a simulation engine, facilitates joint simulation with CARLA, we have developed LimSimLight to address users' needs focusing on traffic flow simulation and trajectory planning. This new version targets local road networks rather than the urban-scale networks SUMO supports. LimSimLight is a lightweight alternative, driven by a custom simulation engine, abandoning complex cross-platform bridging and intricate road structures designed for specific trajectory planning algorithms. It directly parses OpenDrive-formatted road network files, offering comprehensive topological and geometric information for road networks. It supports trajectory planning for any vehicle on various road types. This version is better suited for scenario simulation in research on controllable traffic flow generation and trajectory planning methods based on deep learning.
+[![Custom badge](https://img.shields.io/badge/map-OpenDRIVE-blue)](https://www.asam.net/standards/detail/opendrive/)
+[![Custom badge](https://img.shields.io/badge/gui-DearPygui-red)](https://github.com/hoffstadt/DearPyGui)
+
+
+Although LimSim, leveraging SUMO as a simulation engine, facilitates joint simulation with CARLA, we have developed LimSimLight to address users' needs focusing on traffic flow simulation and trajectory planning. This new version targets local road networks rather than the urban-scale networks SUMO supports. LimSimLight is a lightweight alternative, driven by a custom simulation engine, abandoning complex cross-platform bridging and intricate road structures designed for specific trajectory planning algorithms. It directly parses OpenDRIVE-formatted road network files, offering comprehensive topological and geometric information for road networks. It supports trajectory planning for any vehicle on various road types. This version is better suited for scenario simulation in research on controllable traffic flow generation and trajectory planning methods based on deep learning.
 
 
 ## Features
 
-- **OpenDrive Parser**: Analyzing the road network files in the OpenDrive standard format to obtain basic road information and network topology.
+- **OpenDRIVE Parser**: Analyzing the road network files in the OpenDRIVE standard format to obtain basic road information and network topology.
 - **Simulation Engine**: Customizing a parallel processing simulation engine with a visual GUI, supporting real-time simulation and record-based replay.
 - **Baseline Traffic Flow**: Providing baseline traffic flow simulation models for route planning, following, and lane changing, and also supports users in replacing any module.
 
@@ -42,12 +46,12 @@ python ModelExample.py
 python ModelExample.py replay
 ```
 
-- Choose another OpenDrive file in ``ModelExample.py`` (optional): 
+- Choose another OpenDRIVE file in ``ModelExample.py`` (optional): 
 
 ```python
 net_file = file_paths["CarlaTown02"]
 ```
-OpenDrive files are available in ``networkFiles/CarlaTown`` got from [CARLA](https://github.com/carla-simulator/carla).
+OpenDRIVE files are available in ``networkFiles/CarlaTown`` got from [CARLA](https://github.com/carla-simulator/carla).
 
 - Modify the traffic demands (optional):
 ```powershell
@@ -58,7 +62,10 @@ vi demands.txt
 
 ### 1. Road Network Construction  (``simModel/networkbuild.py``)
 
-From OpenDrive standard files, this module can extract the fundamental elements of a road network: roads and junctions. To ascertain the boundaries and centerlines of the roads, it is necessary to generate them based on the geometric curve functions of the roads. The network topology encompasses the connectivity of roads and lanes, which may have varying requirements for different trajectory planning algorithms. Specifically, to construct a fully connected form between the entry and exit lanes of junctions, additional internal connecting roads within junctions have been introduced. The transformation between Cartesian and Frenet coordinate systems is crucial for trajectory planning. Furthermore, this module also defines the traffic control signals for each junction.
+From OpenDRIVE standard files, this module can extract the fundamental elements of a road network: roads and junctions. To ascertain the boundaries and centerlines of the roads, it is necessary to generate them based on the geometric curve functions of the roads. The network topology encompasses the connectivity of roads and lanes, which may have varying requirements for different trajectory planning algorithms. Specifically, to construct a fully connected form between the entry and exit lanes of junctions, additional internal connecting roads within junctions have been introduced. The transformation between Cartesian and Frenet coordinate systems is crucial for trajectory planning. Furthermore, this module also defines the traffic control signals for each junction.
+
+Note: Some open-source modules can help generate OpenDRIVE format files (.xodr) based on any map from [OpenStreetMap](https://www.openstreetmap.org/) (.osm), such as [Generate maps with OpenStreetMap](https://carla.readthedocs.io/en/0.9.11/tuto_G_openstreetmap/) and [osm2xodr](https://github.com/JHMeusener/osm2xodr). User modifications may be necessary to ensure the map can be correctly parsed, but it won't be challenging.
+
 
 ### 2. Simulation Engine (``simModel/model.py``)
 
@@ -79,7 +86,7 @@ The simulation diagram is presented using the dearpygui module, which includes t
 
 ## License and Citation
 
-All assets and code in this repository are under the Apache 2.0 license. If you use LimSimLight in your research , please use the following BibTeX entry.
+All assets and code in this repository are under the Apache 2.0 license. If you use LimSimLight in your research, please use the following BibTeX entry.
 
 ```
 @inproceedings{wenl2023limsim,
