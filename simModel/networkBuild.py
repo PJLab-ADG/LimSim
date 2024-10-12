@@ -4,6 +4,7 @@ import heapq
 import numpy as np
 from scipy.spatial import distance
 from lxml import etree
+from scipy.spatial import ConvexHull
 from simModel.common.opendriveparser import parse_opendrive
 from simModel.common.opendriveparser.elements.road import Road
 from simModel.common.opendriveparser.elements.roadLanes import Lane, LaneSection
@@ -310,8 +311,6 @@ class NetworkBuild:
 
             points = list(itertools.chain(*lines))
             points = np.array([list(p) for p in points])
-            import matplotlib.pyplot as plt
-            from scipy.spatial import ConvexHull
 
             hull = ConvexHull(points)
             boundary_indices = hull.vertices
