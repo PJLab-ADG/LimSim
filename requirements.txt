@@ -1,6 +1,5 @@
 dearpygui==1.8.0
 lxml==4.8.0
-matplotlib==3.5.1
 numpy==1.21.5
 peewee==3.17.6
 scipy==1.7.3
