@@ -91,7 +91,7 @@ All assets and code in this repository are under the Apache 2.0 license. If you 
 ```
 @inproceedings{wenl2023limsim,
   title={LimSim: A long-term interactive multi-scenario traffic simulator},
-  author={Wenl, Licheng and Fu, Daocheng and Mao, Song and Cai, Pinlong and Dou, Min and Li, Yikang and Qiao, Yu},
+  author={Wen, Licheng and Fu, Daocheng and Mao, Song and Cai, Pinlong and Dou, Min and Li, Yikang and Qiao, Yu},
   booktitle={26th International Conference on Intelligent Transportation Systems (ITSC)},
   pages={1255--1262},
   year={2023}
