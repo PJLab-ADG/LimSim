@@ -333,8 +333,8 @@ class Vehicle:
                        for rv in rotVertexes]
         drawVex = [
             [
-                ctf.zoomScale*(ctf.drawCenter+rev[0]+ctf.offset[0]),
-                ctf.zoomScale*(ctf.drawCenter-rev[1]+ctf.offset[1])
+                ctf.zoomScale*(ctf.drawCenter+rev[0]+ctf.offset[0]).item(),
+                ctf.zoomScale*(ctf.drawCenter-rev[1]+ctf.offset[1]).item()
             ] for rev in relativeVex
         ]
         if vtag == 'ego':
