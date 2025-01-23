@@ -49,24 +49,24 @@ In the root directory, running the following command will invoke LimSim's replay
 python ReplayExample.py
 ```
 
-**For more information of our code, please see our [Online Documentation](https://pjlab-adg.github.io/LimSim/)**.
+**For more information on our code, please see our [Online Documentation](https://pjlab-adg.github.io/LimSim/)**.
 
-If you have any problem when installing and deployment, feel free to [open an issue here](https://github.com/PJLab-ADG/LimSim/issues)!
+If you have any problem when installing and deploying, feel free to [open an issue here](https://github.com/PJLab-ADG/LimSim/issues)!
 
 
 ## 🎁 Main Features
 
-- [x] **Long-term**: Traffic flow can be generated over long periods under the guidance of demand and route planning.
+- [x] **Long-term**: Traffic flow can be generated over long periods under demand and route planning guidance.
 
 - [x] **Diversity**: The built-in behavioral models take heterogeneous driving styles of vehicles into account.
 
-- [x] **Interactivity**: Vehicles in the scenario area are controlled  address sophisticated interactions among vehicles.
+- [x] **Interactivity**: Vehicles in the scenario area are controlled to address sophisticated interactions among vehicles.
 
-- [x] **Multi-scenario**: The universal road components supports a variety of road structures in the real world.
+- [x] **Multi-scenario**: The universal road components support a variety of road structures in the real world.
 
 ## 🖥️ GUI
 
-LimSim has a cross-platform user-friendly GUI, which includes not only a beautiful simulation interface, but also information on road network and ego-vehicle status.
+LimSim has a cross-platform user-friendly GUI, including a beautiful simulation interface, information on road networks, and ego-vehicle status.
 <p align="center">
   <img src="assets/limsim_gui.png" title="" alt="limsim_gui.png">
 </p>
@@ -77,7 +77,7 @@ LimSim has a cross-platform user-friendly GUI, which includes not only a beautif
 <p>
   
 
-LimSim supports road scenarios not limited to freeways, signalized intersections, roundabouts and overpasses.
+LimSim supports road scenarios not limited to freeways, signalized intersections, roundabouts, and overpasses.
 
 <p align="center">
  <img src="assets/scenarios.gif" title="" alt="scenarios.gif" data-align="center" width="700">
@@ -92,7 +92,7 @@ LimSim supports road scenarios not limited to freeways, signalized intersections
 <p>
   
 
-After running a long-term simulation with all kinds of scenarios contained in it, LimSim generates a log report and extract the key scenarios via the evaluation results.
+After running a long-term simulation with all kinds of scenarios contained in it, LimSim generates a log report and extracts the key scenarios via the evaluation results.
 
 <p align="center">
  <img src="assets/evaluation.gif" title="" alt="evaluation.gif" data-align="center" width="700">
@@ -142,19 +142,18 @@ We would like to thank the authors and developers of the following projects, thi
 
 ## Contact
 
-If you have any suggestions or collaboration about this repo, feel free to create a issue/PR or send email to us (<a href="mailto:wenlicheng@pjlab.org.cn">wenlicheng@pjlab.org.cn</a>).
+If you have any suggestions or collaboration about this repo, feel free to create issues/PR or send emails to us (<a href="mailto:wenlicheng@pjlab.org.cn">wenlicheng@pjlab.org.cn</a>).
 
 
 ## Citation
-If you use LimSim in your research , please use the following BibTeX entry.
+If you use LimSim in your research, please use the following BibTeX entry.
 ```
-@misc{wen2023limsim,
-      title={LimSim: A Long-term Interactive Multi-scenario Traffic Simulator}, 
-      author={Licheng Wen and Daocheng Fu and Song Mao and Pinlong Cai and Min Dou and Yikang Li and Yu Qiao},
-      year={2023},
-      eprint={2307.06648},
-      archivePrefix={arXiv},
-      primaryClass={eess.SY}
+@inproceedings{wen2023limsim,
+  title={LimSim: A long-term interactive multi-scenario traffic simulator},
+  author={Wen, Licheng and Fu, Daocheng and Mao, Song and Cai, Pinlong and Dou, Min and Li, Yikang and Qiao, Yu},
+  booktitle={IEEE 26th International Conference on Intelligent Transportation Systems (ITSC)},
+  pages={1255--1262},
+  year={2023}
 }
 ```
 
